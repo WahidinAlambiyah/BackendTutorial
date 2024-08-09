@@ -1,4 +1,4 @@
-org.springframework.test.context.ContextCustomizerFactory = com.alambiyah.\
-    backend.config.SqlTestContainersSpringContextCustomizerFactory,com.\
-    alambiyah.backend.config.TestContainersSpringContextCustomizerFactory,com.\
-    alambiyah.backend.config.KafkaTestContainersSpringContextCustomizerFactory
+org.springframework.test.context.ContextCustomizerFactory = com.mycompany.myapp.\
+    config.SqlTestContainersSpringContextCustomizerFactory,com.mycompany.myapp.\
+    config.TestContainersSpringContextCustomizerFactory,com.mycompany.myapp.\
+    config.KafkaTestContainersSpringContextCustomizerFactory

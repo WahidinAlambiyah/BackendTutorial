@@ -17,7 +17,7 @@ logging:
   level:
     ROOT: INFO
     tech.jhipster: INFO
-    com.alambiyah.backend: INFO
+    com.mycompany.myapp: INFO
 
 management:
   prometheus:
@@ -94,7 +94,7 @@ jhipster:
         # - In the Consul configserver
         # - In a separate `application-prod.yml` file, in the same folder as your executable JAR file
         # - In the `JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET` environment variable
-        base64-secret: MzVjMjgyYjI5ZmJjMjg0ODVjZDZjYzdiM2Y1ODU1YmZmNjY4NDk3MTdhZWMzYmUzNmQ5NWYyMDM3MDExZWJjNTc4YzM4NTQ2MmNkZGFkMDAxNDRjZjAzZTY4ZjkzMDk0ZTAyODgwZDQ3ZWNhZWMwNmViNjYwODRjOTJmMTllYWU=
+        base64-secret: ZGZlMzUwYzc1YjZmMDQ5NDdlMWVkYzkzY2E2YTNhN2NjOGU5NmViNzM2NjEwNzliMjJkYjFmYjJhNDgzZjUxMzdiOTZjY2Y5NmQxMTRlNWQ3ZjRmZWIzNjMxY2YyMjA1OWRmOTA4MmQyNmIwMDRhNWFiYWQwODdiMDVlNGNjNTI=
         # Token is valid 24 hours
         token-validity-in-seconds: 86400
         token-validity-in-seconds-for-remember-me: 2592000

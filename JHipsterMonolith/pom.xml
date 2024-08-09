@@ -3,7 +3,7 @@
                              https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.alambiyah.backend</groupId>
+    <groupId>com.mycompany.myapp</groupId>
     <artifactId>j-hipster-monolith</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -31,7 +31,7 @@
         <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <start-class>com.alambiyah.backend.JHipsterMonolithApp</start-class>
+        <start-class>com.mycompany.myapp.JHipsterMonolithApp</start-class>
         <argLine>-Djava.security.egd=file:/dev/./urandom -Xmx1G</argLine>
         <m2e.apt.activation>jdt_apt</m2e.apt.activation>
         <run.addResources>false</run.addResources>
@@ -902,8 +902,8 @@
                             <configuration>
                                 <inputSpec>${project.basedir}/src/main/resources/swagger/api.yml</inputSpec>
                                 <generatorName>spring</generatorName>
-                                <apiPackage>com.alambiyah.backend.web.api</apiPackage>
-                                <modelPackage>com.alambiyah.backend.service.api.dto</modelPackage>
+                                <apiPackage>com.mycompany.myapp.web.api</apiPackage>
+                                <modelPackage>com.mycompany.myapp.service.api.dto</modelPackage>
                                 <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
                                 <skipValidateSpec>false</skipValidateSpec>
                                 <configOptions>
