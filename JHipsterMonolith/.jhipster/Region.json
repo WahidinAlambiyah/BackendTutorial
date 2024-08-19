@@ -1,0 +1,15 @@
+{
+  "annotations": {
+    "changelogDate": "20240816094136"
+  },
+  "applications": "*",
+  "fields": [
+    {
+      "fieldName": "regionName",
+      "fieldType": "String"
+    }
+  ],
+  "name": "Region",
+  "relationships": [],
+  "service": "serviceImpl"
+}

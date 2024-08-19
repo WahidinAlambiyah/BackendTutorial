@@ -1,0 +1,30 @@
+{
+  "jHipsterMonolithApp": {
+    "job": {
+      "home": {
+        "title": "Jobs",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Job baru",
+        "createOrEditLabel": "Buat atau edit Job",
+        "search": "Cari Job",
+        "notFound": "No Jobs found"
+      },
+      "created": "Job dengan id { param } telah dibuat",
+      "updated": "Job dengan id { param } telah diperbaharui",
+      "deleted": "Job dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Job { id }?"
+      },
+      "detail": {
+        "title": "Job"
+      },
+      "id": "ID",
+      "jobTitle": "Job Title",
+      "minSalary": "Min Salary",
+      "maxSalary": "Max Salary",
+      "task": "Task",
+      "employee": "Employee",
+      "jobHistory": "Job History"
+    }
+  }
+}

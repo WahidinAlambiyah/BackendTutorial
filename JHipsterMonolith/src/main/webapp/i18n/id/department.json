@@ -1,0 +1,28 @@
+{
+  "jHipsterMonolithApp": {
+    "department": {
+      "home": {
+        "title": "Departments",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Department baru",
+        "createOrEditLabel": "Buat atau edit Department",
+        "search": "Cari Department",
+        "notFound": "No Departments found"
+      },
+      "created": "Department dengan id { param } telah dibuat",
+      "updated": "Department dengan id { param } telah diperbaharui",
+      "deleted": "Department dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Department { id }?"
+      },
+      "detail": {
+        "title": "Department"
+      },
+      "id": "ID",
+      "departmentName": "Department Name",
+      "location": "Location",
+      "employee": "Employee",
+      "jobHistory": "Job History"
+    }
+  }
+}
