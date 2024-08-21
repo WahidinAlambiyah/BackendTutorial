@@ -58,9 +58,13 @@
               <span v-text="t$('jHipsterMonolithApp.region.name')"></span>
               <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'name'"></jhi-sort-indicator>
             </th>
-            <th scope="row" v-on:click="changeOrder('code')">
-              <span v-text="t$('jHipsterMonolithApp.region.code')"></span>
-              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'code'"></jhi-sort-indicator>
+            <th scope="row" v-on:click="changeOrder('unm49Code')">
+              <span v-text="t$('jHipsterMonolithApp.region.unm49Code')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'unm49Code'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('isoAlpha2Code')">
+              <span v-text="t$('jHipsterMonolithApp.region.isoAlpha2Code')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'isoAlpha2Code'"></jhi-sort-indicator>
             </th>
             <th scope="row"></th>
           </tr>
@@ -71,7 +75,8 @@
               <router-link :to="{ name: 'RegionView', params: { regionId: region.id } }">{{ region.id }}</router-link>
             </td>
             <td>{{ region.name }}</td>
-            <td>{{ region.code }}</td>
+            <td>{{ region.unm49Code }}</td>
+            <td>{{ region.isoAlpha2Code }}</td>
             <td class="text-right">
               <div class="btn-group">
                 <router-link :to="{ name: 'RegionView', params: { regionId: region.id } }" custom v-slot="{ navigate }">

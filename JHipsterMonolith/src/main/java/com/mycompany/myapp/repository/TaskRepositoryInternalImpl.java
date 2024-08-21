@@ -1,9 +1,12 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.Task;
+import com.mycompany.myapp.domain.criteria.TaskCriteria;
+import com.mycompany.myapp.repository.rowmapper.ColumnConverter;
 import com.mycompany.myapp.repository.rowmapper.TaskRowMapper;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.r2dbc.convert.R2dbcConverter;
@@ -22,6 +25,7 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.r2dbc.core.RowsFetchSpec;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import tech.jhipster.service.ConditionBuilder;
 
 /**
  * Spring Data R2DBC custom repository implementation for the Task entity.
@@ -34,6 +38,7 @@ class TaskRepositoryInternalImpl extends SimpleR2dbcRepository<Task, Long> imple
     private final EntityManager entityManager;
 
     private final TaskRowMapper taskMapper;
+    private final ColumnConverter columnConverter;
 
     private static final Table entityTable = Table.aliased("task", EntityManager.ENTITY_ALIAS);
 
@@ -42,7 +47,8 @@ class TaskRepositoryInternalImpl extends SimpleR2dbcRepository<Task, Long> imple
         EntityManager entityManager,
         TaskRowMapper taskMapper,
         R2dbcEntityOperations entityOperations,
-        R2dbcConverter converter
+        R2dbcConverter converter,
+        ColumnConverter columnConverter
     ) {
         super(
             new MappingRelationalEntityInformation(converter.getMappingContext().getRequiredPersistentEntity(Task.class)),
@@ -53,6 +59,7 @@ class TaskRepositoryInternalImpl extends SimpleR2dbcRepository<Task, Long> imple
         this.r2dbcEntityTemplate = template;
         this.entityManager = entityManager;
         this.taskMapper = taskMapper;
+        this.columnConverter = columnConverter;
     }
 
     @Override
@@ -87,5 +94,34 @@ class TaskRepositoryInternalImpl extends SimpleR2dbcRepository<Task, Long> imple
     @Override
     public <S extends Task> Mono<S> save(S entity) {
         return super.save(entity);
+    }
+
+    @Override
+    public Flux<Task> findByCriteria(TaskCriteria taskCriteria, Pageable page) {
+        return createQuery(page, buildConditions(taskCriteria)).all();
+    }
+
+    @Override
+    public Mono<Long> countByCriteria(TaskCriteria criteria) {
+        return findByCriteria(criteria, null)
+            .collectList()
+            .map(collectedList -> collectedList != null ? (long) collectedList.size() : (long) 0);
+    }
+
+    private Condition buildConditions(TaskCriteria criteria) {
+        ConditionBuilder builder = new ConditionBuilder(this.columnConverter);
+        List<Condition> allConditions = new ArrayList<Condition>();
+        if (criteria != null) {
+            if (criteria.getId() != null) {
+                builder.buildFilterConditionForField(criteria.getId(), entityTable.column("id"));
+            }
+            if (criteria.getTitle() != null) {
+                builder.buildFilterConditionForField(criteria.getTitle(), entityTable.column("title"));
+            }
+            if (criteria.getDescription() != null) {
+                builder.buildFilterConditionForField(criteria.getDescription(), entityTable.column("description"));
+            }
+        }
+        return builder.buildConditions();
     }
 }

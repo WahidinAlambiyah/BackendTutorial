@@ -1,6 +1,5 @@
 package com.mycompany.myapp.domain;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -10,7 +9,6 @@ import org.springframework.data.relational.core.mapping.Table;
 /**
  * not an ignored comment
  */
-@Schema(description = "not an ignored comment")
 @Table("location")
 @org.springframework.data.elasticsearch.annotations.Document(indexName = "location")
 @SuppressWarnings("common-java:DuplicatedBlocks")

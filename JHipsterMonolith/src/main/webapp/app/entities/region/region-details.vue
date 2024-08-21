@@ -13,10 +13,16 @@
             <span>{{ region.name }}</span>
           </dd>
           <dt>
-            <span v-text="t$('jHipsterMonolithApp.region.code')"></span>
+            <span v-text="t$('jHipsterMonolithApp.region.unm49Code')"></span>
           </dt>
           <dd>
-            <span>{{ region.code }}</span>
+            <span>{{ region.unm49Code }}</span>
+          </dd>
+          <dt>
+            <span v-text="t$('jHipsterMonolithApp.region.isoAlpha2Code')"></span>
+          </dt>
+          <dd>
+            <span>{{ region.isoAlpha2Code }}</span>
           </dd>
         </dl>
         <button type="submit" v-on:click.prevent="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">

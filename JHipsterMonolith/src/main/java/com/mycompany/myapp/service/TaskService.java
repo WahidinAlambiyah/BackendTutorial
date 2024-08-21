@@ -1,6 +1,7 @@
 package com.mycompany.myapp.service;
 
-import com.mycompany.myapp.domain.Task;
+import com.mycompany.myapp.domain.criteria.TaskCriteria;
+import com.mycompany.myapp.service.dto.TaskDTO;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -11,33 +12,39 @@ public interface TaskService {
     /**
      * Save a task.
      *
-     * @param task the entity to save.
+     * @param taskDTO the entity to save.
      * @return the persisted entity.
      */
-    Mono<Task> save(Task task);
+    Mono<TaskDTO> save(TaskDTO taskDTO);
 
     /**
      * Updates a task.
      *
-     * @param task the entity to update.
+     * @param taskDTO the entity to update.
      * @return the persisted entity.
      */
-    Mono<Task> update(Task task);
+    Mono<TaskDTO> update(TaskDTO taskDTO);
 
     /**
      * Partially updates a task.
      *
-     * @param task the entity to update partially.
+     * @param taskDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Mono<Task> partialUpdate(Task task);
-
+    Mono<TaskDTO> partialUpdate(TaskDTO taskDTO);
     /**
-     * Get all the tasks.
+     * Find tasks by criteria.
      *
      * @return the list of entities.
      */
-    Flux<Task> findAll();
+    Flux<TaskDTO> findByCriteria(TaskCriteria criteria);
+
+    /**
+     * Find the count of tasks by criteria.
+     * @param criteria filtering criteria
+     * @return the count of tasks
+     */
+    public Mono<Long> countByCriteria(TaskCriteria criteria);
 
     /**
      * Returns the number of tasks available.
@@ -58,7 +65,7 @@ public interface TaskService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Mono<Task> findOne(Long id);
+    Mono<TaskDTO> findOne(Long id);
 
     /**
      * Delete the "id" task.
@@ -74,5 +81,5 @@ public interface TaskService {
      * @param query the query of the search.
      * @return the list of entities.
      */
-    Flux<Task> search(String query);
+    Flux<TaskDTO> search(String query);
 }

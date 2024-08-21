@@ -11,10 +11,14 @@ import static org.mockito.Mockito.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mycompany.myapp.IntegrationTest;
 import com.mycompany.myapp.domain.City;
+import com.mycompany.myapp.domain.Province;
 import com.mycompany.myapp.repository.CityRepository;
 import com.mycompany.myapp.repository.EntityManager;
+import com.mycompany.myapp.repository.ProvinceRepository;
 import com.mycompany.myapp.repository.search.CitySearchRepository;
 import com.mycompany.myapp.service.CityService;
+import com.mycompany.myapp.service.dto.CityDTO;
+import com.mycompany.myapp.service.mapper.CityMapper;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -46,8 +50,11 @@ class CityResourceIT {
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
-    private static final String DEFAULT_CODE = "AAAAAAAAAA";
-    private static final String UPDATED_CODE = "BBBBBBBBBB";
+    private static final String DEFAULT_UNM_49_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_UNM_49_CODE = "BBBBBBBBBB";
+
+    private static final String DEFAULT_ISO_ALPHA_2_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_ISO_ALPHA_2_CODE = "BBBBBBBBBB";
 
     private static final String ENTITY_API_URL = "/api/cities";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -65,6 +72,9 @@ class CityResourceIT {
     @Mock
     private CityRepository cityRepositoryMock;
 
+    @Autowired
+    private CityMapper cityMapper;
+
     @Mock
     private CityService cityServiceMock;
 
@@ -81,6 +91,9 @@ class CityResourceIT {
 
     private City insertedCity;
 
+    @Autowired
+    private ProvinceRepository provinceRepository;
+
     /**
      * Create an entity for this test.
      *
@@ -88,7 +101,7 @@ class CityResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static City createEntity(EntityManager em) {
-        City city = new City().name(DEFAULT_NAME).code(DEFAULT_CODE);
+        City city = new City().name(DEFAULT_NAME).unm49Code(DEFAULT_UNM_49_CODE).isoAlpha2Code(DEFAULT_ISO_ALPHA_2_CODE);
         return city;
     }
 
@@ -99,7 +112,7 @@ class CityResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static City createUpdatedEntity(EntityManager em) {
-        City city = new City().name(UPDATED_NAME).code(UPDATED_CODE);
+        City city = new City().name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
         return city;
     }
 
@@ -131,20 +144,22 @@ class CityResourceIT {
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(citySearchRepository.findAll().collectList().block());
         // Create the City
-        var returnedCity = webTestClient
+        CityDTO cityDTO = cityMapper.toDto(city);
+        var returnedCityDTO = webTestClient
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(city))
+            .bodyValue(om.writeValueAsBytes(cityDTO))
             .exchange()
             .expectStatus()
             .isCreated()
-            .expectBody(City.class)
+            .expectBody(CityDTO.class)
             .returnResult()
             .getResponseBody();
 
         // Validate the City in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        var returnedCity = cityMapper.toEntity(returnedCityDTO);
         assertCityUpdatableFieldsEquals(returnedCity, getPersistedCity(returnedCity));
 
         await()
@@ -161,6 +176,7 @@ class CityResourceIT {
     void createCityWithExistingId() throws Exception {
         // Create the City with an existing ID
         city.setId(1L);
+        CityDTO cityDTO = cityMapper.toDto(city);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(citySearchRepository.findAll().collectList().block());
@@ -170,7 +186,7 @@ class CityResourceIT {
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(city))
+            .bodyValue(om.writeValueAsBytes(cityDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -189,36 +205,13 @@ class CityResourceIT {
         city.setName(null);
 
         // Create the City, which fails.
+        CityDTO cityDTO = cityMapper.toDto(city);
 
         webTestClient
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(city))
-            .exchange()
-            .expectStatus()
-            .isBadRequest();
-
-        assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(citySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
-    }
-
-    @Test
-    void checkCodeIsRequired() throws Exception {
-        long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(citySearchRepository.findAll().collectList().block());
-        // set the field null
-        city.setCode(null);
-
-        // Create the City, which fails.
-
-        webTestClient
-            .post()
-            .uri(ENTITY_API_URL)
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(city))
+            .bodyValue(om.writeValueAsBytes(cityDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -249,8 +242,10 @@ class CityResourceIT {
             .value(hasItem(city.getId().intValue()))
             .jsonPath("$.[*].name")
             .value(hasItem(DEFAULT_NAME))
-            .jsonPath("$.[*].code")
-            .value(hasItem(DEFAULT_CODE));
+            .jsonPath("$.[*].unm49Code")
+            .value(hasItem(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.[*].isoAlpha2Code")
+            .value(hasItem(DEFAULT_ISO_ALPHA_2_CODE));
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -290,8 +285,256 @@ class CityResourceIT {
             .value(is(city.getId().intValue()))
             .jsonPath("$.name")
             .value(is(DEFAULT_NAME))
-            .jsonPath("$.code")
-            .value(is(DEFAULT_CODE));
+            .jsonPath("$.unm49Code")
+            .value(is(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.isoAlpha2Code")
+            .value(is(DEFAULT_ISO_ALPHA_2_CODE));
+    }
+
+    @Test
+    void getCitiesByIdFiltering() {
+        // Initialize the database
+        insertedCity = cityRepository.save(city).block();
+
+        Long id = city.getId();
+
+        defaultCityFiltering("id.equals=" + id, "id.notEquals=" + id);
+
+        defaultCityFiltering("id.greaterThanOrEqual=" + id, "id.greaterThan=" + id);
+
+        defaultCityFiltering("id.lessThanOrEqual=" + id, "id.lessThan=" + id);
+    }
+
+    @Test
+    void getAllCitiesByNameIsEqualToSomething() {
+        // Initialize the database
+        insertedCity = cityRepository.save(city).block();
+
+        // Get all the cityList where name equals to
+        defaultCityFiltering("name.equals=" + DEFAULT_NAME, "name.equals=" + UPDATED_NAME);
+    }
+
+    @Test
+    void getAllCitiesByNameIsInShouldWork() {
+        // Initialize the database
+        insertedCity = cityRepository.save(city).block();
+
+        // Get all the cityList where name in
+        defaultCityFiltering("name.in=" + DEFAULT_NAME + "," + UPDATED_NAME, "name.in=" + UPDATED_NAME);
+    }
+
+    @Test
+    void getAllCitiesByNameIsNullOrNotNull() {
+        // Initialize the database
+        insertedCity = cityRepository.save(city).block();
+
+        // Get all the cityList where name is not null
+        defaultCityFiltering("name.specified=true", "name.specified=false");
+    }
+
+    @Test
+    void getAllCitiesByNameContainsSomething() {
+        // Initialize the database
+        insertedCity = cityRepository.save(city).block();
+
+        // Get all the cityList where name contains
+        defaultCityFiltering("name.contains=" + DEFAULT_NAME, "name.contains=" + UPDATED_NAME);
+    }
+
+    @Test
+    void getAllCitiesByNameNotContainsSomething() {
+        // Initialize the database
+        insertedCity = cityRepository.save(city).block();
+
+        // Get all the cityList where name does not contain
+        defaultCityFiltering("name.doesNotContain=" + UPDATED_NAME, "name.doesNotContain=" + DEFAULT_NAME);
+    }
+
+    @Test
+    void getAllCitiesByUnm49CodeIsEqualToSomething() {
+        // Initialize the database
+        insertedCity = cityRepository.save(city).block();
+
+        // Get all the cityList where unm49Code equals to
+        defaultCityFiltering("unm49Code.equals=" + DEFAULT_UNM_49_CODE, "unm49Code.equals=" + UPDATED_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllCitiesByUnm49CodeIsInShouldWork() {
+        // Initialize the database
+        insertedCity = cityRepository.save(city).block();
+
+        // Get all the cityList where unm49Code in
+        defaultCityFiltering("unm49Code.in=" + DEFAULT_UNM_49_CODE + "," + UPDATED_UNM_49_CODE, "unm49Code.in=" + UPDATED_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllCitiesByUnm49CodeIsNullOrNotNull() {
+        // Initialize the database
+        insertedCity = cityRepository.save(city).block();
+
+        // Get all the cityList where unm49Code is not null
+        defaultCityFiltering("unm49Code.specified=true", "unm49Code.specified=false");
+    }
+
+    @Test
+    void getAllCitiesByUnm49CodeContainsSomething() {
+        // Initialize the database
+        insertedCity = cityRepository.save(city).block();
+
+        // Get all the cityList where unm49Code contains
+        defaultCityFiltering("unm49Code.contains=" + DEFAULT_UNM_49_CODE, "unm49Code.contains=" + UPDATED_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllCitiesByUnm49CodeNotContainsSomething() {
+        // Initialize the database
+        insertedCity = cityRepository.save(city).block();
+
+        // Get all the cityList where unm49Code does not contain
+        defaultCityFiltering("unm49Code.doesNotContain=" + UPDATED_UNM_49_CODE, "unm49Code.doesNotContain=" + DEFAULT_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllCitiesByIsoAlpha2CodeIsEqualToSomething() {
+        // Initialize the database
+        insertedCity = cityRepository.save(city).block();
+
+        // Get all the cityList where isoAlpha2Code equals to
+        defaultCityFiltering("isoAlpha2Code.equals=" + DEFAULT_ISO_ALPHA_2_CODE, "isoAlpha2Code.equals=" + UPDATED_ISO_ALPHA_2_CODE);
+    }
+
+    @Test
+    void getAllCitiesByIsoAlpha2CodeIsInShouldWork() {
+        // Initialize the database
+        insertedCity = cityRepository.save(city).block();
+
+        // Get all the cityList where isoAlpha2Code in
+        defaultCityFiltering(
+            "isoAlpha2Code.in=" + DEFAULT_ISO_ALPHA_2_CODE + "," + UPDATED_ISO_ALPHA_2_CODE,
+            "isoAlpha2Code.in=" + UPDATED_ISO_ALPHA_2_CODE
+        );
+    }
+
+    @Test
+    void getAllCitiesByIsoAlpha2CodeIsNullOrNotNull() {
+        // Initialize the database
+        insertedCity = cityRepository.save(city).block();
+
+        // Get all the cityList where isoAlpha2Code is not null
+        defaultCityFiltering("isoAlpha2Code.specified=true", "isoAlpha2Code.specified=false");
+    }
+
+    @Test
+    void getAllCitiesByIsoAlpha2CodeContainsSomething() {
+        // Initialize the database
+        insertedCity = cityRepository.save(city).block();
+
+        // Get all the cityList where isoAlpha2Code contains
+        defaultCityFiltering("isoAlpha2Code.contains=" + DEFAULT_ISO_ALPHA_2_CODE, "isoAlpha2Code.contains=" + UPDATED_ISO_ALPHA_2_CODE);
+    }
+
+    @Test
+    void getAllCitiesByIsoAlpha2CodeNotContainsSomething() {
+        // Initialize the database
+        insertedCity = cityRepository.save(city).block();
+
+        // Get all the cityList where isoAlpha2Code does not contain
+        defaultCityFiltering(
+            "isoAlpha2Code.doesNotContain=" + UPDATED_ISO_ALPHA_2_CODE,
+            "isoAlpha2Code.doesNotContain=" + DEFAULT_ISO_ALPHA_2_CODE
+        );
+    }
+
+    @Test
+    void getAllCitiesByProvinceIsEqualToSomething() {
+        Province province = ProvinceResourceIT.createEntity(em);
+        provinceRepository.save(province).block();
+        Long provinceId = province.getId();
+        city.setProvinceId(provinceId);
+        insertedCity = cityRepository.save(city).block();
+        // Get all the cityList where province equals to provinceId
+        defaultCityShouldBeFound("provinceId.equals=" + provinceId);
+
+        // Get all the cityList where province equals to (provinceId + 1)
+        defaultCityShouldNotBeFound("provinceId.equals=" + (provinceId + 1));
+    }
+
+    private void defaultCityFiltering(String shouldBeFound, String shouldNotBeFound) {
+        defaultCityShouldBeFound(shouldBeFound);
+        defaultCityShouldNotBeFound(shouldNotBeFound);
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultCityShouldBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$.[*].id")
+            .value(hasItem(city.getId().intValue()))
+            .jsonPath("$.[*].name")
+            .value(hasItem(DEFAULT_NAME))
+            .jsonPath("$.[*].unm49Code")
+            .value(hasItem(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.[*].isoAlpha2Code")
+            .value(hasItem(DEFAULT_ISO_ALPHA_2_CODE));
+
+        // Check, that the count call also returns 1
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultCityShouldNotBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .isArray()
+            .jsonPath("$")
+            .isEmpty();
+
+        // Check, that the count call also returns 0
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(0));
     }
 
     @Test
@@ -317,13 +560,14 @@ class CityResourceIT {
 
         // Update the city
         City updatedCity = cityRepository.findById(city.getId()).block();
-        updatedCity.name(UPDATED_NAME).code(UPDATED_CODE);
+        updatedCity.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
+        CityDTO cityDTO = cityMapper.toDto(updatedCity);
 
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, updatedCity.getId())
+            .uri(ENTITY_API_URL_ID, cityDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(updatedCity))
+            .bodyValue(om.writeValueAsBytes(cityDTO))
             .exchange()
             .expectStatus()
             .isOk();
@@ -352,12 +596,15 @@ class CityResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(citySearchRepository.findAll().collectList().block());
         city.setId(longCount.incrementAndGet());
 
+        // Create the City
+        CityDTO cityDTO = cityMapper.toDto(city);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, city.getId())
+            .uri(ENTITY_API_URL_ID, cityDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(city))
+            .bodyValue(om.writeValueAsBytes(cityDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -374,12 +621,15 @@ class CityResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(citySearchRepository.findAll().collectList().block());
         city.setId(longCount.incrementAndGet());
 
+        // Create the City
+        CityDTO cityDTO = cityMapper.toDto(city);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(city))
+            .bodyValue(om.writeValueAsBytes(cityDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -396,12 +646,15 @@ class CityResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(citySearchRepository.findAll().collectList().block());
         city.setId(longCount.incrementAndGet());
 
+        // Create the City
+        CityDTO cityDTO = cityMapper.toDto(city);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(city))
+            .bodyValue(om.writeValueAsBytes(cityDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);
@@ -449,7 +702,7 @@ class CityResourceIT {
         City partialUpdatedCity = new City();
         partialUpdatedCity.setId(city.getId());
 
-        partialUpdatedCity.name(UPDATED_NAME).code(UPDATED_CODE);
+        partialUpdatedCity.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
 
         webTestClient
             .patch()
@@ -472,12 +725,15 @@ class CityResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(citySearchRepository.findAll().collectList().block());
         city.setId(longCount.incrementAndGet());
 
+        // Create the City
+        CityDTO cityDTO = cityMapper.toDto(city);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
-            .uri(ENTITY_API_URL_ID, city.getId())
+            .uri(ENTITY_API_URL_ID, cityDTO.getId())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(city))
+            .bodyValue(om.writeValueAsBytes(cityDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -494,12 +750,15 @@ class CityResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(citySearchRepository.findAll().collectList().block());
         city.setId(longCount.incrementAndGet());
 
+        // Create the City
+        CityDTO cityDTO = cityMapper.toDto(city);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(city))
+            .bodyValue(om.writeValueAsBytes(cityDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -516,12 +775,15 @@ class CityResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(citySearchRepository.findAll().collectList().block());
         city.setId(longCount.incrementAndGet());
 
+        // Create the City
+        CityDTO cityDTO = cityMapper.toDto(city);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(city))
+            .bodyValue(om.writeValueAsBytes(cityDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);
@@ -578,8 +840,10 @@ class CityResourceIT {
             .value(hasItem(city.getId().intValue()))
             .jsonPath("$.[*].name")
             .value(hasItem(DEFAULT_NAME))
-            .jsonPath("$.[*].code")
-            .value(hasItem(DEFAULT_CODE));
+            .jsonPath("$.[*].unm49Code")
+            .value(hasItem(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.[*].isoAlpha2Code")
+            .value(hasItem(DEFAULT_ISO_ALPHA_2_CODE));
     }
 
     protected long getRepositoryCount() {

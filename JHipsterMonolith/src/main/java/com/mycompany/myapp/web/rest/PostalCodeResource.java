@@ -1,8 +1,9 @@
 package com.mycompany.myapp.web.rest;
 
-import com.mycompany.myapp.domain.PostalCode;
+import com.mycompany.myapp.domain.criteria.PostalCodeCriteria;
 import com.mycompany.myapp.repository.PostalCodeRepository;
 import com.mycompany.myapp.service.PostalCodeService;
+import com.mycompany.myapp.service.dto.PostalCodeDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -55,18 +56,18 @@ public class PostalCodeResource {
     /**
      * {@code POST  /postal-codes} : Create a new postalCode.
      *
-     * @param postalCode the postalCode to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new postalCode, or with status {@code 400 (Bad Request)} if the postalCode has already an ID.
+     * @param postalCodeDTO the postalCodeDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new postalCodeDTO, or with status {@code 400 (Bad Request)} if the postalCode has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public Mono<ResponseEntity<PostalCode>> createPostalCode(@Valid @RequestBody PostalCode postalCode) throws URISyntaxException {
-        log.debug("REST request to save PostalCode : {}", postalCode);
-        if (postalCode.getId() != null) {
+    public Mono<ResponseEntity<PostalCodeDTO>> createPostalCode(@Valid @RequestBody PostalCodeDTO postalCodeDTO) throws URISyntaxException {
+        log.debug("REST request to save PostalCode : {}", postalCodeDTO);
+        if (postalCodeDTO.getId() != null) {
             throw new BadRequestAlertException("A new postalCode cannot already have an ID", ENTITY_NAME, "idexists");
         }
         return postalCodeService
-            .save(postalCode)
+            .save(postalCodeDTO)
             .map(result -> {
                 try {
                     return ResponseEntity.created(new URI("/api/postal-codes/" + result.getId()))
@@ -81,23 +82,23 @@ public class PostalCodeResource {
     /**
      * {@code PUT  /postal-codes/:id} : Updates an existing postalCode.
      *
-     * @param id the id of the postalCode to save.
-     * @param postalCode the postalCode to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated postalCode,
-     * or with status {@code 400 (Bad Request)} if the postalCode is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the postalCode couldn't be updated.
+     * @param id the id of the postalCodeDTO to save.
+     * @param postalCodeDTO the postalCodeDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated postalCodeDTO,
+     * or with status {@code 400 (Bad Request)} if the postalCodeDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the postalCodeDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
-    public Mono<ResponseEntity<PostalCode>> updatePostalCode(
+    public Mono<ResponseEntity<PostalCodeDTO>> updatePostalCode(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody PostalCode postalCode
+        @Valid @RequestBody PostalCodeDTO postalCodeDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update PostalCode : {}, {}", id, postalCode);
-        if (postalCode.getId() == null) {
+        log.debug("REST request to update PostalCode : {}, {}", id, postalCodeDTO);
+        if (postalCodeDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, postalCode.getId())) {
+        if (!Objects.equals(id, postalCodeDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -109,7 +110,7 @@ public class PostalCodeResource {
                 }
 
                 return postalCodeService
-                    .update(postalCode)
+                    .update(postalCodeDTO)
                     .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
                     .map(
                         result ->
@@ -123,24 +124,24 @@ public class PostalCodeResource {
     /**
      * {@code PATCH  /postal-codes/:id} : Partial updates given fields of an existing postalCode, field will ignore if it is null
      *
-     * @param id the id of the postalCode to save.
-     * @param postalCode the postalCode to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated postalCode,
-     * or with status {@code 400 (Bad Request)} if the postalCode is not valid,
-     * or with status {@code 404 (Not Found)} if the postalCode is not found,
-     * or with status {@code 500 (Internal Server Error)} if the postalCode couldn't be updated.
+     * @param id the id of the postalCodeDTO to save.
+     * @param postalCodeDTO the postalCodeDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated postalCodeDTO,
+     * or with status {@code 400 (Bad Request)} if the postalCodeDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the postalCodeDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the postalCodeDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public Mono<ResponseEntity<PostalCode>> partialUpdatePostalCode(
+    public Mono<ResponseEntity<PostalCodeDTO>> partialUpdatePostalCode(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody PostalCode postalCode
+        @NotNull @RequestBody PostalCodeDTO postalCodeDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update PostalCode partially : {}, {}", id, postalCode);
-        if (postalCode.getId() == null) {
+        log.debug("REST request to partial update PostalCode partially : {}, {}", id, postalCodeDTO);
+        if (postalCodeDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, postalCode.getId())) {
+        if (!Objects.equals(id, postalCodeDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -151,7 +152,7 @@ public class PostalCodeResource {
                     return Mono.error(new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
                 }
 
-                Mono<PostalCode> result = postalCodeService.partialUpdate(postalCode);
+                Mono<PostalCodeDTO> result = postalCodeService.partialUpdate(postalCodeDTO);
 
                 return result
                     .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
@@ -169,19 +170,19 @@ public class PostalCodeResource {
      *
      * @param pageable the pagination information.
      * @param request a {@link ServerHttpRequest} request.
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of postalCodes in body.
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<List<PostalCode>>> getAllPostalCodes(
+    public Mono<ResponseEntity<List<PostalCodeDTO>>> getAllPostalCodes(
+        PostalCodeCriteria criteria,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        ServerHttpRequest request,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        ServerHttpRequest request
     ) {
-        log.debug("REST request to get a page of PostalCodes");
+        log.debug("REST request to get PostalCodes by criteria: {}", criteria);
         return postalCodeService
-            .countAll()
-            .zipWith(postalCodeService.findAll(pageable).collectList())
+            .countByCriteria(criteria)
+            .zipWith(postalCodeService.findByCriteria(criteria, pageable).collectList())
             .map(
                 countWithEntities ->
                     ResponseEntity.ok()
@@ -196,22 +197,34 @@ public class PostalCodeResource {
     }
 
     /**
+     * {@code GET  /postal-codes/count} : count all the postalCodes.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public Mono<ResponseEntity<Long>> countPostalCodes(PostalCodeCriteria criteria) {
+        log.debug("REST request to count PostalCodes by criteria: {}", criteria);
+        return postalCodeService.countByCriteria(criteria).map(count -> ResponseEntity.status(HttpStatus.OK).body(count));
+    }
+
+    /**
      * {@code GET  /postal-codes/:id} : get the "id" postalCode.
      *
-     * @param id the id of the postalCode to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the postalCode, or with status {@code 404 (Not Found)}.
+     * @param id the id of the postalCodeDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the postalCodeDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public Mono<ResponseEntity<PostalCode>> getPostalCode(@PathVariable("id") Long id) {
+    public Mono<ResponseEntity<PostalCodeDTO>> getPostalCode(@PathVariable("id") Long id) {
         log.debug("REST request to get PostalCode : {}", id);
-        Mono<PostalCode> postalCode = postalCodeService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(postalCode);
+        Mono<PostalCodeDTO> postalCodeDTO = postalCodeService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(postalCodeDTO);
     }
 
     /**
      * {@code DELETE  /postal-codes/:id} : delete the "id" postalCode.
      *
-     * @param id the id of the postalCode to delete.
+     * @param id the id of the postalCodeDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
@@ -238,7 +251,7 @@ public class PostalCodeResource {
      * @return the result of the search.
      */
     @GetMapping("/_search")
-    public Mono<ResponseEntity<Flux<PostalCode>>> searchPostalCodes(
+    public Mono<ResponseEntity<Flux<PostalCodeDTO>>> searchPostalCodes(
         @RequestParam("query") String query,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         ServerHttpRequest request

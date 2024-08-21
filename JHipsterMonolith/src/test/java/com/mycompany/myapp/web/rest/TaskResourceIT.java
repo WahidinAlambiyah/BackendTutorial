@@ -14,7 +14,8 @@ import com.mycompany.myapp.domain.Task;
 import com.mycompany.myapp.repository.EntityManager;
 import com.mycompany.myapp.repository.TaskRepository;
 import com.mycompany.myapp.repository.search.TaskSearchRepository;
-import java.time.Duration;
+import com.mycompany.myapp.service.dto.TaskDTO;
+import com.mycompany.myapp.service.mapper.TaskMapper;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -56,6 +57,9 @@ class TaskResourceIT {
 
     @Autowired
     private TaskRepository taskRepository;
+
+    @Autowired
+    private TaskMapper taskMapper;
 
     @Autowired
     private TaskSearchRepository taskSearchRepository;
@@ -120,20 +124,22 @@ class TaskResourceIT {
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll().collectList().block());
         // Create the Task
-        var returnedTask = webTestClient
+        TaskDTO taskDTO = taskMapper.toDto(task);
+        var returnedTaskDTO = webTestClient
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(task))
+            .bodyValue(om.writeValueAsBytes(taskDTO))
             .exchange()
             .expectStatus()
             .isCreated()
-            .expectBody(Task.class)
+            .expectBody(TaskDTO.class)
             .returnResult()
             .getResponseBody();
 
         // Validate the Task in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        var returnedTask = taskMapper.toEntity(returnedTaskDTO);
         assertTaskUpdatableFieldsEquals(returnedTask, getPersistedTask(returnedTask));
 
         await()
@@ -150,6 +156,7 @@ class TaskResourceIT {
     void createTaskWithExistingId() throws Exception {
         // Create the Task with an existing ID
         task.setId(1L);
+        TaskDTO taskDTO = taskMapper.toDto(task);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll().collectList().block());
@@ -159,7 +166,7 @@ class TaskResourceIT {
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(task))
+            .bodyValue(om.writeValueAsBytes(taskDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -168,35 +175,6 @@ class TaskResourceIT {
         assertSameRepositoryCount(databaseSizeBeforeCreate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(taskSearchRepository.findAll().collectList().block());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
-    }
-
-    @Test
-    void getAllTasksAsStream() {
-        // Initialize the database
-        taskRepository.save(task).block();
-
-        List<Task> taskList = webTestClient
-            .get()
-            .uri(ENTITY_API_URL)
-            .accept(MediaType.APPLICATION_NDJSON)
-            .exchange()
-            .expectStatus()
-            .isOk()
-            .expectHeader()
-            .contentTypeCompatibleWith(MediaType.APPLICATION_NDJSON)
-            .returnResult(Task.class)
-            .getResponseBody()
-            .filter(task::equals)
-            .collectList()
-            .block(Duration.ofSeconds(5));
-
-        assertThat(taskList).isNotNull();
-        assertThat(taskList).hasSize(1);
-        Task testTask = taskList.get(0);
-
-        // Test fails because reactive api returns an empty object instead of null
-        // assertTaskAllPropertiesEquals(task, testTask);
-        assertTaskUpdatableFieldsEquals(task, testTask);
     }
 
     @Test
@@ -248,6 +226,185 @@ class TaskResourceIT {
     }
 
     @Test
+    void getTasksByIdFiltering() {
+        // Initialize the database
+        insertedTask = taskRepository.save(task).block();
+
+        Long id = task.getId();
+
+        defaultTaskFiltering("id.equals=" + id, "id.notEquals=" + id);
+
+        defaultTaskFiltering("id.greaterThanOrEqual=" + id, "id.greaterThan=" + id);
+
+        defaultTaskFiltering("id.lessThanOrEqual=" + id, "id.lessThan=" + id);
+    }
+
+    @Test
+    void getAllTasksByTitleIsEqualToSomething() {
+        // Initialize the database
+        insertedTask = taskRepository.save(task).block();
+
+        // Get all the taskList where title equals to
+        defaultTaskFiltering("title.equals=" + DEFAULT_TITLE, "title.equals=" + UPDATED_TITLE);
+    }
+
+    @Test
+    void getAllTasksByTitleIsInShouldWork() {
+        // Initialize the database
+        insertedTask = taskRepository.save(task).block();
+
+        // Get all the taskList where title in
+        defaultTaskFiltering("title.in=" + DEFAULT_TITLE + "," + UPDATED_TITLE, "title.in=" + UPDATED_TITLE);
+    }
+
+    @Test
+    void getAllTasksByTitleIsNullOrNotNull() {
+        // Initialize the database
+        insertedTask = taskRepository.save(task).block();
+
+        // Get all the taskList where title is not null
+        defaultTaskFiltering("title.specified=true", "title.specified=false");
+    }
+
+    @Test
+    void getAllTasksByTitleContainsSomething() {
+        // Initialize the database
+        insertedTask = taskRepository.save(task).block();
+
+        // Get all the taskList where title contains
+        defaultTaskFiltering("title.contains=" + DEFAULT_TITLE, "title.contains=" + UPDATED_TITLE);
+    }
+
+    @Test
+    void getAllTasksByTitleNotContainsSomething() {
+        // Initialize the database
+        insertedTask = taskRepository.save(task).block();
+
+        // Get all the taskList where title does not contain
+        defaultTaskFiltering("title.doesNotContain=" + UPDATED_TITLE, "title.doesNotContain=" + DEFAULT_TITLE);
+    }
+
+    @Test
+    void getAllTasksByDescriptionIsEqualToSomething() {
+        // Initialize the database
+        insertedTask = taskRepository.save(task).block();
+
+        // Get all the taskList where description equals to
+        defaultTaskFiltering("description.equals=" + DEFAULT_DESCRIPTION, "description.equals=" + UPDATED_DESCRIPTION);
+    }
+
+    @Test
+    void getAllTasksByDescriptionIsInShouldWork() {
+        // Initialize the database
+        insertedTask = taskRepository.save(task).block();
+
+        // Get all the taskList where description in
+        defaultTaskFiltering("description.in=" + DEFAULT_DESCRIPTION + "," + UPDATED_DESCRIPTION, "description.in=" + UPDATED_DESCRIPTION);
+    }
+
+    @Test
+    void getAllTasksByDescriptionIsNullOrNotNull() {
+        // Initialize the database
+        insertedTask = taskRepository.save(task).block();
+
+        // Get all the taskList where description is not null
+        defaultTaskFiltering("description.specified=true", "description.specified=false");
+    }
+
+    @Test
+    void getAllTasksByDescriptionContainsSomething() {
+        // Initialize the database
+        insertedTask = taskRepository.save(task).block();
+
+        // Get all the taskList where description contains
+        defaultTaskFiltering("description.contains=" + DEFAULT_DESCRIPTION, "description.contains=" + UPDATED_DESCRIPTION);
+    }
+
+    @Test
+    void getAllTasksByDescriptionNotContainsSomething() {
+        // Initialize the database
+        insertedTask = taskRepository.save(task).block();
+
+        // Get all the taskList where description does not contain
+        defaultTaskFiltering("description.doesNotContain=" + UPDATED_DESCRIPTION, "description.doesNotContain=" + DEFAULT_DESCRIPTION);
+    }
+
+    private void defaultTaskFiltering(String shouldBeFound, String shouldNotBeFound) {
+        defaultTaskShouldBeFound(shouldBeFound);
+        defaultTaskShouldNotBeFound(shouldNotBeFound);
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultTaskShouldBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$.[*].id")
+            .value(hasItem(task.getId().intValue()))
+            .jsonPath("$.[*].title")
+            .value(hasItem(DEFAULT_TITLE))
+            .jsonPath("$.[*].description")
+            .value(hasItem(DEFAULT_DESCRIPTION));
+
+        // Check, that the count call also returns 1
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultTaskShouldNotBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .isArray()
+            .jsonPath("$")
+            .isEmpty();
+
+        // Check, that the count call also returns 0
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(0));
+    }
+
+    @Test
     void getNonExistingTask() {
         // Get the task
         webTestClient
@@ -271,12 +428,13 @@ class TaskResourceIT {
         // Update the task
         Task updatedTask = taskRepository.findById(task.getId()).block();
         updatedTask.title(UPDATED_TITLE).description(UPDATED_DESCRIPTION);
+        TaskDTO taskDTO = taskMapper.toDto(updatedTask);
 
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, updatedTask.getId())
+            .uri(ENTITY_API_URL_ID, taskDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(updatedTask))
+            .bodyValue(om.writeValueAsBytes(taskDTO))
             .exchange()
             .expectStatus()
             .isOk();
@@ -305,12 +463,15 @@ class TaskResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll().collectList().block());
         task.setId(longCount.incrementAndGet());
 
+        // Create the Task
+        TaskDTO taskDTO = taskMapper.toDto(task);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, task.getId())
+            .uri(ENTITY_API_URL_ID, taskDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(task))
+            .bodyValue(om.writeValueAsBytes(taskDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -327,12 +488,15 @@ class TaskResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll().collectList().block());
         task.setId(longCount.incrementAndGet());
 
+        // Create the Task
+        TaskDTO taskDTO = taskMapper.toDto(task);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(task))
+            .bodyValue(om.writeValueAsBytes(taskDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -349,12 +513,15 @@ class TaskResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll().collectList().block());
         task.setId(longCount.incrementAndGet());
 
+        // Create the Task
+        TaskDTO taskDTO = taskMapper.toDto(task);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(task))
+            .bodyValue(om.writeValueAsBytes(taskDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);
@@ -427,12 +594,15 @@ class TaskResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll().collectList().block());
         task.setId(longCount.incrementAndGet());
 
+        // Create the Task
+        TaskDTO taskDTO = taskMapper.toDto(task);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
-            .uri(ENTITY_API_URL_ID, task.getId())
+            .uri(ENTITY_API_URL_ID, taskDTO.getId())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(task))
+            .bodyValue(om.writeValueAsBytes(taskDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -449,12 +619,15 @@ class TaskResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll().collectList().block());
         task.setId(longCount.incrementAndGet());
 
+        // Create the Task
+        TaskDTO taskDTO = taskMapper.toDto(task);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(task))
+            .bodyValue(om.writeValueAsBytes(taskDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -471,12 +644,15 @@ class TaskResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll().collectList().block());
         task.setId(longCount.incrementAndGet());
 
+        // Create the Task
+        TaskDTO taskDTO = taskMapper.toDto(task);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(task))
+            .bodyValue(om.writeValueAsBytes(taskDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);

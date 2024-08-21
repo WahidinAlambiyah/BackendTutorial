@@ -40,6 +40,5 @@
 
     <include file="config/liquibase/changelog/20240821190500_added_data_Region.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240821194400_added_data_Country.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20240821_alter_region_table.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

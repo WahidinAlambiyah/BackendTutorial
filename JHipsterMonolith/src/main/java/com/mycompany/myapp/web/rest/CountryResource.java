@@ -1,8 +1,9 @@
 package com.mycompany.myapp.web.rest;
 
-import com.mycompany.myapp.domain.Country;
+import com.mycompany.myapp.domain.criteria.CountryCriteria;
 import com.mycompany.myapp.repository.CountryRepository;
 import com.mycompany.myapp.service.CountryService;
+import com.mycompany.myapp.service.dto.CountryDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -55,18 +56,18 @@ public class CountryResource {
     /**
      * {@code POST  /countries} : Create a new country.
      *
-     * @param country the country to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new country, or with status {@code 400 (Bad Request)} if the country has already an ID.
+     * @param countryDTO the countryDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new countryDTO, or with status {@code 400 (Bad Request)} if the country has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public Mono<ResponseEntity<Country>> createCountry(@Valid @RequestBody Country country) throws URISyntaxException {
-        log.debug("REST request to save Country : {}", country);
-        if (country.getId() != null) {
+    public Mono<ResponseEntity<CountryDTO>> createCountry(@Valid @RequestBody CountryDTO countryDTO) throws URISyntaxException {
+        log.debug("REST request to save Country : {}", countryDTO);
+        if (countryDTO.getId() != null) {
             throw new BadRequestAlertException("A new country cannot already have an ID", ENTITY_NAME, "idexists");
         }
         return countryService
-            .save(country)
+            .save(countryDTO)
             .map(result -> {
                 try {
                     return ResponseEntity.created(new URI("/api/countries/" + result.getId()))
@@ -81,23 +82,23 @@ public class CountryResource {
     /**
      * {@code PUT  /countries/:id} : Updates an existing country.
      *
-     * @param id the id of the country to save.
-     * @param country the country to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated country,
-     * or with status {@code 400 (Bad Request)} if the country is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the country couldn't be updated.
+     * @param id the id of the countryDTO to save.
+     * @param countryDTO the countryDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated countryDTO,
+     * or with status {@code 400 (Bad Request)} if the countryDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the countryDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
-    public Mono<ResponseEntity<Country>> updateCountry(
+    public Mono<ResponseEntity<CountryDTO>> updateCountry(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody Country country
+        @Valid @RequestBody CountryDTO countryDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update Country : {}, {}", id, country);
-        if (country.getId() == null) {
+        log.debug("REST request to update Country : {}, {}", id, countryDTO);
+        if (countryDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, country.getId())) {
+        if (!Objects.equals(id, countryDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -109,7 +110,7 @@ public class CountryResource {
                 }
 
                 return countryService
-                    .update(country)
+                    .update(countryDTO)
                     .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
                     .map(
                         result ->
@@ -123,24 +124,24 @@ public class CountryResource {
     /**
      * {@code PATCH  /countries/:id} : Partial updates given fields of an existing country, field will ignore if it is null
      *
-     * @param id the id of the country to save.
-     * @param country the country to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated country,
-     * or with status {@code 400 (Bad Request)} if the country is not valid,
-     * or with status {@code 404 (Not Found)} if the country is not found,
-     * or with status {@code 500 (Internal Server Error)} if the country couldn't be updated.
+     * @param id the id of the countryDTO to save.
+     * @param countryDTO the countryDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated countryDTO,
+     * or with status {@code 400 (Bad Request)} if the countryDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the countryDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the countryDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public Mono<ResponseEntity<Country>> partialUpdateCountry(
+    public Mono<ResponseEntity<CountryDTO>> partialUpdateCountry(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody Country country
+        @NotNull @RequestBody CountryDTO countryDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Country partially : {}, {}", id, country);
-        if (country.getId() == null) {
+        log.debug("REST request to partial update Country partially : {}, {}", id, countryDTO);
+        if (countryDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, country.getId())) {
+        if (!Objects.equals(id, countryDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -151,7 +152,7 @@ public class CountryResource {
                     return Mono.error(new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
                 }
 
-                Mono<Country> result = countryService.partialUpdate(country);
+                Mono<CountryDTO> result = countryService.partialUpdate(countryDTO);
 
                 return result
                     .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
@@ -169,19 +170,19 @@ public class CountryResource {
      *
      * @param pageable the pagination information.
      * @param request a {@link ServerHttpRequest} request.
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of countries in body.
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<List<Country>>> getAllCountries(
+    public Mono<ResponseEntity<List<CountryDTO>>> getAllCountries(
+        CountryCriteria criteria,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        ServerHttpRequest request,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        ServerHttpRequest request
     ) {
-        log.debug("REST request to get a page of Countries");
+        log.debug("REST request to get Countries by criteria: {}", criteria);
         return countryService
-            .countAll()
-            .zipWith(countryService.findAll(pageable).collectList())
+            .countByCriteria(criteria)
+            .zipWith(countryService.findByCriteria(criteria, pageable).collectList())
             .map(
                 countWithEntities ->
                     ResponseEntity.ok()
@@ -196,22 +197,34 @@ public class CountryResource {
     }
 
     /**
+     * {@code GET  /countries/count} : count all the countries.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public Mono<ResponseEntity<Long>> countCountries(CountryCriteria criteria) {
+        log.debug("REST request to count Countries by criteria: {}", criteria);
+        return countryService.countByCriteria(criteria).map(count -> ResponseEntity.status(HttpStatus.OK).body(count));
+    }
+
+    /**
      * {@code GET  /countries/:id} : get the "id" country.
      *
-     * @param id the id of the country to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the country, or with status {@code 404 (Not Found)}.
+     * @param id the id of the countryDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the countryDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public Mono<ResponseEntity<Country>> getCountry(@PathVariable("id") Long id) {
+    public Mono<ResponseEntity<CountryDTO>> getCountry(@PathVariable("id") Long id) {
         log.debug("REST request to get Country : {}", id);
-        Mono<Country> country = countryService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(country);
+        Mono<CountryDTO> countryDTO = countryService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(countryDTO);
     }
 
     /**
      * {@code DELETE  /countries/:id} : delete the "id" country.
      *
-     * @param id the id of the country to delete.
+     * @param id the id of the countryDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
@@ -238,7 +251,7 @@ public class CountryResource {
      * @return the result of the search.
      */
     @GetMapping("/_search")
-    public Mono<ResponseEntity<Flux<Country>>> searchCountries(
+    public Mono<ResponseEntity<Flux<CountryDTO>>> searchCountries(
         @RequestParam("query") String query,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         ServerHttpRequest request

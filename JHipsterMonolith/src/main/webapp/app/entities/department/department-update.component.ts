@@ -61,6 +61,8 @@ export default defineComponent({
         required: validations.required(t$('entity.validation.required').toString()),
       },
       location: {},
+      employees: {},
+      jobHistory: {},
     };
     const v$ = useVuelidate(validationRules, department as any);
     v$.value.$validate();

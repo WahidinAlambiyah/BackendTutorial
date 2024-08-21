@@ -1,10 +1,13 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.Country;
+import com.mycompany.myapp.domain.criteria.CountryCriteria;
+import com.mycompany.myapp.repository.rowmapper.ColumnConverter;
 import com.mycompany.myapp.repository.rowmapper.CountryRowMapper;
 import com.mycompany.myapp.repository.rowmapper.RegionRowMapper;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.r2dbc.convert.R2dbcConverter;
@@ -24,6 +27,7 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.r2dbc.core.RowsFetchSpec;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import tech.jhipster.service.ConditionBuilder;
 
 /**
  * Spring Data R2DBC custom repository implementation for the Country entity.
@@ -37,6 +41,7 @@ class CountryRepositoryInternalImpl extends SimpleR2dbcRepository<Country, Long>
 
     private final RegionRowMapper regionMapper;
     private final CountryRowMapper countryMapper;
+    private final ColumnConverter columnConverter;
 
     private static final Table entityTable = Table.aliased("country", EntityManager.ENTITY_ALIAS);
     private static final Table regionTable = Table.aliased("region", "region");
@@ -47,7 +52,8 @@ class CountryRepositoryInternalImpl extends SimpleR2dbcRepository<Country, Long>
         RegionRowMapper regionMapper,
         CountryRowMapper countryMapper,
         R2dbcEntityOperations entityOperations,
-        R2dbcConverter converter
+        R2dbcConverter converter,
+        ColumnConverter columnConverter
     ) {
         super(
             new MappingRelationalEntityInformation(converter.getMappingContext().getRequiredPersistentEntity(Country.class)),
@@ -59,6 +65,7 @@ class CountryRepositoryInternalImpl extends SimpleR2dbcRepository<Country, Long>
         this.entityManager = entityManager;
         this.regionMapper = regionMapper;
         this.countryMapper = countryMapper;
+        this.columnConverter = columnConverter;
     }
 
     @Override
@@ -115,5 +122,40 @@ class CountryRepositoryInternalImpl extends SimpleR2dbcRepository<Country, Long>
     @Override
     public <S extends Country> Mono<S> save(S entity) {
         return super.save(entity);
+    }
+
+    @Override
+    public Flux<Country> findByCriteria(CountryCriteria countryCriteria, Pageable page) {
+        return createQuery(page, buildConditions(countryCriteria)).all();
+    }
+
+    @Override
+    public Mono<Long> countByCriteria(CountryCriteria criteria) {
+        return findByCriteria(criteria, null)
+            .collectList()
+            .map(collectedList -> collectedList != null ? (long) collectedList.size() : (long) 0);
+    }
+
+    private Condition buildConditions(CountryCriteria criteria) {
+        ConditionBuilder builder = new ConditionBuilder(this.columnConverter);
+        List<Condition> allConditions = new ArrayList<Condition>();
+        if (criteria != null) {
+            if (criteria.getId() != null) {
+                builder.buildFilterConditionForField(criteria.getId(), entityTable.column("id"));
+            }
+            if (criteria.getName() != null) {
+                builder.buildFilterConditionForField(criteria.getName(), entityTable.column("name"));
+            }
+            if (criteria.getUnm49Code() != null) {
+                builder.buildFilterConditionForField(criteria.getUnm49Code(), entityTable.column("unm_49_code"));
+            }
+            if (criteria.getIsoAlpha2Code() != null) {
+                builder.buildFilterConditionForField(criteria.getIsoAlpha2Code(), entityTable.column("iso_alpha_2_code"));
+            }
+            if (criteria.getRegionId() != null) {
+                builder.buildFilterConditionForField(criteria.getRegionId(), regionTable.column("id"));
+            }
+        }
+        return builder.buildConditions();
     }
 }

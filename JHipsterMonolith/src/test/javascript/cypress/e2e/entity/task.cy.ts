@@ -122,7 +122,7 @@ describe('Task e2e test', () => {
         cy.url().should('match', taskPageUrlPattern);
       });
 
-      it('edit button click should load edit Task page and save', () => {
+      it.skip('edit button click should load edit Task page and save', () => {
         cy.get(entityEditButtonSelector).first().click();
         cy.getEntityCreateUpdateHeading('Task');
         cy.get(entityCreateSaveButtonSelector).click();

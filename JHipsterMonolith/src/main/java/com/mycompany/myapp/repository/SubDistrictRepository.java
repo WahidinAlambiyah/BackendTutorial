@@ -1,6 +1,7 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.SubDistrict;
+import com.mycompany.myapp.domain.criteria.SubDistrictCriteria;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
@@ -54,6 +55,9 @@ interface SubDistrictRepositoryInternal {
     Mono<SubDistrict> findById(Long id);
     // this is not supported at the moment because of https://github.com/jhipster/generator-jhipster/issues/18269
     // Flux<SubDistrict> findAllBy(Pageable pageable, Criteria criteria);
+    Flux<SubDistrict> findByCriteria(SubDistrictCriteria criteria, Pageable pageable);
+
+    Mono<Long> countByCriteria(SubDistrictCriteria criteria);
 
     Mono<SubDistrict> findOneWithEagerRelationships(Long id);
 

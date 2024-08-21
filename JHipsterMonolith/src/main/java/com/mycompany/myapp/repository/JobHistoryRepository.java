@@ -1,6 +1,7 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.JobHistory;
+import com.mycompany.myapp.domain.criteria.JobHistoryCriteria;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
@@ -57,4 +58,7 @@ interface JobHistoryRepositoryInternal {
     Mono<JobHistory> findById(Long id);
     // this is not supported at the moment because of https://github.com/jhipster/generator-jhipster/issues/18269
     // Flux<JobHistory> findAllBy(Pageable pageable, Criteria criteria);
+    Flux<JobHistory> findByCriteria(JobHistoryCriteria criteria, Pageable pageable);
+
+    Mono<Long> countByCriteria(JobHistoryCriteria criteria);
 }

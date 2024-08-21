@@ -122,7 +122,7 @@ describe('Location e2e test', () => {
         cy.url().should('match', locationPageUrlPattern);
       });
 
-      it('edit button click should load edit Location page and save', () => {
+      it.skip('edit button click should load edit Location page and save', () => {
         cy.get(entityEditButtonSelector).first().click();
         cy.getEntityCreateUpdateHeading('Location');
         cy.get(entityCreateSaveButtonSelector).click();

@@ -10,11 +10,15 @@ import static org.mockito.Mockito.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mycompany.myapp.IntegrationTest;
+import com.mycompany.myapp.domain.City;
 import com.mycompany.myapp.domain.District;
+import com.mycompany.myapp.repository.CityRepository;
 import com.mycompany.myapp.repository.DistrictRepository;
 import com.mycompany.myapp.repository.EntityManager;
 import com.mycompany.myapp.repository.search.DistrictSearchRepository;
 import com.mycompany.myapp.service.DistrictService;
+import com.mycompany.myapp.service.dto.DistrictDTO;
+import com.mycompany.myapp.service.mapper.DistrictMapper;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -46,8 +50,11 @@ class DistrictResourceIT {
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
-    private static final String DEFAULT_CODE = "AAAAAAAAAA";
-    private static final String UPDATED_CODE = "BBBBBBBBBB";
+    private static final String DEFAULT_UNM_49_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_UNM_49_CODE = "BBBBBBBBBB";
+
+    private static final String DEFAULT_ISO_ALPHA_2_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_ISO_ALPHA_2_CODE = "BBBBBBBBBB";
 
     private static final String ENTITY_API_URL = "/api/districts";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -65,6 +72,9 @@ class DistrictResourceIT {
     @Mock
     private DistrictRepository districtRepositoryMock;
 
+    @Autowired
+    private DistrictMapper districtMapper;
+
     @Mock
     private DistrictService districtServiceMock;
 
@@ -81,6 +91,9 @@ class DistrictResourceIT {
 
     private District insertedDistrict;
 
+    @Autowired
+    private CityRepository cityRepository;
+
     /**
      * Create an entity for this test.
      *
@@ -88,7 +101,7 @@ class DistrictResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static District createEntity(EntityManager em) {
-        District district = new District().name(DEFAULT_NAME).code(DEFAULT_CODE);
+        District district = new District().name(DEFAULT_NAME).unm49Code(DEFAULT_UNM_49_CODE).isoAlpha2Code(DEFAULT_ISO_ALPHA_2_CODE);
         return district;
     }
 
@@ -99,7 +112,7 @@ class DistrictResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static District createUpdatedEntity(EntityManager em) {
-        District district = new District().name(UPDATED_NAME).code(UPDATED_CODE);
+        District district = new District().name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
         return district;
     }
 
@@ -131,20 +144,22 @@ class DistrictResourceIT {
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(districtSearchRepository.findAll().collectList().block());
         // Create the District
-        var returnedDistrict = webTestClient
+        DistrictDTO districtDTO = districtMapper.toDto(district);
+        var returnedDistrictDTO = webTestClient
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(district))
+            .bodyValue(om.writeValueAsBytes(districtDTO))
             .exchange()
             .expectStatus()
             .isCreated()
-            .expectBody(District.class)
+            .expectBody(DistrictDTO.class)
             .returnResult()
             .getResponseBody();
 
         // Validate the District in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        var returnedDistrict = districtMapper.toEntity(returnedDistrictDTO);
         assertDistrictUpdatableFieldsEquals(returnedDistrict, getPersistedDistrict(returnedDistrict));
 
         await()
@@ -161,6 +176,7 @@ class DistrictResourceIT {
     void createDistrictWithExistingId() throws Exception {
         // Create the District with an existing ID
         district.setId(1L);
+        DistrictDTO districtDTO = districtMapper.toDto(district);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(districtSearchRepository.findAll().collectList().block());
@@ -170,7 +186,7 @@ class DistrictResourceIT {
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(district))
+            .bodyValue(om.writeValueAsBytes(districtDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -189,36 +205,13 @@ class DistrictResourceIT {
         district.setName(null);
 
         // Create the District, which fails.
+        DistrictDTO districtDTO = districtMapper.toDto(district);
 
         webTestClient
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(district))
-            .exchange()
-            .expectStatus()
-            .isBadRequest();
-
-        assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(districtSearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
-    }
-
-    @Test
-    void checkCodeIsRequired() throws Exception {
-        long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(districtSearchRepository.findAll().collectList().block());
-        // set the field null
-        district.setCode(null);
-
-        // Create the District, which fails.
-
-        webTestClient
-            .post()
-            .uri(ENTITY_API_URL)
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(district))
+            .bodyValue(om.writeValueAsBytes(districtDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -249,8 +242,10 @@ class DistrictResourceIT {
             .value(hasItem(district.getId().intValue()))
             .jsonPath("$.[*].name")
             .value(hasItem(DEFAULT_NAME))
-            .jsonPath("$.[*].code")
-            .value(hasItem(DEFAULT_CODE));
+            .jsonPath("$.[*].unm49Code")
+            .value(hasItem(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.[*].isoAlpha2Code")
+            .value(hasItem(DEFAULT_ISO_ALPHA_2_CODE));
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -290,8 +285,259 @@ class DistrictResourceIT {
             .value(is(district.getId().intValue()))
             .jsonPath("$.name")
             .value(is(DEFAULT_NAME))
-            .jsonPath("$.code")
-            .value(is(DEFAULT_CODE));
+            .jsonPath("$.unm49Code")
+            .value(is(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.isoAlpha2Code")
+            .value(is(DEFAULT_ISO_ALPHA_2_CODE));
+    }
+
+    @Test
+    void getDistrictsByIdFiltering() {
+        // Initialize the database
+        insertedDistrict = districtRepository.save(district).block();
+
+        Long id = district.getId();
+
+        defaultDistrictFiltering("id.equals=" + id, "id.notEquals=" + id);
+
+        defaultDistrictFiltering("id.greaterThanOrEqual=" + id, "id.greaterThan=" + id);
+
+        defaultDistrictFiltering("id.lessThanOrEqual=" + id, "id.lessThan=" + id);
+    }
+
+    @Test
+    void getAllDistrictsByNameIsEqualToSomething() {
+        // Initialize the database
+        insertedDistrict = districtRepository.save(district).block();
+
+        // Get all the districtList where name equals to
+        defaultDistrictFiltering("name.equals=" + DEFAULT_NAME, "name.equals=" + UPDATED_NAME);
+    }
+
+    @Test
+    void getAllDistrictsByNameIsInShouldWork() {
+        // Initialize the database
+        insertedDistrict = districtRepository.save(district).block();
+
+        // Get all the districtList where name in
+        defaultDistrictFiltering("name.in=" + DEFAULT_NAME + "," + UPDATED_NAME, "name.in=" + UPDATED_NAME);
+    }
+
+    @Test
+    void getAllDistrictsByNameIsNullOrNotNull() {
+        // Initialize the database
+        insertedDistrict = districtRepository.save(district).block();
+
+        // Get all the districtList where name is not null
+        defaultDistrictFiltering("name.specified=true", "name.specified=false");
+    }
+
+    @Test
+    void getAllDistrictsByNameContainsSomething() {
+        // Initialize the database
+        insertedDistrict = districtRepository.save(district).block();
+
+        // Get all the districtList where name contains
+        defaultDistrictFiltering("name.contains=" + DEFAULT_NAME, "name.contains=" + UPDATED_NAME);
+    }
+
+    @Test
+    void getAllDistrictsByNameNotContainsSomething() {
+        // Initialize the database
+        insertedDistrict = districtRepository.save(district).block();
+
+        // Get all the districtList where name does not contain
+        defaultDistrictFiltering("name.doesNotContain=" + UPDATED_NAME, "name.doesNotContain=" + DEFAULT_NAME);
+    }
+
+    @Test
+    void getAllDistrictsByUnm49CodeIsEqualToSomething() {
+        // Initialize the database
+        insertedDistrict = districtRepository.save(district).block();
+
+        // Get all the districtList where unm49Code equals to
+        defaultDistrictFiltering("unm49Code.equals=" + DEFAULT_UNM_49_CODE, "unm49Code.equals=" + UPDATED_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllDistrictsByUnm49CodeIsInShouldWork() {
+        // Initialize the database
+        insertedDistrict = districtRepository.save(district).block();
+
+        // Get all the districtList where unm49Code in
+        defaultDistrictFiltering("unm49Code.in=" + DEFAULT_UNM_49_CODE + "," + UPDATED_UNM_49_CODE, "unm49Code.in=" + UPDATED_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllDistrictsByUnm49CodeIsNullOrNotNull() {
+        // Initialize the database
+        insertedDistrict = districtRepository.save(district).block();
+
+        // Get all the districtList where unm49Code is not null
+        defaultDistrictFiltering("unm49Code.specified=true", "unm49Code.specified=false");
+    }
+
+    @Test
+    void getAllDistrictsByUnm49CodeContainsSomething() {
+        // Initialize the database
+        insertedDistrict = districtRepository.save(district).block();
+
+        // Get all the districtList where unm49Code contains
+        defaultDistrictFiltering("unm49Code.contains=" + DEFAULT_UNM_49_CODE, "unm49Code.contains=" + UPDATED_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllDistrictsByUnm49CodeNotContainsSomething() {
+        // Initialize the database
+        insertedDistrict = districtRepository.save(district).block();
+
+        // Get all the districtList where unm49Code does not contain
+        defaultDistrictFiltering("unm49Code.doesNotContain=" + UPDATED_UNM_49_CODE, "unm49Code.doesNotContain=" + DEFAULT_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllDistrictsByIsoAlpha2CodeIsEqualToSomething() {
+        // Initialize the database
+        insertedDistrict = districtRepository.save(district).block();
+
+        // Get all the districtList where isoAlpha2Code equals to
+        defaultDistrictFiltering("isoAlpha2Code.equals=" + DEFAULT_ISO_ALPHA_2_CODE, "isoAlpha2Code.equals=" + UPDATED_ISO_ALPHA_2_CODE);
+    }
+
+    @Test
+    void getAllDistrictsByIsoAlpha2CodeIsInShouldWork() {
+        // Initialize the database
+        insertedDistrict = districtRepository.save(district).block();
+
+        // Get all the districtList where isoAlpha2Code in
+        defaultDistrictFiltering(
+            "isoAlpha2Code.in=" + DEFAULT_ISO_ALPHA_2_CODE + "," + UPDATED_ISO_ALPHA_2_CODE,
+            "isoAlpha2Code.in=" + UPDATED_ISO_ALPHA_2_CODE
+        );
+    }
+
+    @Test
+    void getAllDistrictsByIsoAlpha2CodeIsNullOrNotNull() {
+        // Initialize the database
+        insertedDistrict = districtRepository.save(district).block();
+
+        // Get all the districtList where isoAlpha2Code is not null
+        defaultDistrictFiltering("isoAlpha2Code.specified=true", "isoAlpha2Code.specified=false");
+    }
+
+    @Test
+    void getAllDistrictsByIsoAlpha2CodeContainsSomething() {
+        // Initialize the database
+        insertedDistrict = districtRepository.save(district).block();
+
+        // Get all the districtList where isoAlpha2Code contains
+        defaultDistrictFiltering(
+            "isoAlpha2Code.contains=" + DEFAULT_ISO_ALPHA_2_CODE,
+            "isoAlpha2Code.contains=" + UPDATED_ISO_ALPHA_2_CODE
+        );
+    }
+
+    @Test
+    void getAllDistrictsByIsoAlpha2CodeNotContainsSomething() {
+        // Initialize the database
+        insertedDistrict = districtRepository.save(district).block();
+
+        // Get all the districtList where isoAlpha2Code does not contain
+        defaultDistrictFiltering(
+            "isoAlpha2Code.doesNotContain=" + UPDATED_ISO_ALPHA_2_CODE,
+            "isoAlpha2Code.doesNotContain=" + DEFAULT_ISO_ALPHA_2_CODE
+        );
+    }
+
+    @Test
+    void getAllDistrictsByCityIsEqualToSomething() {
+        City city = CityResourceIT.createEntity(em);
+        cityRepository.save(city).block();
+        Long cityId = city.getId();
+        district.setCityId(cityId);
+        insertedDistrict = districtRepository.save(district).block();
+        // Get all the districtList where city equals to cityId
+        defaultDistrictShouldBeFound("cityId.equals=" + cityId);
+
+        // Get all the districtList where city equals to (cityId + 1)
+        defaultDistrictShouldNotBeFound("cityId.equals=" + (cityId + 1));
+    }
+
+    private void defaultDistrictFiltering(String shouldBeFound, String shouldNotBeFound) {
+        defaultDistrictShouldBeFound(shouldBeFound);
+        defaultDistrictShouldNotBeFound(shouldNotBeFound);
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultDistrictShouldBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$.[*].id")
+            .value(hasItem(district.getId().intValue()))
+            .jsonPath("$.[*].name")
+            .value(hasItem(DEFAULT_NAME))
+            .jsonPath("$.[*].unm49Code")
+            .value(hasItem(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.[*].isoAlpha2Code")
+            .value(hasItem(DEFAULT_ISO_ALPHA_2_CODE));
+
+        // Check, that the count call also returns 1
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultDistrictShouldNotBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .isArray()
+            .jsonPath("$")
+            .isEmpty();
+
+        // Check, that the count call also returns 0
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(0));
     }
 
     @Test
@@ -317,13 +563,14 @@ class DistrictResourceIT {
 
         // Update the district
         District updatedDistrict = districtRepository.findById(district.getId()).block();
-        updatedDistrict.name(UPDATED_NAME).code(UPDATED_CODE);
+        updatedDistrict.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
+        DistrictDTO districtDTO = districtMapper.toDto(updatedDistrict);
 
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, updatedDistrict.getId())
+            .uri(ENTITY_API_URL_ID, districtDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(updatedDistrict))
+            .bodyValue(om.writeValueAsBytes(districtDTO))
             .exchange()
             .expectStatus()
             .isOk();
@@ -352,12 +599,15 @@ class DistrictResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(districtSearchRepository.findAll().collectList().block());
         district.setId(longCount.incrementAndGet());
 
+        // Create the District
+        DistrictDTO districtDTO = districtMapper.toDto(district);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, district.getId())
+            .uri(ENTITY_API_URL_ID, districtDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(district))
+            .bodyValue(om.writeValueAsBytes(districtDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -374,12 +624,15 @@ class DistrictResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(districtSearchRepository.findAll().collectList().block());
         district.setId(longCount.incrementAndGet());
 
+        // Create the District
+        DistrictDTO districtDTO = districtMapper.toDto(district);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(district))
+            .bodyValue(om.writeValueAsBytes(districtDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -396,12 +649,15 @@ class DistrictResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(districtSearchRepository.findAll().collectList().block());
         district.setId(longCount.incrementAndGet());
 
+        // Create the District
+        DistrictDTO districtDTO = districtMapper.toDto(district);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(district))
+            .bodyValue(om.writeValueAsBytes(districtDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);
@@ -451,7 +707,7 @@ class DistrictResourceIT {
         District partialUpdatedDistrict = new District();
         partialUpdatedDistrict.setId(district.getId());
 
-        partialUpdatedDistrict.name(UPDATED_NAME).code(UPDATED_CODE);
+        partialUpdatedDistrict.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
 
         webTestClient
             .patch()
@@ -474,12 +730,15 @@ class DistrictResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(districtSearchRepository.findAll().collectList().block());
         district.setId(longCount.incrementAndGet());
 
+        // Create the District
+        DistrictDTO districtDTO = districtMapper.toDto(district);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
-            .uri(ENTITY_API_URL_ID, district.getId())
+            .uri(ENTITY_API_URL_ID, districtDTO.getId())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(district))
+            .bodyValue(om.writeValueAsBytes(districtDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -496,12 +755,15 @@ class DistrictResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(districtSearchRepository.findAll().collectList().block());
         district.setId(longCount.incrementAndGet());
 
+        // Create the District
+        DistrictDTO districtDTO = districtMapper.toDto(district);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(district))
+            .bodyValue(om.writeValueAsBytes(districtDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -518,12 +780,15 @@ class DistrictResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(districtSearchRepository.findAll().collectList().block());
         district.setId(longCount.incrementAndGet());
 
+        // Create the District
+        DistrictDTO districtDTO = districtMapper.toDto(district);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(district))
+            .bodyValue(om.writeValueAsBytes(districtDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);
@@ -580,8 +845,10 @@ class DistrictResourceIT {
             .value(hasItem(district.getId().intValue()))
             .jsonPath("$.[*].name")
             .value(hasItem(DEFAULT_NAME))
-            .jsonPath("$.[*].code")
-            .value(hasItem(DEFAULT_CODE));
+            .jsonPath("$.[*].unm49Code")
+            .value(hasItem(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.[*].isoAlpha2Code")
+            .value(hasItem(DEFAULT_ISO_ALPHA_2_CODE));
     }
 
     protected long getRepositoryCount() {

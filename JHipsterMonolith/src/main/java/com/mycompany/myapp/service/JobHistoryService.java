@@ -1,6 +1,7 @@
 package com.mycompany.myapp.service;
 
-import com.mycompany.myapp.domain.JobHistory;
+import com.mycompany.myapp.domain.criteria.JobHistoryCriteria;
+import com.mycompany.myapp.service.dto.JobHistoryDTO;
 import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -12,34 +13,40 @@ public interface JobHistoryService {
     /**
      * Save a jobHistory.
      *
-     * @param jobHistory the entity to save.
+     * @param jobHistoryDTO the entity to save.
      * @return the persisted entity.
      */
-    Mono<JobHistory> save(JobHistory jobHistory);
+    Mono<JobHistoryDTO> save(JobHistoryDTO jobHistoryDTO);
 
     /**
      * Updates a jobHistory.
      *
-     * @param jobHistory the entity to update.
+     * @param jobHistoryDTO the entity to update.
      * @return the persisted entity.
      */
-    Mono<JobHistory> update(JobHistory jobHistory);
+    Mono<JobHistoryDTO> update(JobHistoryDTO jobHistoryDTO);
 
     /**
      * Partially updates a jobHistory.
      *
-     * @param jobHistory the entity to update partially.
+     * @param jobHistoryDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Mono<JobHistory> partialUpdate(JobHistory jobHistory);
-
+    Mono<JobHistoryDTO> partialUpdate(JobHistoryDTO jobHistoryDTO);
     /**
-     * Get all the jobHistories.
+     * Find jobHistories by criteria.
      *
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<JobHistory> findAll(Pageable pageable);
+    Flux<JobHistoryDTO> findByCriteria(JobHistoryCriteria criteria, Pageable pageable);
+
+    /**
+     * Find the count of jobHistories by criteria.
+     * @param criteria filtering criteria
+     * @return the count of jobHistories
+     */
+    public Mono<Long> countByCriteria(JobHistoryCriteria criteria);
 
     /**
      * Returns the number of jobHistories available.
@@ -60,7 +67,7 @@ public interface JobHistoryService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Mono<JobHistory> findOne(Long id);
+    Mono<JobHistoryDTO> findOne(Long id);
 
     /**
      * Delete the "id" jobHistory.
@@ -78,5 +85,5 @@ public interface JobHistoryService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<JobHistory> search(String query, Pageable pageable);
+    Flux<JobHistoryDTO> search(String query, Pageable pageable);
 }

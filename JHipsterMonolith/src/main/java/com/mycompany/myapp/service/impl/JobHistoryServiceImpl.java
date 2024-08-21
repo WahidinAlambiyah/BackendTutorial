@@ -1,9 +1,11 @@
 package com.mycompany.myapp.service.impl;
 
-import com.mycompany.myapp.domain.JobHistory;
+import com.mycompany.myapp.domain.criteria.JobHistoryCriteria;
 import com.mycompany.myapp.repository.JobHistoryRepository;
 import com.mycompany.myapp.repository.search.JobHistorySearchRepository;
 import com.mycompany.myapp.service.JobHistoryService;
+import com.mycompany.myapp.service.dto.JobHistoryDTO;
+import com.mycompany.myapp.service.mapper.JobHistoryMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
@@ -23,41 +25,46 @@ public class JobHistoryServiceImpl implements JobHistoryService {
 
     private final JobHistoryRepository jobHistoryRepository;
 
+    private final JobHistoryMapper jobHistoryMapper;
+
     private final JobHistorySearchRepository jobHistorySearchRepository;
 
-    public JobHistoryServiceImpl(JobHistoryRepository jobHistoryRepository, JobHistorySearchRepository jobHistorySearchRepository) {
+    public JobHistoryServiceImpl(
+        JobHistoryRepository jobHistoryRepository,
+        JobHistoryMapper jobHistoryMapper,
+        JobHistorySearchRepository jobHistorySearchRepository
+    ) {
         this.jobHistoryRepository = jobHistoryRepository;
+        this.jobHistoryMapper = jobHistoryMapper;
         this.jobHistorySearchRepository = jobHistorySearchRepository;
     }
 
     @Override
-    public Mono<JobHistory> save(JobHistory jobHistory) {
-        log.debug("Request to save JobHistory : {}", jobHistory);
-        return jobHistoryRepository.save(jobHistory).flatMap(jobHistorySearchRepository::save);
+    public Mono<JobHistoryDTO> save(JobHistoryDTO jobHistoryDTO) {
+        log.debug("Request to save JobHistory : {}", jobHistoryDTO);
+        return jobHistoryRepository
+            .save(jobHistoryMapper.toEntity(jobHistoryDTO))
+            .flatMap(jobHistorySearchRepository::save)
+            .map(jobHistoryMapper::toDto);
     }
 
     @Override
-    public Mono<JobHistory> update(JobHistory jobHistory) {
-        log.debug("Request to update JobHistory : {}", jobHistory);
-        return jobHistoryRepository.save(jobHistory).flatMap(jobHistorySearchRepository::save);
+    public Mono<JobHistoryDTO> update(JobHistoryDTO jobHistoryDTO) {
+        log.debug("Request to update JobHistory : {}", jobHistoryDTO);
+        return jobHistoryRepository
+            .save(jobHistoryMapper.toEntity(jobHistoryDTO))
+            .flatMap(jobHistorySearchRepository::save)
+            .map(jobHistoryMapper::toDto);
     }
 
     @Override
-    public Mono<JobHistory> partialUpdate(JobHistory jobHistory) {
-        log.debug("Request to partially update JobHistory : {}", jobHistory);
+    public Mono<JobHistoryDTO> partialUpdate(JobHistoryDTO jobHistoryDTO) {
+        log.debug("Request to partially update JobHistory : {}", jobHistoryDTO);
 
         return jobHistoryRepository
-            .findById(jobHistory.getId())
+            .findById(jobHistoryDTO.getId())
             .map(existingJobHistory -> {
-                if (jobHistory.getStartDate() != null) {
-                    existingJobHistory.setStartDate(jobHistory.getStartDate());
-                }
-                if (jobHistory.getEndDate() != null) {
-                    existingJobHistory.setEndDate(jobHistory.getEndDate());
-                }
-                if (jobHistory.getLanguage() != null) {
-                    existingJobHistory.setLanguage(jobHistory.getLanguage());
-                }
+                jobHistoryMapper.partialUpdate(existingJobHistory, jobHistoryDTO);
 
                 return existingJobHistory;
             })
@@ -65,14 +72,25 @@ public class JobHistoryServiceImpl implements JobHistoryService {
             .flatMap(savedJobHistory -> {
                 jobHistorySearchRepository.save(savedJobHistory);
                 return Mono.just(savedJobHistory);
-            });
+            })
+            .map(jobHistoryMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<JobHistory> findAll(Pageable pageable) {
-        log.debug("Request to get all JobHistories");
-        return jobHistoryRepository.findAllBy(pageable);
+    public Flux<JobHistoryDTO> findByCriteria(JobHistoryCriteria criteria, Pageable pageable) {
+        log.debug("Request to get all JobHistories by Criteria");
+        return jobHistoryRepository.findByCriteria(criteria, pageable).map(jobHistoryMapper::toDto);
+    }
+
+    /**
+     * Find the count of jobHistories by criteria.
+     * @param criteria filtering criteria
+     * @return the count of jobHistories
+     */
+    public Mono<Long> countByCriteria(JobHistoryCriteria criteria) {
+        log.debug("Request to get the count of all JobHistories by Criteria");
+        return jobHistoryRepository.countByCriteria(criteria);
     }
 
     public Mono<Long> countAll() {
@@ -85,9 +103,9 @@ public class JobHistoryServiceImpl implements JobHistoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Mono<JobHistory> findOne(Long id) {
+    public Mono<JobHistoryDTO> findOne(Long id) {
         log.debug("Request to get JobHistory : {}", id);
-        return jobHistoryRepository.findById(id);
+        return jobHistoryRepository.findById(id).map(jobHistoryMapper::toDto);
     }
 
     @Override
@@ -98,8 +116,8 @@ public class JobHistoryServiceImpl implements JobHistoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<JobHistory> search(String query, Pageable pageable) {
+    public Flux<JobHistoryDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of JobHistories for query {}", query);
-        return jobHistorySearchRepository.search(query, pageable);
+        return jobHistorySearchRepository.search(query, pageable).map(jobHistoryMapper::toDto);
     }
 }

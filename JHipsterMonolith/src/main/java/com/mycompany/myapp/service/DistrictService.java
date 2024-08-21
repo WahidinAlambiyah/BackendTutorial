@@ -1,6 +1,7 @@
 package com.mycompany.myapp.service;
 
-import com.mycompany.myapp.domain.District;
+import com.mycompany.myapp.domain.criteria.DistrictCriteria;
+import com.mycompany.myapp.service.dto.DistrictDTO;
 import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -12,34 +13,40 @@ public interface DistrictService {
     /**
      * Save a district.
      *
-     * @param district the entity to save.
+     * @param districtDTO the entity to save.
      * @return the persisted entity.
      */
-    Mono<District> save(District district);
+    Mono<DistrictDTO> save(DistrictDTO districtDTO);
 
     /**
      * Updates a district.
      *
-     * @param district the entity to update.
+     * @param districtDTO the entity to update.
      * @return the persisted entity.
      */
-    Mono<District> update(District district);
+    Mono<DistrictDTO> update(DistrictDTO districtDTO);
 
     /**
      * Partially updates a district.
      *
-     * @param district the entity to update partially.
+     * @param districtDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Mono<District> partialUpdate(District district);
-
+    Mono<DistrictDTO> partialUpdate(DistrictDTO districtDTO);
     /**
-     * Get all the districts.
+     * Find districts by criteria.
      *
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<District> findAll(Pageable pageable);
+    Flux<DistrictDTO> findByCriteria(DistrictCriteria criteria, Pageable pageable);
+
+    /**
+     * Find the count of districts by criteria.
+     * @param criteria filtering criteria
+     * @return the count of districts
+     */
+    public Mono<Long> countByCriteria(DistrictCriteria criteria);
 
     /**
      * Get all the districts with eager load of many-to-many relationships.
@@ -47,7 +54,7 @@ public interface DistrictService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<District> findAllWithEagerRelationships(Pageable pageable);
+    Flux<DistrictDTO> findAllWithEagerRelationships(Pageable pageable);
 
     /**
      * Returns the number of districts available.
@@ -68,7 +75,7 @@ public interface DistrictService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Mono<District> findOne(Long id);
+    Mono<DistrictDTO> findOne(Long id);
 
     /**
      * Delete the "id" district.
@@ -86,5 +93,5 @@ public interface DistrictService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<District> search(String query, Pageable pageable);
+    Flux<DistrictDTO> search(String query, Pageable pageable);
 }

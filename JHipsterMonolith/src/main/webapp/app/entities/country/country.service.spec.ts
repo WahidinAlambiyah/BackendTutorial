@@ -29,7 +29,7 @@ describe('Service Tests', () => {
 
     beforeEach(() => {
       service = new CountryService();
-      elemDefault = new Country(123, 'AAAAAAA', 'AAAAAAA');
+      elemDefault = new Country(123, 'AAAAAAA', 'AAAAAAA', 'AAAAAAA');
     });
 
     describe('Service methods', () => {
@@ -82,7 +82,8 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             name: 'BBBBBB',
-            code: 'BBBBBB',
+            unm49Code: 'BBBBBB',
+            isoAlpha2Code: 'BBBBBB',
           },
           elemDefault,
         );
@@ -110,7 +111,8 @@ describe('Service Tests', () => {
         const patchObject = Object.assign(
           {
             name: 'BBBBBB',
-            code: 'BBBBBB',
+            unm49Code: 'BBBBBB',
+            isoAlpha2Code: 'BBBBBB',
           },
           new Country(),
         );
@@ -139,7 +141,8 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             name: 'BBBBBB',
-            code: 'BBBBBB',
+            unm49Code: 'BBBBBB',
+            isoAlpha2Code: 'BBBBBB',
           },
           elemDefault,
         );

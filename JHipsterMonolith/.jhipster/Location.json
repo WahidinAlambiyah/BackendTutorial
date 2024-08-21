@@ -4,6 +4,7 @@
   },
   "applications": "*",
   "documentation": "not an ignored comment",
+  "dto": "mapstruct",
   "fields": [
     {
       "fieldName": "streetAddress",
@@ -22,6 +23,7 @@
       "fieldType": "String"
     }
   ],
+  "jpaMetamodelFiltering": true,
   "name": "Location",
   "relationships": [],
   "service": "serviceImpl"

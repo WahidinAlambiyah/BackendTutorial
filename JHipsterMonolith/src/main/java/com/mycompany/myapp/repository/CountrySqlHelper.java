@@ -12,7 +12,8 @@ public class CountrySqlHelper {
         List<Expression> columns = new ArrayList<>();
         columns.add(Column.aliased("id", table, columnPrefix + "_id"));
         columns.add(Column.aliased("name", table, columnPrefix + "_name"));
-        columns.add(Column.aliased("code", table, columnPrefix + "_code"));
+        columns.add(Column.aliased("unm_49_code", table, columnPrefix + "_unm_49_code"));
+        columns.add(Column.aliased("iso_alpha_2_code", table, columnPrefix + "_iso_alpha_2_code"));
 
         columns.add(Column.aliased("region_id", table, columnPrefix + "_region_id"));
         return columns;

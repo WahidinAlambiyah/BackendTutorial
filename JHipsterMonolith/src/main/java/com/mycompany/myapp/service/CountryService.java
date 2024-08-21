@@ -1,6 +1,7 @@
 package com.mycompany.myapp.service;
 
-import com.mycompany.myapp.domain.Country;
+import com.mycompany.myapp.domain.criteria.CountryCriteria;
+import com.mycompany.myapp.service.dto.CountryDTO;
 import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -12,34 +13,40 @@ public interface CountryService {
     /**
      * Save a country.
      *
-     * @param country the entity to save.
+     * @param countryDTO the entity to save.
      * @return the persisted entity.
      */
-    Mono<Country> save(Country country);
+    Mono<CountryDTO> save(CountryDTO countryDTO);
 
     /**
      * Updates a country.
      *
-     * @param country the entity to update.
+     * @param countryDTO the entity to update.
      * @return the persisted entity.
      */
-    Mono<Country> update(Country country);
+    Mono<CountryDTO> update(CountryDTO countryDTO);
 
     /**
      * Partially updates a country.
      *
-     * @param country the entity to update partially.
+     * @param countryDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Mono<Country> partialUpdate(Country country);
-
+    Mono<CountryDTO> partialUpdate(CountryDTO countryDTO);
     /**
-     * Get all the countries.
+     * Find countries by criteria.
      *
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<Country> findAll(Pageable pageable);
+    Flux<CountryDTO> findByCriteria(CountryCriteria criteria, Pageable pageable);
+
+    /**
+     * Find the count of countries by criteria.
+     * @param criteria filtering criteria
+     * @return the count of countries
+     */
+    public Mono<Long> countByCriteria(CountryCriteria criteria);
 
     /**
      * Get all the countries with eager load of many-to-many relationships.
@@ -47,7 +54,7 @@ public interface CountryService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<Country> findAllWithEagerRelationships(Pageable pageable);
+    Flux<CountryDTO> findAllWithEagerRelationships(Pageable pageable);
 
     /**
      * Returns the number of countries available.
@@ -68,7 +75,7 @@ public interface CountryService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Mono<Country> findOne(Long id);
+    Mono<CountryDTO> findOne(Long id);
 
     /**
      * Delete the "id" country.
@@ -86,5 +93,5 @@ public interface CountryService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<Country> search(String query, Pageable pageable);
+    Flux<CountryDTO> search(String query, Pageable pageable);
 }

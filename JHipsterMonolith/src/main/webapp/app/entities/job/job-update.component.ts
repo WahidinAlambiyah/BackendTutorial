@@ -73,6 +73,7 @@ export default defineComponent({
       maxSalary: {},
       tasks: {},
       employee: {},
+      jobHistory: {},
     };
     const v$ = useVuelidate(validationRules, job as any);
     v$.value.$validate();

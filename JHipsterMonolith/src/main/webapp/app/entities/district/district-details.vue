@@ -13,10 +13,16 @@
             <span>{{ district.name }}</span>
           </dd>
           <dt>
-            <span v-text="t$('jHipsterMonolithApp.district.code')"></span>
+            <span v-text="t$('jHipsterMonolithApp.district.unm49Code')"></span>
           </dt>
           <dd>
-            <span>{{ district.code }}</span>
+            <span>{{ district.unm49Code }}</span>
+          </dd>
+          <dt>
+            <span v-text="t$('jHipsterMonolithApp.district.isoAlpha2Code')"></span>
+          </dt>
+          <dd>
+            <span>{{ district.isoAlpha2Code }}</span>
           </dd>
           <dt>
             <span v-text="t$('jHipsterMonolithApp.district.city')"></span>

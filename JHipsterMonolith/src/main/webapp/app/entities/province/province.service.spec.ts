@@ -29,7 +29,7 @@ describe('Service Tests', () => {
 
     beforeEach(() => {
       service = new ProvinceService();
-      elemDefault = new Province(123, 'AAAAAAA', 'AAAAAAA');
+      elemDefault = new Province(123, 'AAAAAAA', 'AAAAAAA', 'AAAAAAA');
     });
 
     describe('Service methods', () => {
@@ -82,7 +82,8 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             name: 'BBBBBB',
-            code: 'BBBBBB',
+            unm49Code: 'BBBBBB',
+            isoAlpha2Code: 'BBBBBB',
           },
           elemDefault,
         );
@@ -110,7 +111,6 @@ describe('Service Tests', () => {
         const patchObject = Object.assign(
           {
             name: 'BBBBBB',
-            code: 'BBBBBB',
           },
           new Province(),
         );
@@ -139,7 +139,8 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             name: 'BBBBBB',
-            code: 'BBBBBB',
+            unm49Code: 'BBBBBB',
+            isoAlpha2Code: 'BBBBBB',
           },
           elemDefault,
         );

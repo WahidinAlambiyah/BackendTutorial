@@ -1,7 +1,6 @@
 package com.mycompany.myapp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,7 +13,6 @@ import org.springframework.data.relational.core.mapping.Table;
  * Task entity.
  * @author The JHipster team.
  */
-@Schema(description = "Task entity.\n@author The JHipster team.")
 @Table("task")
 @org.springframework.data.elasticsearch.annotations.Document(indexName = "task")
 @SuppressWarnings("common-java:DuplicatedBlocks")

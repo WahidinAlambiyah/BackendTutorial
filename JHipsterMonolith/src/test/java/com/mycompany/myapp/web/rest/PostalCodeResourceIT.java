@@ -11,10 +11,14 @@ import static org.mockito.Mockito.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mycompany.myapp.IntegrationTest;
 import com.mycompany.myapp.domain.PostalCode;
+import com.mycompany.myapp.domain.SubDistrict;
 import com.mycompany.myapp.repository.EntityManager;
 import com.mycompany.myapp.repository.PostalCodeRepository;
+import com.mycompany.myapp.repository.SubDistrictRepository;
 import com.mycompany.myapp.repository.search.PostalCodeSearchRepository;
 import com.mycompany.myapp.service.PostalCodeService;
+import com.mycompany.myapp.service.dto.PostalCodeDTO;
+import com.mycompany.myapp.service.mapper.PostalCodeMapper;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -62,6 +66,9 @@ class PostalCodeResourceIT {
     @Mock
     private PostalCodeRepository postalCodeRepositoryMock;
 
+    @Autowired
+    private PostalCodeMapper postalCodeMapper;
+
     @Mock
     private PostalCodeService postalCodeServiceMock;
 
@@ -77,6 +84,9 @@ class PostalCodeResourceIT {
     private PostalCode postalCode;
 
     private PostalCode insertedPostalCode;
+
+    @Autowired
+    private SubDistrictRepository subDistrictRepository;
 
     /**
      * Create an entity for this test.
@@ -128,20 +138,22 @@ class PostalCodeResourceIT {
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(postalCodeSearchRepository.findAll().collectList().block());
         // Create the PostalCode
-        var returnedPostalCode = webTestClient
+        PostalCodeDTO postalCodeDTO = postalCodeMapper.toDto(postalCode);
+        var returnedPostalCodeDTO = webTestClient
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(postalCode))
+            .bodyValue(om.writeValueAsBytes(postalCodeDTO))
             .exchange()
             .expectStatus()
             .isCreated()
-            .expectBody(PostalCode.class)
+            .expectBody(PostalCodeDTO.class)
             .returnResult()
             .getResponseBody();
 
         // Validate the PostalCode in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        var returnedPostalCode = postalCodeMapper.toEntity(returnedPostalCodeDTO);
         assertPostalCodeUpdatableFieldsEquals(returnedPostalCode, getPersistedPostalCode(returnedPostalCode));
 
         await()
@@ -158,6 +170,7 @@ class PostalCodeResourceIT {
     void createPostalCodeWithExistingId() throws Exception {
         // Create the PostalCode with an existing ID
         postalCode.setId(1L);
+        PostalCodeDTO postalCodeDTO = postalCodeMapper.toDto(postalCode);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(postalCodeSearchRepository.findAll().collectList().block());
@@ -167,7 +180,7 @@ class PostalCodeResourceIT {
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(postalCode))
+            .bodyValue(om.writeValueAsBytes(postalCodeDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -186,12 +199,13 @@ class PostalCodeResourceIT {
         postalCode.setCode(null);
 
         // Create the PostalCode, which fails.
+        PostalCodeDTO postalCodeDTO = postalCodeMapper.toDto(postalCode);
 
         webTestClient
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(postalCode))
+            .bodyValue(om.writeValueAsBytes(postalCodeDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -264,6 +278,152 @@ class PostalCodeResourceIT {
     }
 
     @Test
+    void getPostalCodesByIdFiltering() {
+        // Initialize the database
+        insertedPostalCode = postalCodeRepository.save(postalCode).block();
+
+        Long id = postalCode.getId();
+
+        defaultPostalCodeFiltering("id.equals=" + id, "id.notEquals=" + id);
+
+        defaultPostalCodeFiltering("id.greaterThanOrEqual=" + id, "id.greaterThan=" + id);
+
+        defaultPostalCodeFiltering("id.lessThanOrEqual=" + id, "id.lessThan=" + id);
+    }
+
+    @Test
+    void getAllPostalCodesByCodeIsEqualToSomething() {
+        // Initialize the database
+        insertedPostalCode = postalCodeRepository.save(postalCode).block();
+
+        // Get all the postalCodeList where code equals to
+        defaultPostalCodeFiltering("code.equals=" + DEFAULT_CODE, "code.equals=" + UPDATED_CODE);
+    }
+
+    @Test
+    void getAllPostalCodesByCodeIsInShouldWork() {
+        // Initialize the database
+        insertedPostalCode = postalCodeRepository.save(postalCode).block();
+
+        // Get all the postalCodeList where code in
+        defaultPostalCodeFiltering("code.in=" + DEFAULT_CODE + "," + UPDATED_CODE, "code.in=" + UPDATED_CODE);
+    }
+
+    @Test
+    void getAllPostalCodesByCodeIsNullOrNotNull() {
+        // Initialize the database
+        insertedPostalCode = postalCodeRepository.save(postalCode).block();
+
+        // Get all the postalCodeList where code is not null
+        defaultPostalCodeFiltering("code.specified=true", "code.specified=false");
+    }
+
+    @Test
+    void getAllPostalCodesByCodeContainsSomething() {
+        // Initialize the database
+        insertedPostalCode = postalCodeRepository.save(postalCode).block();
+
+        // Get all the postalCodeList where code contains
+        defaultPostalCodeFiltering("code.contains=" + DEFAULT_CODE, "code.contains=" + UPDATED_CODE);
+    }
+
+    @Test
+    void getAllPostalCodesByCodeNotContainsSomething() {
+        // Initialize the database
+        insertedPostalCode = postalCodeRepository.save(postalCode).block();
+
+        // Get all the postalCodeList where code does not contain
+        defaultPostalCodeFiltering("code.doesNotContain=" + UPDATED_CODE, "code.doesNotContain=" + DEFAULT_CODE);
+    }
+
+    @Test
+    void getAllPostalCodesBySubDistrictIsEqualToSomething() {
+        SubDistrict subDistrict = SubDistrictResourceIT.createEntity(em);
+        subDistrictRepository.save(subDistrict).block();
+        Long subDistrictId = subDistrict.getId();
+        postalCode.setSubDistrictId(subDistrictId);
+        insertedPostalCode = postalCodeRepository.save(postalCode).block();
+        // Get all the postalCodeList where subDistrict equals to subDistrictId
+        defaultPostalCodeShouldBeFound("subDistrictId.equals=" + subDistrictId);
+
+        // Get all the postalCodeList where subDistrict equals to (subDistrictId + 1)
+        defaultPostalCodeShouldNotBeFound("subDistrictId.equals=" + (subDistrictId + 1));
+    }
+
+    private void defaultPostalCodeFiltering(String shouldBeFound, String shouldNotBeFound) {
+        defaultPostalCodeShouldBeFound(shouldBeFound);
+        defaultPostalCodeShouldNotBeFound(shouldNotBeFound);
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultPostalCodeShouldBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$.[*].id")
+            .value(hasItem(postalCode.getId().intValue()))
+            .jsonPath("$.[*].code")
+            .value(hasItem(DEFAULT_CODE));
+
+        // Check, that the count call also returns 1
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultPostalCodeShouldNotBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .isArray()
+            .jsonPath("$")
+            .isEmpty();
+
+        // Check, that the count call also returns 0
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(0));
+    }
+
+    @Test
     void getNonExistingPostalCode() {
         // Get the postalCode
         webTestClient
@@ -287,12 +447,13 @@ class PostalCodeResourceIT {
         // Update the postalCode
         PostalCode updatedPostalCode = postalCodeRepository.findById(postalCode.getId()).block();
         updatedPostalCode.code(UPDATED_CODE);
+        PostalCodeDTO postalCodeDTO = postalCodeMapper.toDto(updatedPostalCode);
 
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, updatedPostalCode.getId())
+            .uri(ENTITY_API_URL_ID, postalCodeDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(updatedPostalCode))
+            .bodyValue(om.writeValueAsBytes(postalCodeDTO))
             .exchange()
             .expectStatus()
             .isOk();
@@ -321,12 +482,15 @@ class PostalCodeResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(postalCodeSearchRepository.findAll().collectList().block());
         postalCode.setId(longCount.incrementAndGet());
 
+        // Create the PostalCode
+        PostalCodeDTO postalCodeDTO = postalCodeMapper.toDto(postalCode);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, postalCode.getId())
+            .uri(ENTITY_API_URL_ID, postalCodeDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(postalCode))
+            .bodyValue(om.writeValueAsBytes(postalCodeDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -343,12 +507,15 @@ class PostalCodeResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(postalCodeSearchRepository.findAll().collectList().block());
         postalCode.setId(longCount.incrementAndGet());
 
+        // Create the PostalCode
+        PostalCodeDTO postalCodeDTO = postalCodeMapper.toDto(postalCode);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(postalCode))
+            .bodyValue(om.writeValueAsBytes(postalCodeDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -365,12 +532,15 @@ class PostalCodeResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(postalCodeSearchRepository.findAll().collectList().block());
         postalCode.setId(longCount.incrementAndGet());
 
+        // Create the PostalCode
+        PostalCodeDTO postalCodeDTO = postalCodeMapper.toDto(postalCode);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(postalCode))
+            .bodyValue(om.writeValueAsBytes(postalCodeDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);
@@ -444,12 +614,15 @@ class PostalCodeResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(postalCodeSearchRepository.findAll().collectList().block());
         postalCode.setId(longCount.incrementAndGet());
 
+        // Create the PostalCode
+        PostalCodeDTO postalCodeDTO = postalCodeMapper.toDto(postalCode);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
-            .uri(ENTITY_API_URL_ID, postalCode.getId())
+            .uri(ENTITY_API_URL_ID, postalCodeDTO.getId())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(postalCode))
+            .bodyValue(om.writeValueAsBytes(postalCodeDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -466,12 +639,15 @@ class PostalCodeResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(postalCodeSearchRepository.findAll().collectList().block());
         postalCode.setId(longCount.incrementAndGet());
 
+        // Create the PostalCode
+        PostalCodeDTO postalCodeDTO = postalCodeMapper.toDto(postalCode);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(postalCode))
+            .bodyValue(om.writeValueAsBytes(postalCodeDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -488,12 +664,15 @@ class PostalCodeResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(postalCodeSearchRepository.findAll().collectList().block());
         postalCode.setId(longCount.incrementAndGet());
 
+        // Create the PostalCode
+        PostalCodeDTO postalCodeDTO = postalCodeMapper.toDto(postalCode);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(postalCode))
+            .bodyValue(om.writeValueAsBytes(postalCodeDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);

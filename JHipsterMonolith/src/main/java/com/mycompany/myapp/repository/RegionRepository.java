@@ -1,6 +1,7 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.Region;
+import com.mycompany.myapp.domain.criteria.RegionCriteria;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
@@ -38,4 +39,7 @@ interface RegionRepositoryInternal {
     Mono<Region> findById(Long id);
     // this is not supported at the moment because of https://github.com/jhipster/generator-jhipster/issues/18269
     // Flux<Region> findAllBy(Pageable pageable, Criteria criteria);
+    Flux<Region> findByCriteria(RegionCriteria criteria, Pageable pageable);
+
+    Mono<Long> countByCriteria(RegionCriteria criteria);
 }

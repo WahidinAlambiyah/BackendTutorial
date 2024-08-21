@@ -2,10 +2,13 @@ package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.Job;
 import com.mycompany.myapp.domain.Task;
+import com.mycompany.myapp.domain.criteria.JobCriteria;
+import com.mycompany.myapp.repository.rowmapper.ColumnConverter;
 import com.mycompany.myapp.repository.rowmapper.EmployeeRowMapper;
 import com.mycompany.myapp.repository.rowmapper.JobRowMapper;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.r2dbc.convert.R2dbcConverter;
@@ -25,6 +28,7 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.r2dbc.core.RowsFetchSpec;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import tech.jhipster.service.ConditionBuilder;
 
 /**
  * Spring Data R2DBC custom repository implementation for the Job entity.
@@ -38,6 +42,7 @@ class JobRepositoryInternalImpl extends SimpleR2dbcRepository<Job, Long> impleme
 
     private final EmployeeRowMapper employeeMapper;
     private final JobRowMapper jobMapper;
+    private final ColumnConverter columnConverter;
 
     private static final Table entityTable = Table.aliased("job", EntityManager.ENTITY_ALIAS);
     private static final Table employeeTable = Table.aliased("employee", "employee");
@@ -50,7 +55,8 @@ class JobRepositoryInternalImpl extends SimpleR2dbcRepository<Job, Long> impleme
         EmployeeRowMapper employeeMapper,
         JobRowMapper jobMapper,
         R2dbcEntityOperations entityOperations,
-        R2dbcConverter converter
+        R2dbcConverter converter,
+        ColumnConverter columnConverter
     ) {
         super(
             new MappingRelationalEntityInformation(converter.getMappingContext().getRequiredPersistentEntity(Job.class)),
@@ -62,6 +68,7 @@ class JobRepositoryInternalImpl extends SimpleR2dbcRepository<Job, Long> impleme
         this.entityManager = entityManager;
         this.employeeMapper = employeeMapper;
         this.jobMapper = jobMapper;
+        this.columnConverter = columnConverter;
     }
 
     @Override
@@ -132,5 +139,40 @@ class JobRepositoryInternalImpl extends SimpleR2dbcRepository<Job, Long> impleme
 
     protected Mono<Void> deleteRelations(Long entityId) {
         return entityManager.deleteFromLinkTable(taskLink, entityId);
+    }
+
+    @Override
+    public Flux<Job> findByCriteria(JobCriteria jobCriteria, Pageable page) {
+        return createQuery(page, buildConditions(jobCriteria)).all();
+    }
+
+    @Override
+    public Mono<Long> countByCriteria(JobCriteria criteria) {
+        return findByCriteria(criteria, null)
+            .collectList()
+            .map(collectedList -> collectedList != null ? (long) collectedList.size() : (long) 0);
+    }
+
+    private Condition buildConditions(JobCriteria criteria) {
+        ConditionBuilder builder = new ConditionBuilder(this.columnConverter);
+        List<Condition> allConditions = new ArrayList<Condition>();
+        if (criteria != null) {
+            if (criteria.getId() != null) {
+                builder.buildFilterConditionForField(criteria.getId(), entityTable.column("id"));
+            }
+            if (criteria.getJobTitle() != null) {
+                builder.buildFilterConditionForField(criteria.getJobTitle(), entityTable.column("job_title"));
+            }
+            if (criteria.getMinSalary() != null) {
+                builder.buildFilterConditionForField(criteria.getMinSalary(), entityTable.column("min_salary"));
+            }
+            if (criteria.getMaxSalary() != null) {
+                builder.buildFilterConditionForField(criteria.getMaxSalary(), entityTable.column("max_salary"));
+            }
+            if (criteria.getEmployeeId() != null) {
+                builder.buildFilterConditionForField(criteria.getEmployeeId(), employeeTable.column("id"));
+            }
+        }
+        return builder.buildConditions();
     }
 }

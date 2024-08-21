@@ -38,15 +38,19 @@ export default defineComponent({
       retrieveRegion(route.params.regionId);
     }
 
+    const initRelationships = () => {};
+
+    initRelationships();
+
     const { t: t$ } = useI18n();
     const validations = useValidation();
     const validationRules = {
       name: {
         required: validations.required(t$('entity.validation.required').toString()),
       },
-      code: {
-        required: validations.required(t$('entity.validation.required').toString()),
-      },
+      unm49Code: {},
+      isoAlpha2Code: {},
+      countries: {},
     };
     const v$ = useVuelidate(validationRules, region as any);
     v$.value.$validate();

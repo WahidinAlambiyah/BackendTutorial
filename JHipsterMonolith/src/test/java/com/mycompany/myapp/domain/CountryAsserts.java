@@ -48,7 +48,8 @@ public class CountryAsserts {
         assertThat(expected)
             .as("Verify Country relevant properties")
             .satisfies(e -> assertThat(e.getName()).as("check name").isEqualTo(actual.getName()))
-            .satisfies(e -> assertThat(e.getCode()).as("check code").isEqualTo(actual.getCode()));
+            .satisfies(e -> assertThat(e.getUnm49Code()).as("check unm49Code").isEqualTo(actual.getUnm49Code()))
+            .satisfies(e -> assertThat(e.getIsoAlpha2Code()).as("check isoAlpha2Code").isEqualTo(actual.getIsoAlpha2Code()));
     }
 
     /**

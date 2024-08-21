@@ -15,7 +15,7 @@ describe('Country e2e test', () => {
   const countryPageUrlPattern = new RegExp('/country(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const countrySample = { name: 'avalanche promptly', code: 'well tar' };
+  const countrySample = { name: 'vacantly' };
 
   let country;
 
@@ -125,7 +125,7 @@ describe('Country e2e test', () => {
         cy.url().should('match', countryPageUrlPattern);
       });
 
-      it('edit button click should load edit Country page and save', () => {
+      it.skip('edit button click should load edit Country page and save', () => {
         cy.get(entityEditButtonSelector).first().click();
         cy.getEntityCreateUpdateHeading('Country');
         cy.get(entityCreateSaveButtonSelector).click();
@@ -160,11 +160,14 @@ describe('Country e2e test', () => {
     });
 
     it('should create an instance of Country', () => {
-      cy.get(`[data-cy="name"]`).type('rightfully comptroller');
-      cy.get(`[data-cy="name"]`).should('have.value', 'rightfully comptroller');
+      cy.get(`[data-cy="name"]`).type('gee annually nor');
+      cy.get(`[data-cy="name"]`).should('have.value', 'gee annually nor');
 
-      cy.get(`[data-cy="code"]`).type('and');
-      cy.get(`[data-cy="code"]`).should('have.value', 'and');
+      cy.get(`[data-cy="unm49Code"]`).type('although or');
+      cy.get(`[data-cy="unm49Code"]`).should('have.value', 'although or');
+
+      cy.get(`[data-cy="isoAlpha2Code"]`).type('till duh');
+      cy.get(`[data-cy="isoAlpha2Code"]`).should('have.value', 'till duh');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

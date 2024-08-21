@@ -1,9 +1,11 @@
 package com.mycompany.myapp.service.impl;
 
-import com.mycompany.myapp.domain.Location;
+import com.mycompany.myapp.domain.criteria.LocationCriteria;
 import com.mycompany.myapp.repository.LocationRepository;
 import com.mycompany.myapp.repository.search.LocationSearchRepository;
 import com.mycompany.myapp.service.LocationService;
+import com.mycompany.myapp.service.dto.LocationDTO;
+import com.mycompany.myapp.service.mapper.LocationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,44 +24,46 @@ public class LocationServiceImpl implements LocationService {
 
     private final LocationRepository locationRepository;
 
+    private final LocationMapper locationMapper;
+
     private final LocationSearchRepository locationSearchRepository;
 
-    public LocationServiceImpl(LocationRepository locationRepository, LocationSearchRepository locationSearchRepository) {
+    public LocationServiceImpl(
+        LocationRepository locationRepository,
+        LocationMapper locationMapper,
+        LocationSearchRepository locationSearchRepository
+    ) {
         this.locationRepository = locationRepository;
+        this.locationMapper = locationMapper;
         this.locationSearchRepository = locationSearchRepository;
     }
 
     @Override
-    public Mono<Location> save(Location location) {
-        log.debug("Request to save Location : {}", location);
-        return locationRepository.save(location).flatMap(locationSearchRepository::save);
+    public Mono<LocationDTO> save(LocationDTO locationDTO) {
+        log.debug("Request to save Location : {}", locationDTO);
+        return locationRepository
+            .save(locationMapper.toEntity(locationDTO))
+            .flatMap(locationSearchRepository::save)
+            .map(locationMapper::toDto);
     }
 
     @Override
-    public Mono<Location> update(Location location) {
-        log.debug("Request to update Location : {}", location);
-        return locationRepository.save(location).flatMap(locationSearchRepository::save);
+    public Mono<LocationDTO> update(LocationDTO locationDTO) {
+        log.debug("Request to update Location : {}", locationDTO);
+        return locationRepository
+            .save(locationMapper.toEntity(locationDTO))
+            .flatMap(locationSearchRepository::save)
+            .map(locationMapper::toDto);
     }
 
     @Override
-    public Mono<Location> partialUpdate(Location location) {
-        log.debug("Request to partially update Location : {}", location);
+    public Mono<LocationDTO> partialUpdate(LocationDTO locationDTO) {
+        log.debug("Request to partially update Location : {}", locationDTO);
 
         return locationRepository
-            .findById(location.getId())
+            .findById(locationDTO.getId())
             .map(existingLocation -> {
-                if (location.getStreetAddress() != null) {
-                    existingLocation.setStreetAddress(location.getStreetAddress());
-                }
-                if (location.getPostalCode() != null) {
-                    existingLocation.setPostalCode(location.getPostalCode());
-                }
-                if (location.getCity() != null) {
-                    existingLocation.setCity(location.getCity());
-                }
-                if (location.getStateProvince() != null) {
-                    existingLocation.setStateProvince(location.getStateProvince());
-                }
+                locationMapper.partialUpdate(existingLocation, locationDTO);
 
                 return existingLocation;
             })
@@ -67,14 +71,25 @@ public class LocationServiceImpl implements LocationService {
             .flatMap(savedLocation -> {
                 locationSearchRepository.save(savedLocation);
                 return Mono.just(savedLocation);
-            });
+            })
+            .map(locationMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<Location> findAll() {
-        log.debug("Request to get all Locations");
-        return locationRepository.findAll();
+    public Flux<LocationDTO> findByCriteria(LocationCriteria criteria) {
+        log.debug("Request to get all Locations by Criteria");
+        return locationRepository.findByCriteria(criteria, null).map(locationMapper::toDto);
+    }
+
+    /**
+     * Find the count of locations by criteria.
+     * @param criteria filtering criteria
+     * @return the count of locations
+     */
+    public Mono<Long> countByCriteria(LocationCriteria criteria) {
+        log.debug("Request to get the count of all Locations by Criteria");
+        return locationRepository.countByCriteria(criteria);
     }
 
     /**
@@ -82,9 +97,9 @@ public class LocationServiceImpl implements LocationService {
      *  @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public Flux<Location> findAllWhereDepartmentIsNull() {
+    public Flux<LocationDTO> findAllWhereDepartmentIsNull() {
         log.debug("Request to get all locations where Department is null");
-        return locationRepository.findAllWhereDepartmentIsNull();
+        return locationRepository.findAllWhereDepartmentIsNull().map(locationMapper::toDto);
     }
 
     public Mono<Long> countAll() {
@@ -97,9 +112,9 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     @Transactional(readOnly = true)
-    public Mono<Location> findOne(Long id) {
+    public Mono<LocationDTO> findOne(Long id) {
         log.debug("Request to get Location : {}", id);
-        return locationRepository.findById(id);
+        return locationRepository.findById(id).map(locationMapper::toDto);
     }
 
     @Override
@@ -110,10 +125,10 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<Location> search(String query) {
+    public Flux<LocationDTO> search(String query) {
         log.debug("Request to search Locations for query {}", query);
         try {
-            return locationSearchRepository.search(query);
+            return locationSearchRepository.search(query).map(locationMapper::toDto);
         } catch (RuntimeException e) {
             throw e;
         }

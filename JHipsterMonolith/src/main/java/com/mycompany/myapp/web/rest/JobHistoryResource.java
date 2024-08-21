@@ -1,8 +1,9 @@
 package com.mycompany.myapp.web.rest;
 
-import com.mycompany.myapp.domain.JobHistory;
+import com.mycompany.myapp.domain.criteria.JobHistoryCriteria;
 import com.mycompany.myapp.repository.JobHistoryRepository;
 import com.mycompany.myapp.service.JobHistoryService;
+import com.mycompany.myapp.service.dto.JobHistoryDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -53,18 +54,18 @@ public class JobHistoryResource {
     /**
      * {@code POST  /job-histories} : Create a new jobHistory.
      *
-     * @param jobHistory the jobHistory to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new jobHistory, or with status {@code 400 (Bad Request)} if the jobHistory has already an ID.
+     * @param jobHistoryDTO the jobHistoryDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new jobHistoryDTO, or with status {@code 400 (Bad Request)} if the jobHistory has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public Mono<ResponseEntity<JobHistory>> createJobHistory(@RequestBody JobHistory jobHistory) throws URISyntaxException {
-        log.debug("REST request to save JobHistory : {}", jobHistory);
-        if (jobHistory.getId() != null) {
+    public Mono<ResponseEntity<JobHistoryDTO>> createJobHistory(@RequestBody JobHistoryDTO jobHistoryDTO) throws URISyntaxException {
+        log.debug("REST request to save JobHistory : {}", jobHistoryDTO);
+        if (jobHistoryDTO.getId() != null) {
             throw new BadRequestAlertException("A new jobHistory cannot already have an ID", ENTITY_NAME, "idexists");
         }
         return jobHistoryService
-            .save(jobHistory)
+            .save(jobHistoryDTO)
             .map(result -> {
                 try {
                     return ResponseEntity.created(new URI("/api/job-histories/" + result.getId()))
@@ -79,23 +80,23 @@ public class JobHistoryResource {
     /**
      * {@code PUT  /job-histories/:id} : Updates an existing jobHistory.
      *
-     * @param id the id of the jobHistory to save.
-     * @param jobHistory the jobHistory to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated jobHistory,
-     * or with status {@code 400 (Bad Request)} if the jobHistory is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the jobHistory couldn't be updated.
+     * @param id the id of the jobHistoryDTO to save.
+     * @param jobHistoryDTO the jobHistoryDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated jobHistoryDTO,
+     * or with status {@code 400 (Bad Request)} if the jobHistoryDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the jobHistoryDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
-    public Mono<ResponseEntity<JobHistory>> updateJobHistory(
+    public Mono<ResponseEntity<JobHistoryDTO>> updateJobHistory(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody JobHistory jobHistory
+        @RequestBody JobHistoryDTO jobHistoryDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update JobHistory : {}, {}", id, jobHistory);
-        if (jobHistory.getId() == null) {
+        log.debug("REST request to update JobHistory : {}, {}", id, jobHistoryDTO);
+        if (jobHistoryDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, jobHistory.getId())) {
+        if (!Objects.equals(id, jobHistoryDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -107,7 +108,7 @@ public class JobHistoryResource {
                 }
 
                 return jobHistoryService
-                    .update(jobHistory)
+                    .update(jobHistoryDTO)
                     .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
                     .map(
                         result ->
@@ -121,24 +122,24 @@ public class JobHistoryResource {
     /**
      * {@code PATCH  /job-histories/:id} : Partial updates given fields of an existing jobHistory, field will ignore if it is null
      *
-     * @param id the id of the jobHistory to save.
-     * @param jobHistory the jobHistory to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated jobHistory,
-     * or with status {@code 400 (Bad Request)} if the jobHistory is not valid,
-     * or with status {@code 404 (Not Found)} if the jobHistory is not found,
-     * or with status {@code 500 (Internal Server Error)} if the jobHistory couldn't be updated.
+     * @param id the id of the jobHistoryDTO to save.
+     * @param jobHistoryDTO the jobHistoryDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated jobHistoryDTO,
+     * or with status {@code 400 (Bad Request)} if the jobHistoryDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the jobHistoryDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the jobHistoryDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public Mono<ResponseEntity<JobHistory>> partialUpdateJobHistory(
+    public Mono<ResponseEntity<JobHistoryDTO>> partialUpdateJobHistory(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody JobHistory jobHistory
+        @RequestBody JobHistoryDTO jobHistoryDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update JobHistory partially : {}, {}", id, jobHistory);
-        if (jobHistory.getId() == null) {
+        log.debug("REST request to partial update JobHistory partially : {}, {}", id, jobHistoryDTO);
+        if (jobHistoryDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, jobHistory.getId())) {
+        if (!Objects.equals(id, jobHistoryDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -149,7 +150,7 @@ public class JobHistoryResource {
                     return Mono.error(new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
                 }
 
-                Mono<JobHistory> result = jobHistoryService.partialUpdate(jobHistory);
+                Mono<JobHistoryDTO> result = jobHistoryService.partialUpdate(jobHistoryDTO);
 
                 return result
                     .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
@@ -167,17 +168,19 @@ public class JobHistoryResource {
      *
      * @param pageable the pagination information.
      * @param request a {@link ServerHttpRequest} request.
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of jobHistories in body.
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<List<JobHistory>>> getAllJobHistories(
+    public Mono<ResponseEntity<List<JobHistoryDTO>>> getAllJobHistories(
+        JobHistoryCriteria criteria,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         ServerHttpRequest request
     ) {
-        log.debug("REST request to get a page of JobHistories");
+        log.debug("REST request to get JobHistories by criteria: {}", criteria);
         return jobHistoryService
-            .countAll()
-            .zipWith(jobHistoryService.findAll(pageable).collectList())
+            .countByCriteria(criteria)
+            .zipWith(jobHistoryService.findByCriteria(criteria, pageable).collectList())
             .map(
                 countWithEntities ->
                     ResponseEntity.ok()
@@ -192,22 +195,34 @@ public class JobHistoryResource {
     }
 
     /**
+     * {@code GET  /job-histories/count} : count all the jobHistories.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public Mono<ResponseEntity<Long>> countJobHistories(JobHistoryCriteria criteria) {
+        log.debug("REST request to count JobHistories by criteria: {}", criteria);
+        return jobHistoryService.countByCriteria(criteria).map(count -> ResponseEntity.status(HttpStatus.OK).body(count));
+    }
+
+    /**
      * {@code GET  /job-histories/:id} : get the "id" jobHistory.
      *
-     * @param id the id of the jobHistory to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the jobHistory, or with status {@code 404 (Not Found)}.
+     * @param id the id of the jobHistoryDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the jobHistoryDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public Mono<ResponseEntity<JobHistory>> getJobHistory(@PathVariable("id") Long id) {
+    public Mono<ResponseEntity<JobHistoryDTO>> getJobHistory(@PathVariable("id") Long id) {
         log.debug("REST request to get JobHistory : {}", id);
-        Mono<JobHistory> jobHistory = jobHistoryService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(jobHistory);
+        Mono<JobHistoryDTO> jobHistoryDTO = jobHistoryService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(jobHistoryDTO);
     }
 
     /**
      * {@code DELETE  /job-histories/:id} : delete the "id" jobHistory.
      *
-     * @param id the id of the jobHistory to delete.
+     * @param id the id of the jobHistoryDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
@@ -234,7 +249,7 @@ public class JobHistoryResource {
      * @return the result of the search.
      */
     @GetMapping("/_search")
-    public Mono<ResponseEntity<Flux<JobHistory>>> searchJobHistories(
+    public Mono<ResponseEntity<Flux<JobHistoryDTO>>> searchJobHistories(
         @RequestParam("query") String query,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         ServerHttpRequest request

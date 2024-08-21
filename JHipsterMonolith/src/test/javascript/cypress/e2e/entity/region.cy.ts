@@ -15,7 +15,7 @@ describe('Region e2e test', () => {
   const regionPageUrlPattern = new RegExp('/region(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const regionSample = { name: 'wait', code: 'coin loincloth' };
+  const regionSample = { name: 'anatomy' };
 
   let region;
 
@@ -125,7 +125,7 @@ describe('Region e2e test', () => {
         cy.url().should('match', regionPageUrlPattern);
       });
 
-      it('edit button click should load edit Region page and save', () => {
+      it.skip('edit button click should load edit Region page and save', () => {
         cy.get(entityEditButtonSelector).first().click();
         cy.getEntityCreateUpdateHeading('Region');
         cy.get(entityCreateSaveButtonSelector).click();
@@ -160,11 +160,14 @@ describe('Region e2e test', () => {
     });
 
     it('should create an instance of Region', () => {
-      cy.get(`[data-cy="name"]`).type('although');
-      cy.get(`[data-cy="name"]`).should('have.value', 'although');
+      cy.get(`[data-cy="name"]`).type('beyond guava aha');
+      cy.get(`[data-cy="name"]`).should('have.value', 'beyond guava aha');
 
-      cy.get(`[data-cy="code"]`).type('gosh fake ick');
-      cy.get(`[data-cy="code"]`).should('have.value', 'gosh fake ick');
+      cy.get(`[data-cy="unm49Code"]`).type('mysteriously into');
+      cy.get(`[data-cy="unm49Code"]`).should('have.value', 'mysteriously into');
+
+      cy.get(`[data-cy="isoAlpha2Code"]`).type('pish dialect');
+      cy.get(`[data-cy="isoAlpha2Code"]`).should('have.value', 'pish dialect');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

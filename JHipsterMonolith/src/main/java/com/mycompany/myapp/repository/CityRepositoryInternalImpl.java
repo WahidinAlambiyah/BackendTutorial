@@ -1,10 +1,13 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.City;
+import com.mycompany.myapp.domain.criteria.CityCriteria;
 import com.mycompany.myapp.repository.rowmapper.CityRowMapper;
+import com.mycompany.myapp.repository.rowmapper.ColumnConverter;
 import com.mycompany.myapp.repository.rowmapper.ProvinceRowMapper;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.r2dbc.convert.R2dbcConverter;
@@ -24,6 +27,7 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.r2dbc.core.RowsFetchSpec;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import tech.jhipster.service.ConditionBuilder;
 
 /**
  * Spring Data R2DBC custom repository implementation for the City entity.
@@ -37,6 +41,7 @@ class CityRepositoryInternalImpl extends SimpleR2dbcRepository<City, Long> imple
 
     private final ProvinceRowMapper provinceMapper;
     private final CityRowMapper cityMapper;
+    private final ColumnConverter columnConverter;
 
     private static final Table entityTable = Table.aliased("city", EntityManager.ENTITY_ALIAS);
     private static final Table provinceTable = Table.aliased("province", "province");
@@ -47,7 +52,8 @@ class CityRepositoryInternalImpl extends SimpleR2dbcRepository<City, Long> imple
         ProvinceRowMapper provinceMapper,
         CityRowMapper cityMapper,
         R2dbcEntityOperations entityOperations,
-        R2dbcConverter converter
+        R2dbcConverter converter,
+        ColumnConverter columnConverter
     ) {
         super(
             new MappingRelationalEntityInformation(converter.getMappingContext().getRequiredPersistentEntity(City.class)),
@@ -59,6 +65,7 @@ class CityRepositoryInternalImpl extends SimpleR2dbcRepository<City, Long> imple
         this.entityManager = entityManager;
         this.provinceMapper = provinceMapper;
         this.cityMapper = cityMapper;
+        this.columnConverter = columnConverter;
     }
 
     @Override
@@ -115,5 +122,40 @@ class CityRepositoryInternalImpl extends SimpleR2dbcRepository<City, Long> imple
     @Override
     public <S extends City> Mono<S> save(S entity) {
         return super.save(entity);
+    }
+
+    @Override
+    public Flux<City> findByCriteria(CityCriteria cityCriteria, Pageable page) {
+        return createQuery(page, buildConditions(cityCriteria)).all();
+    }
+
+    @Override
+    public Mono<Long> countByCriteria(CityCriteria criteria) {
+        return findByCriteria(criteria, null)
+            .collectList()
+            .map(collectedList -> collectedList != null ? (long) collectedList.size() : (long) 0);
+    }
+
+    private Condition buildConditions(CityCriteria criteria) {
+        ConditionBuilder builder = new ConditionBuilder(this.columnConverter);
+        List<Condition> allConditions = new ArrayList<Condition>();
+        if (criteria != null) {
+            if (criteria.getId() != null) {
+                builder.buildFilterConditionForField(criteria.getId(), entityTable.column("id"));
+            }
+            if (criteria.getName() != null) {
+                builder.buildFilterConditionForField(criteria.getName(), entityTable.column("name"));
+            }
+            if (criteria.getUnm49Code() != null) {
+                builder.buildFilterConditionForField(criteria.getUnm49Code(), entityTable.column("unm_49_code"));
+            }
+            if (criteria.getIsoAlpha2Code() != null) {
+                builder.buildFilterConditionForField(criteria.getIsoAlpha2Code(), entityTable.column("iso_alpha_2_code"));
+            }
+            if (criteria.getProvinceId() != null) {
+                builder.buildFilterConditionForField(criteria.getProvinceId(), provinceTable.column("id"));
+            }
+        }
+        return builder.buildConditions();
     }
 }

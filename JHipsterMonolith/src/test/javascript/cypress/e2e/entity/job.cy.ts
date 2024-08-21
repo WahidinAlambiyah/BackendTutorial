@@ -125,7 +125,7 @@ describe('Job e2e test', () => {
         cy.url().should('match', jobPageUrlPattern);
       });
 
-      it('edit button click should load edit Job page and save', () => {
+      it.skip('edit button click should load edit Job page and save', () => {
         cy.get(entityEditButtonSelector).first().click();
         cy.getEntityCreateUpdateHeading('Job');
         cy.get(entityCreateSaveButtonSelector).click();

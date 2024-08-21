@@ -1,9 +1,11 @@
 package com.mycompany.myapp.service.impl;
 
-import com.mycompany.myapp.domain.PostalCode;
+import com.mycompany.myapp.domain.criteria.PostalCodeCriteria;
 import com.mycompany.myapp.repository.PostalCodeRepository;
 import com.mycompany.myapp.repository.search.PostalCodeSearchRepository;
 import com.mycompany.myapp.service.PostalCodeService;
+import com.mycompany.myapp.service.dto.PostalCodeDTO;
+import com.mycompany.myapp.service.mapper.PostalCodeMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
@@ -23,35 +25,46 @@ public class PostalCodeServiceImpl implements PostalCodeService {
 
     private final PostalCodeRepository postalCodeRepository;
 
+    private final PostalCodeMapper postalCodeMapper;
+
     private final PostalCodeSearchRepository postalCodeSearchRepository;
 
-    public PostalCodeServiceImpl(PostalCodeRepository postalCodeRepository, PostalCodeSearchRepository postalCodeSearchRepository) {
+    public PostalCodeServiceImpl(
+        PostalCodeRepository postalCodeRepository,
+        PostalCodeMapper postalCodeMapper,
+        PostalCodeSearchRepository postalCodeSearchRepository
+    ) {
         this.postalCodeRepository = postalCodeRepository;
+        this.postalCodeMapper = postalCodeMapper;
         this.postalCodeSearchRepository = postalCodeSearchRepository;
     }
 
     @Override
-    public Mono<PostalCode> save(PostalCode postalCode) {
-        log.debug("Request to save PostalCode : {}", postalCode);
-        return postalCodeRepository.save(postalCode).flatMap(postalCodeSearchRepository::save);
+    public Mono<PostalCodeDTO> save(PostalCodeDTO postalCodeDTO) {
+        log.debug("Request to save PostalCode : {}", postalCodeDTO);
+        return postalCodeRepository
+            .save(postalCodeMapper.toEntity(postalCodeDTO))
+            .flatMap(postalCodeSearchRepository::save)
+            .map(postalCodeMapper::toDto);
     }
 
     @Override
-    public Mono<PostalCode> update(PostalCode postalCode) {
-        log.debug("Request to update PostalCode : {}", postalCode);
-        return postalCodeRepository.save(postalCode).flatMap(postalCodeSearchRepository::save);
+    public Mono<PostalCodeDTO> update(PostalCodeDTO postalCodeDTO) {
+        log.debug("Request to update PostalCode : {}", postalCodeDTO);
+        return postalCodeRepository
+            .save(postalCodeMapper.toEntity(postalCodeDTO))
+            .flatMap(postalCodeSearchRepository::save)
+            .map(postalCodeMapper::toDto);
     }
 
     @Override
-    public Mono<PostalCode> partialUpdate(PostalCode postalCode) {
-        log.debug("Request to partially update PostalCode : {}", postalCode);
+    public Mono<PostalCodeDTO> partialUpdate(PostalCodeDTO postalCodeDTO) {
+        log.debug("Request to partially update PostalCode : {}", postalCodeDTO);
 
         return postalCodeRepository
-            .findById(postalCode.getId())
+            .findById(postalCodeDTO.getId())
             .map(existingPostalCode -> {
-                if (postalCode.getCode() != null) {
-                    existingPostalCode.setCode(postalCode.getCode());
-                }
+                postalCodeMapper.partialUpdate(existingPostalCode, postalCodeDTO);
 
                 return existingPostalCode;
             })
@@ -59,18 +72,29 @@ public class PostalCodeServiceImpl implements PostalCodeService {
             .flatMap(savedPostalCode -> {
                 postalCodeSearchRepository.save(savedPostalCode);
                 return Mono.just(savedPostalCode);
-            });
+            })
+            .map(postalCodeMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<PostalCode> findAll(Pageable pageable) {
-        log.debug("Request to get all PostalCodes");
-        return postalCodeRepository.findAllBy(pageable);
+    public Flux<PostalCodeDTO> findByCriteria(PostalCodeCriteria criteria, Pageable pageable) {
+        log.debug("Request to get all PostalCodes by Criteria");
+        return postalCodeRepository.findByCriteria(criteria, pageable).map(postalCodeMapper::toDto);
     }
 
-    public Flux<PostalCode> findAllWithEagerRelationships(Pageable pageable) {
-        return postalCodeRepository.findAllWithEagerRelationships(pageable);
+    /**
+     * Find the count of postalCodes by criteria.
+     * @param criteria filtering criteria
+     * @return the count of postalCodes
+     */
+    public Mono<Long> countByCriteria(PostalCodeCriteria criteria) {
+        log.debug("Request to get the count of all PostalCodes by Criteria");
+        return postalCodeRepository.countByCriteria(criteria);
+    }
+
+    public Flux<PostalCodeDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return postalCodeRepository.findAllWithEagerRelationships(pageable).map(postalCodeMapper::toDto);
     }
 
     public Mono<Long> countAll() {
@@ -83,9 +107,9 @@ public class PostalCodeServiceImpl implements PostalCodeService {
 
     @Override
     @Transactional(readOnly = true)
-    public Mono<PostalCode> findOne(Long id) {
+    public Mono<PostalCodeDTO> findOne(Long id) {
         log.debug("Request to get PostalCode : {}", id);
-        return postalCodeRepository.findOneWithEagerRelationships(id);
+        return postalCodeRepository.findOneWithEagerRelationships(id).map(postalCodeMapper::toDto);
     }
 
     @Override
@@ -96,8 +120,8 @@ public class PostalCodeServiceImpl implements PostalCodeService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<PostalCode> search(String query, Pageable pageable) {
+    public Flux<PostalCodeDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of PostalCodes for query {}", query);
-        return postalCodeSearchRepository.search(query, pageable);
+        return postalCodeSearchRepository.search(query, pageable).map(postalCodeMapper::toDto);
     }
 }

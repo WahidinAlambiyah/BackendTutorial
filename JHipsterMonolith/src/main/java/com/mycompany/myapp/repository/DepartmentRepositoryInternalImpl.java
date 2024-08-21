@@ -1,10 +1,13 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.Department;
+import com.mycompany.myapp.domain.criteria.DepartmentCriteria;
+import com.mycompany.myapp.repository.rowmapper.ColumnConverter;
 import com.mycompany.myapp.repository.rowmapper.DepartmentRowMapper;
 import com.mycompany.myapp.repository.rowmapper.LocationRowMapper;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.r2dbc.convert.R2dbcConverter;
@@ -24,6 +27,7 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.r2dbc.core.RowsFetchSpec;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import tech.jhipster.service.ConditionBuilder;
 
 /**
  * Spring Data R2DBC custom repository implementation for the Department entity.
@@ -37,6 +41,7 @@ class DepartmentRepositoryInternalImpl extends SimpleR2dbcRepository<Department,
 
     private final LocationRowMapper locationMapper;
     private final DepartmentRowMapper departmentMapper;
+    private final ColumnConverter columnConverter;
 
     private static final Table entityTable = Table.aliased("department", EntityManager.ENTITY_ALIAS);
     private static final Table locationTable = Table.aliased("location", "location");
@@ -47,7 +52,8 @@ class DepartmentRepositoryInternalImpl extends SimpleR2dbcRepository<Department,
         LocationRowMapper locationMapper,
         DepartmentRowMapper departmentMapper,
         R2dbcEntityOperations entityOperations,
-        R2dbcConverter converter
+        R2dbcConverter converter,
+        ColumnConverter columnConverter
     ) {
         super(
             new MappingRelationalEntityInformation(converter.getMappingContext().getRequiredPersistentEntity(Department.class)),
@@ -59,6 +65,7 @@ class DepartmentRepositoryInternalImpl extends SimpleR2dbcRepository<Department,
         this.entityManager = entityManager;
         this.locationMapper = locationMapper;
         this.departmentMapper = departmentMapper;
+        this.columnConverter = columnConverter;
     }
 
     @Override
@@ -100,5 +107,34 @@ class DepartmentRepositoryInternalImpl extends SimpleR2dbcRepository<Department,
     @Override
     public <S extends Department> Mono<S> save(S entity) {
         return super.save(entity);
+    }
+
+    @Override
+    public Flux<Department> findByCriteria(DepartmentCriteria departmentCriteria, Pageable page) {
+        return createQuery(page, buildConditions(departmentCriteria)).all();
+    }
+
+    @Override
+    public Mono<Long> countByCriteria(DepartmentCriteria criteria) {
+        return findByCriteria(criteria, null)
+            .collectList()
+            .map(collectedList -> collectedList != null ? (long) collectedList.size() : (long) 0);
+    }
+
+    private Condition buildConditions(DepartmentCriteria criteria) {
+        ConditionBuilder builder = new ConditionBuilder(this.columnConverter);
+        List<Condition> allConditions = new ArrayList<Condition>();
+        if (criteria != null) {
+            if (criteria.getId() != null) {
+                builder.buildFilterConditionForField(criteria.getId(), entityTable.column("id"));
+            }
+            if (criteria.getDepartmentName() != null) {
+                builder.buildFilterConditionForField(criteria.getDepartmentName(), entityTable.column("department_name"));
+            }
+            if (criteria.getLocationId() != null) {
+                builder.buildFilterConditionForField(criteria.getLocationId(), locationTable.column("id"));
+            }
+        }
+        return builder.buildConditions();
     }
 }

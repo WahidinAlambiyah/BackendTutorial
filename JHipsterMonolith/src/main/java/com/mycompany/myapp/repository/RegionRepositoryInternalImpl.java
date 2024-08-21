@@ -1,9 +1,12 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.Region;
+import com.mycompany.myapp.domain.criteria.RegionCriteria;
+import com.mycompany.myapp.repository.rowmapper.ColumnConverter;
 import com.mycompany.myapp.repository.rowmapper.RegionRowMapper;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.r2dbc.convert.R2dbcConverter;
@@ -22,6 +25,7 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.r2dbc.core.RowsFetchSpec;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import tech.jhipster.service.ConditionBuilder;
 
 /**
  * Spring Data R2DBC custom repository implementation for the Region entity.
@@ -34,6 +38,7 @@ class RegionRepositoryInternalImpl extends SimpleR2dbcRepository<Region, Long> i
     private final EntityManager entityManager;
 
     private final RegionRowMapper regionMapper;
+    private final ColumnConverter columnConverter;
 
     private static final Table entityTable = Table.aliased("region", EntityManager.ENTITY_ALIAS);
 
@@ -42,7 +47,8 @@ class RegionRepositoryInternalImpl extends SimpleR2dbcRepository<Region, Long> i
         EntityManager entityManager,
         RegionRowMapper regionMapper,
         R2dbcEntityOperations entityOperations,
-        R2dbcConverter converter
+        R2dbcConverter converter,
+        ColumnConverter columnConverter
     ) {
         super(
             new MappingRelationalEntityInformation(converter.getMappingContext().getRequiredPersistentEntity(Region.class)),
@@ -53,6 +59,7 @@ class RegionRepositoryInternalImpl extends SimpleR2dbcRepository<Region, Long> i
         this.r2dbcEntityTemplate = template;
         this.entityManager = entityManager;
         this.regionMapper = regionMapper;
+        this.columnConverter = columnConverter;
     }
 
     @Override
@@ -87,5 +94,37 @@ class RegionRepositoryInternalImpl extends SimpleR2dbcRepository<Region, Long> i
     @Override
     public <S extends Region> Mono<S> save(S entity) {
         return super.save(entity);
+    }
+
+    @Override
+    public Flux<Region> findByCriteria(RegionCriteria regionCriteria, Pageable page) {
+        return createQuery(page, buildConditions(regionCriteria)).all();
+    }
+
+    @Override
+    public Mono<Long> countByCriteria(RegionCriteria criteria) {
+        return findByCriteria(criteria, null)
+            .collectList()
+            .map(collectedList -> collectedList != null ? (long) collectedList.size() : (long) 0);
+    }
+
+    private Condition buildConditions(RegionCriteria criteria) {
+        ConditionBuilder builder = new ConditionBuilder(this.columnConverter);
+        List<Condition> allConditions = new ArrayList<Condition>();
+        if (criteria != null) {
+            if (criteria.getId() != null) {
+                builder.buildFilterConditionForField(criteria.getId(), entityTable.column("id"));
+            }
+            if (criteria.getName() != null) {
+                builder.buildFilterConditionForField(criteria.getName(), entityTable.column("name"));
+            }
+            if (criteria.getUnm49Code() != null) {
+                builder.buildFilterConditionForField(criteria.getUnm49Code(), entityTable.column("unm_49_code"));
+            }
+            if (criteria.getIsoAlpha2Code() != null) {
+                builder.buildFilterConditionForField(criteria.getIsoAlpha2Code(), entityTable.column("iso_alpha_2_code"));
+            }
+        }
+        return builder.buildConditions();
     }
 }

@@ -1,10 +1,13 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.PostalCode;
+import com.mycompany.myapp.domain.criteria.PostalCodeCriteria;
+import com.mycompany.myapp.repository.rowmapper.ColumnConverter;
 import com.mycompany.myapp.repository.rowmapper.PostalCodeRowMapper;
 import com.mycompany.myapp.repository.rowmapper.SubDistrictRowMapper;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.r2dbc.convert.R2dbcConverter;
@@ -24,6 +27,7 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.r2dbc.core.RowsFetchSpec;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import tech.jhipster.service.ConditionBuilder;
 
 /**
  * Spring Data R2DBC custom repository implementation for the PostalCode entity.
@@ -37,6 +41,7 @@ class PostalCodeRepositoryInternalImpl extends SimpleR2dbcRepository<PostalCode,
 
     private final SubDistrictRowMapper subdistrictMapper;
     private final PostalCodeRowMapper postalcodeMapper;
+    private final ColumnConverter columnConverter;
 
     private static final Table entityTable = Table.aliased("postal_code", EntityManager.ENTITY_ALIAS);
     private static final Table subDistrictTable = Table.aliased("sub_district", "subDistrict");
@@ -47,7 +52,8 @@ class PostalCodeRepositoryInternalImpl extends SimpleR2dbcRepository<PostalCode,
         SubDistrictRowMapper subdistrictMapper,
         PostalCodeRowMapper postalcodeMapper,
         R2dbcEntityOperations entityOperations,
-        R2dbcConverter converter
+        R2dbcConverter converter,
+        ColumnConverter columnConverter
     ) {
         super(
             new MappingRelationalEntityInformation(converter.getMappingContext().getRequiredPersistentEntity(PostalCode.class)),
@@ -59,6 +65,7 @@ class PostalCodeRepositoryInternalImpl extends SimpleR2dbcRepository<PostalCode,
         this.entityManager = entityManager;
         this.subdistrictMapper = subdistrictMapper;
         this.postalcodeMapper = postalcodeMapper;
+        this.columnConverter = columnConverter;
     }
 
     @Override
@@ -115,5 +122,34 @@ class PostalCodeRepositoryInternalImpl extends SimpleR2dbcRepository<PostalCode,
     @Override
     public <S extends PostalCode> Mono<S> save(S entity) {
         return super.save(entity);
+    }
+
+    @Override
+    public Flux<PostalCode> findByCriteria(PostalCodeCriteria postalCodeCriteria, Pageable page) {
+        return createQuery(page, buildConditions(postalCodeCriteria)).all();
+    }
+
+    @Override
+    public Mono<Long> countByCriteria(PostalCodeCriteria criteria) {
+        return findByCriteria(criteria, null)
+            .collectList()
+            .map(collectedList -> collectedList != null ? (long) collectedList.size() : (long) 0);
+    }
+
+    private Condition buildConditions(PostalCodeCriteria criteria) {
+        ConditionBuilder builder = new ConditionBuilder(this.columnConverter);
+        List<Condition> allConditions = new ArrayList<Condition>();
+        if (criteria != null) {
+            if (criteria.getId() != null) {
+                builder.buildFilterConditionForField(criteria.getId(), entityTable.column("id"));
+            }
+            if (criteria.getCode() != null) {
+                builder.buildFilterConditionForField(criteria.getCode(), entityTable.column("code"));
+            }
+            if (criteria.getSubDistrictId() != null) {
+                builder.buildFilterConditionForField(criteria.getSubDistrictId(), subDistrictTable.column("id"));
+            }
+        }
+        return builder.buildConditions();
     }
 }

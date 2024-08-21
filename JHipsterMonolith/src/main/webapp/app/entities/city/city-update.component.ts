@@ -60,9 +60,9 @@ export default defineComponent({
       name: {
         required: validations.required(t$('entity.validation.required').toString()),
       },
-      code: {
-        required: validations.required(t$('entity.validation.required').toString()),
-      },
+      unm49Code: {},
+      isoAlpha2Code: {},
+      districts: {},
       province: {},
     };
     const v$ = useVuelidate(validationRules, city as any);

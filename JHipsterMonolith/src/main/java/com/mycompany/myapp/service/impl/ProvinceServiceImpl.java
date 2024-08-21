@@ -1,9 +1,11 @@
 package com.mycompany.myapp.service.impl;
 
-import com.mycompany.myapp.domain.Province;
+import com.mycompany.myapp.domain.criteria.ProvinceCriteria;
 import com.mycompany.myapp.repository.ProvinceRepository;
 import com.mycompany.myapp.repository.search.ProvinceSearchRepository;
 import com.mycompany.myapp.service.ProvinceService;
+import com.mycompany.myapp.service.dto.ProvinceDTO;
+import com.mycompany.myapp.service.mapper.ProvinceMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
@@ -23,38 +25,46 @@ public class ProvinceServiceImpl implements ProvinceService {
 
     private final ProvinceRepository provinceRepository;
 
+    private final ProvinceMapper provinceMapper;
+
     private final ProvinceSearchRepository provinceSearchRepository;
 
-    public ProvinceServiceImpl(ProvinceRepository provinceRepository, ProvinceSearchRepository provinceSearchRepository) {
+    public ProvinceServiceImpl(
+        ProvinceRepository provinceRepository,
+        ProvinceMapper provinceMapper,
+        ProvinceSearchRepository provinceSearchRepository
+    ) {
         this.provinceRepository = provinceRepository;
+        this.provinceMapper = provinceMapper;
         this.provinceSearchRepository = provinceSearchRepository;
     }
 
     @Override
-    public Mono<Province> save(Province province) {
-        log.debug("Request to save Province : {}", province);
-        return provinceRepository.save(province).flatMap(provinceSearchRepository::save);
+    public Mono<ProvinceDTO> save(ProvinceDTO provinceDTO) {
+        log.debug("Request to save Province : {}", provinceDTO);
+        return provinceRepository
+            .save(provinceMapper.toEntity(provinceDTO))
+            .flatMap(provinceSearchRepository::save)
+            .map(provinceMapper::toDto);
     }
 
     @Override
-    public Mono<Province> update(Province province) {
-        log.debug("Request to update Province : {}", province);
-        return provinceRepository.save(province).flatMap(provinceSearchRepository::save);
+    public Mono<ProvinceDTO> update(ProvinceDTO provinceDTO) {
+        log.debug("Request to update Province : {}", provinceDTO);
+        return provinceRepository
+            .save(provinceMapper.toEntity(provinceDTO))
+            .flatMap(provinceSearchRepository::save)
+            .map(provinceMapper::toDto);
     }
 
     @Override
-    public Mono<Province> partialUpdate(Province province) {
-        log.debug("Request to partially update Province : {}", province);
+    public Mono<ProvinceDTO> partialUpdate(ProvinceDTO provinceDTO) {
+        log.debug("Request to partially update Province : {}", provinceDTO);
 
         return provinceRepository
-            .findById(province.getId())
+            .findById(provinceDTO.getId())
             .map(existingProvince -> {
-                if (province.getName() != null) {
-                    existingProvince.setName(province.getName());
-                }
-                if (province.getCode() != null) {
-                    existingProvince.setCode(province.getCode());
-                }
+                provinceMapper.partialUpdate(existingProvince, provinceDTO);
 
                 return existingProvince;
             })
@@ -62,18 +72,29 @@ public class ProvinceServiceImpl implements ProvinceService {
             .flatMap(savedProvince -> {
                 provinceSearchRepository.save(savedProvince);
                 return Mono.just(savedProvince);
-            });
+            })
+            .map(provinceMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<Province> findAll(Pageable pageable) {
-        log.debug("Request to get all Provinces");
-        return provinceRepository.findAllBy(pageable);
+    public Flux<ProvinceDTO> findByCriteria(ProvinceCriteria criteria, Pageable pageable) {
+        log.debug("Request to get all Provinces by Criteria");
+        return provinceRepository.findByCriteria(criteria, pageable).map(provinceMapper::toDto);
     }
 
-    public Flux<Province> findAllWithEagerRelationships(Pageable pageable) {
-        return provinceRepository.findAllWithEagerRelationships(pageable);
+    /**
+     * Find the count of provinces by criteria.
+     * @param criteria filtering criteria
+     * @return the count of provinces
+     */
+    public Mono<Long> countByCriteria(ProvinceCriteria criteria) {
+        log.debug("Request to get the count of all Provinces by Criteria");
+        return provinceRepository.countByCriteria(criteria);
+    }
+
+    public Flux<ProvinceDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return provinceRepository.findAllWithEagerRelationships(pageable).map(provinceMapper::toDto);
     }
 
     public Mono<Long> countAll() {
@@ -86,9 +107,9 @@ public class ProvinceServiceImpl implements ProvinceService {
 
     @Override
     @Transactional(readOnly = true)
-    public Mono<Province> findOne(Long id) {
+    public Mono<ProvinceDTO> findOne(Long id) {
         log.debug("Request to get Province : {}", id);
-        return provinceRepository.findOneWithEagerRelationships(id);
+        return provinceRepository.findOneWithEagerRelationships(id).map(provinceMapper::toDto);
     }
 
     @Override
@@ -99,8 +120,8 @@ public class ProvinceServiceImpl implements ProvinceService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<Province> search(String query, Pageable pageable) {
+    public Flux<ProvinceDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of Provinces for query {}", query);
-        return provinceSearchRepository.search(query, pageable);
+        return provinceSearchRepository.search(query, pageable).map(provinceMapper::toDto);
     }
 }

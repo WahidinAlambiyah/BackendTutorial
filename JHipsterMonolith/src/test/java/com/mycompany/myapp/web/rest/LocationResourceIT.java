@@ -14,7 +14,8 @@ import com.mycompany.myapp.domain.Location;
 import com.mycompany.myapp.repository.EntityManager;
 import com.mycompany.myapp.repository.LocationRepository;
 import com.mycompany.myapp.repository.search.LocationSearchRepository;
-import java.time.Duration;
+import com.mycompany.myapp.service.dto.LocationDTO;
+import com.mycompany.myapp.service.mapper.LocationMapper;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -62,6 +63,9 @@ class LocationResourceIT {
 
     @Autowired
     private LocationRepository locationRepository;
+
+    @Autowired
+    private LocationMapper locationMapper;
 
     @Autowired
     private LocationSearchRepository locationSearchRepository;
@@ -134,20 +138,22 @@ class LocationResourceIT {
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(locationSearchRepository.findAll().collectList().block());
         // Create the Location
-        var returnedLocation = webTestClient
+        LocationDTO locationDTO = locationMapper.toDto(location);
+        var returnedLocationDTO = webTestClient
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(location))
+            .bodyValue(om.writeValueAsBytes(locationDTO))
             .exchange()
             .expectStatus()
             .isCreated()
-            .expectBody(Location.class)
+            .expectBody(LocationDTO.class)
             .returnResult()
             .getResponseBody();
 
         // Validate the Location in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        var returnedLocation = locationMapper.toEntity(returnedLocationDTO);
         assertLocationUpdatableFieldsEquals(returnedLocation, getPersistedLocation(returnedLocation));
 
         await()
@@ -164,6 +170,7 @@ class LocationResourceIT {
     void createLocationWithExistingId() throws Exception {
         // Create the Location with an existing ID
         location.setId(1L);
+        LocationDTO locationDTO = locationMapper.toDto(location);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(locationSearchRepository.findAll().collectList().block());
@@ -173,7 +180,7 @@ class LocationResourceIT {
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(location))
+            .bodyValue(om.writeValueAsBytes(locationDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -182,35 +189,6 @@ class LocationResourceIT {
         assertSameRepositoryCount(databaseSizeBeforeCreate);
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(locationSearchRepository.findAll().collectList().block());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
-    }
-
-    @Test
-    void getAllLocationsAsStream() {
-        // Initialize the database
-        locationRepository.save(location).block();
-
-        List<Location> locationList = webTestClient
-            .get()
-            .uri(ENTITY_API_URL)
-            .accept(MediaType.APPLICATION_NDJSON)
-            .exchange()
-            .expectStatus()
-            .isOk()
-            .expectHeader()
-            .contentTypeCompatibleWith(MediaType.APPLICATION_NDJSON)
-            .returnResult(Location.class)
-            .getResponseBody()
-            .filter(location::equals)
-            .collectList()
-            .block(Duration.ofSeconds(5));
-
-        assertThat(locationList).isNotNull();
-        assertThat(locationList).hasSize(1);
-        Location testLocation = locationList.get(0);
-
-        // Test fails because reactive api returns an empty object instead of null
-        // assertLocationAllPropertiesEquals(location, testLocation);
-        assertLocationUpdatableFieldsEquals(location, testLocation);
     }
 
     @Test
@@ -270,6 +248,294 @@ class LocationResourceIT {
     }
 
     @Test
+    void getLocationsByIdFiltering() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        Long id = location.getId();
+
+        defaultLocationFiltering("id.equals=" + id, "id.notEquals=" + id);
+
+        defaultLocationFiltering("id.greaterThanOrEqual=" + id, "id.greaterThan=" + id);
+
+        defaultLocationFiltering("id.lessThanOrEqual=" + id, "id.lessThan=" + id);
+    }
+
+    @Test
+    void getAllLocationsByStreetAddressIsEqualToSomething() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where streetAddress equals to
+        defaultLocationFiltering("streetAddress.equals=" + DEFAULT_STREET_ADDRESS, "streetAddress.equals=" + UPDATED_STREET_ADDRESS);
+    }
+
+    @Test
+    void getAllLocationsByStreetAddressIsInShouldWork() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where streetAddress in
+        defaultLocationFiltering(
+            "streetAddress.in=" + DEFAULT_STREET_ADDRESS + "," + UPDATED_STREET_ADDRESS,
+            "streetAddress.in=" + UPDATED_STREET_ADDRESS
+        );
+    }
+
+    @Test
+    void getAllLocationsByStreetAddressIsNullOrNotNull() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where streetAddress is not null
+        defaultLocationFiltering("streetAddress.specified=true", "streetAddress.specified=false");
+    }
+
+    @Test
+    void getAllLocationsByStreetAddressContainsSomething() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where streetAddress contains
+        defaultLocationFiltering("streetAddress.contains=" + DEFAULT_STREET_ADDRESS, "streetAddress.contains=" + UPDATED_STREET_ADDRESS);
+    }
+
+    @Test
+    void getAllLocationsByStreetAddressNotContainsSomething() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where streetAddress does not contain
+        defaultLocationFiltering(
+            "streetAddress.doesNotContain=" + UPDATED_STREET_ADDRESS,
+            "streetAddress.doesNotContain=" + DEFAULT_STREET_ADDRESS
+        );
+    }
+
+    @Test
+    void getAllLocationsByPostalCodeIsEqualToSomething() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where postalCode equals to
+        defaultLocationFiltering("postalCode.equals=" + DEFAULT_POSTAL_CODE, "postalCode.equals=" + UPDATED_POSTAL_CODE);
+    }
+
+    @Test
+    void getAllLocationsByPostalCodeIsInShouldWork() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where postalCode in
+        defaultLocationFiltering(
+            "postalCode.in=" + DEFAULT_POSTAL_CODE + "," + UPDATED_POSTAL_CODE,
+            "postalCode.in=" + UPDATED_POSTAL_CODE
+        );
+    }
+
+    @Test
+    void getAllLocationsByPostalCodeIsNullOrNotNull() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where postalCode is not null
+        defaultLocationFiltering("postalCode.specified=true", "postalCode.specified=false");
+    }
+
+    @Test
+    void getAllLocationsByPostalCodeContainsSomething() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where postalCode contains
+        defaultLocationFiltering("postalCode.contains=" + DEFAULT_POSTAL_CODE, "postalCode.contains=" + UPDATED_POSTAL_CODE);
+    }
+
+    @Test
+    void getAllLocationsByPostalCodeNotContainsSomething() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where postalCode does not contain
+        defaultLocationFiltering("postalCode.doesNotContain=" + UPDATED_POSTAL_CODE, "postalCode.doesNotContain=" + DEFAULT_POSTAL_CODE);
+    }
+
+    @Test
+    void getAllLocationsByCityIsEqualToSomething() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where city equals to
+        defaultLocationFiltering("city.equals=" + DEFAULT_CITY, "city.equals=" + UPDATED_CITY);
+    }
+
+    @Test
+    void getAllLocationsByCityIsInShouldWork() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where city in
+        defaultLocationFiltering("city.in=" + DEFAULT_CITY + "," + UPDATED_CITY, "city.in=" + UPDATED_CITY);
+    }
+
+    @Test
+    void getAllLocationsByCityIsNullOrNotNull() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where city is not null
+        defaultLocationFiltering("city.specified=true", "city.specified=false");
+    }
+
+    @Test
+    void getAllLocationsByCityContainsSomething() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where city contains
+        defaultLocationFiltering("city.contains=" + DEFAULT_CITY, "city.contains=" + UPDATED_CITY);
+    }
+
+    @Test
+    void getAllLocationsByCityNotContainsSomething() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where city does not contain
+        defaultLocationFiltering("city.doesNotContain=" + UPDATED_CITY, "city.doesNotContain=" + DEFAULT_CITY);
+    }
+
+    @Test
+    void getAllLocationsByStateProvinceIsEqualToSomething() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where stateProvince equals to
+        defaultLocationFiltering("stateProvince.equals=" + DEFAULT_STATE_PROVINCE, "stateProvince.equals=" + UPDATED_STATE_PROVINCE);
+    }
+
+    @Test
+    void getAllLocationsByStateProvinceIsInShouldWork() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where stateProvince in
+        defaultLocationFiltering(
+            "stateProvince.in=" + DEFAULT_STATE_PROVINCE + "," + UPDATED_STATE_PROVINCE,
+            "stateProvince.in=" + UPDATED_STATE_PROVINCE
+        );
+    }
+
+    @Test
+    void getAllLocationsByStateProvinceIsNullOrNotNull() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where stateProvince is not null
+        defaultLocationFiltering("stateProvince.specified=true", "stateProvince.specified=false");
+    }
+
+    @Test
+    void getAllLocationsByStateProvinceContainsSomething() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where stateProvince contains
+        defaultLocationFiltering("stateProvince.contains=" + DEFAULT_STATE_PROVINCE, "stateProvince.contains=" + UPDATED_STATE_PROVINCE);
+    }
+
+    @Test
+    void getAllLocationsByStateProvinceNotContainsSomething() {
+        // Initialize the database
+        insertedLocation = locationRepository.save(location).block();
+
+        // Get all the locationList where stateProvince does not contain
+        defaultLocationFiltering(
+            "stateProvince.doesNotContain=" + UPDATED_STATE_PROVINCE,
+            "stateProvince.doesNotContain=" + DEFAULT_STATE_PROVINCE
+        );
+    }
+
+    private void defaultLocationFiltering(String shouldBeFound, String shouldNotBeFound) {
+        defaultLocationShouldBeFound(shouldBeFound);
+        defaultLocationShouldNotBeFound(shouldNotBeFound);
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultLocationShouldBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$.[*].id")
+            .value(hasItem(location.getId().intValue()))
+            .jsonPath("$.[*].streetAddress")
+            .value(hasItem(DEFAULT_STREET_ADDRESS))
+            .jsonPath("$.[*].postalCode")
+            .value(hasItem(DEFAULT_POSTAL_CODE))
+            .jsonPath("$.[*].city")
+            .value(hasItem(DEFAULT_CITY))
+            .jsonPath("$.[*].stateProvince")
+            .value(hasItem(DEFAULT_STATE_PROVINCE));
+
+        // Check, that the count call also returns 1
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultLocationShouldNotBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .isArray()
+            .jsonPath("$")
+            .isEmpty();
+
+        // Check, that the count call also returns 0
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(0));
+    }
+
+    @Test
     void getNonExistingLocation() {
         // Get the location
         webTestClient
@@ -297,12 +563,13 @@ class LocationResourceIT {
             .postalCode(UPDATED_POSTAL_CODE)
             .city(UPDATED_CITY)
             .stateProvince(UPDATED_STATE_PROVINCE);
+        LocationDTO locationDTO = locationMapper.toDto(updatedLocation);
 
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, updatedLocation.getId())
+            .uri(ENTITY_API_URL_ID, locationDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(updatedLocation))
+            .bodyValue(om.writeValueAsBytes(locationDTO))
             .exchange()
             .expectStatus()
             .isOk();
@@ -331,12 +598,15 @@ class LocationResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(locationSearchRepository.findAll().collectList().block());
         location.setId(longCount.incrementAndGet());
 
+        // Create the Location
+        LocationDTO locationDTO = locationMapper.toDto(location);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, location.getId())
+            .uri(ENTITY_API_URL_ID, locationDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(location))
+            .bodyValue(om.writeValueAsBytes(locationDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -353,12 +623,15 @@ class LocationResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(locationSearchRepository.findAll().collectList().block());
         location.setId(longCount.incrementAndGet());
 
+        // Create the Location
+        LocationDTO locationDTO = locationMapper.toDto(location);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(location))
+            .bodyValue(om.writeValueAsBytes(locationDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -375,12 +648,15 @@ class LocationResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(locationSearchRepository.findAll().collectList().block());
         location.setId(longCount.incrementAndGet());
 
+        // Create the Location
+        LocationDTO locationDTO = locationMapper.toDto(location);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(location))
+            .bodyValue(om.writeValueAsBytes(locationDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);
@@ -457,12 +733,15 @@ class LocationResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(locationSearchRepository.findAll().collectList().block());
         location.setId(longCount.incrementAndGet());
 
+        // Create the Location
+        LocationDTO locationDTO = locationMapper.toDto(location);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
-            .uri(ENTITY_API_URL_ID, location.getId())
+            .uri(ENTITY_API_URL_ID, locationDTO.getId())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(location))
+            .bodyValue(om.writeValueAsBytes(locationDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -479,12 +758,15 @@ class LocationResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(locationSearchRepository.findAll().collectList().block());
         location.setId(longCount.incrementAndGet());
 
+        // Create the Location
+        LocationDTO locationDTO = locationMapper.toDto(location);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(location))
+            .bodyValue(om.writeValueAsBytes(locationDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -501,12 +783,15 @@ class LocationResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(locationSearchRepository.findAll().collectList().block());
         location.setId(longCount.incrementAndGet());
 
+        // Create the Location
+        LocationDTO locationDTO = locationMapper.toDto(location);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(location))
+            .bodyValue(om.writeValueAsBytes(locationDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);

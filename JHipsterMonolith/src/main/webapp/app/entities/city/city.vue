@@ -53,9 +53,13 @@
               <span v-text="t$('jHipsterMonolithApp.city.name')"></span>
               <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'name'"></jhi-sort-indicator>
             </th>
-            <th scope="row" v-on:click="changeOrder('code')">
-              <span v-text="t$('jHipsterMonolithApp.city.code')"></span>
-              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'code'"></jhi-sort-indicator>
+            <th scope="row" v-on:click="changeOrder('unm49Code')">
+              <span v-text="t$('jHipsterMonolithApp.city.unm49Code')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'unm49Code'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('isoAlpha2Code')">
+              <span v-text="t$('jHipsterMonolithApp.city.isoAlpha2Code')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'isoAlpha2Code'"></jhi-sort-indicator>
             </th>
             <th scope="row" v-on:click="changeOrder('province.name')">
               <span v-text="t$('jHipsterMonolithApp.city.province')"></span>
@@ -70,7 +74,8 @@
               <router-link :to="{ name: 'CityView', params: { cityId: city.id } }">{{ city.id }}</router-link>
             </td>
             <td>{{ city.name }}</td>
-            <td>{{ city.code }}</td>
+            <td>{{ city.unm49Code }}</td>
+            <td>{{ city.isoAlpha2Code }}</td>
             <td>
               <div v-if="city.province">
                 <router-link :to="{ name: 'ProvinceView', params: { provinceId: city.province.id } }">{{ city.province.name }}</router-link>

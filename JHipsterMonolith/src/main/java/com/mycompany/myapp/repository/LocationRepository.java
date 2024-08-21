@@ -1,6 +1,7 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.Location;
+import com.mycompany.myapp.domain.criteria.LocationCriteria;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
@@ -40,4 +41,7 @@ interface LocationRepositoryInternal {
     Mono<Location> findById(Long id);
     // this is not supported at the moment because of https://github.com/jhipster/generator-jhipster/issues/18269
     // Flux<Location> findAllBy(Pageable pageable, Criteria criteria);
+    Flux<Location> findByCriteria(LocationCriteria criteria, Pageable pageable);
+
+    Mono<Long> countByCriteria(LocationCriteria criteria);
 }

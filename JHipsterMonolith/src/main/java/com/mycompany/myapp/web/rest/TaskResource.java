@@ -1,8 +1,9 @@
 package com.mycompany.myapp.web.rest;
 
-import com.mycompany.myapp.domain.Task;
+import com.mycompany.myapp.domain.criteria.TaskCriteria;
 import com.mycompany.myapp.repository.TaskRepository;
 import com.mycompany.myapp.service.TaskService;
+import com.mycompany.myapp.service.dto.TaskDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import com.mycompany.myapp.web.rest.errors.ElasticsearchExceptionMapper;
 import java.net.URI;
@@ -48,18 +49,18 @@ public class TaskResource {
     /**
      * {@code POST  /tasks} : Create a new task.
      *
-     * @param task the task to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new task, or with status {@code 400 (Bad Request)} if the task has already an ID.
+     * @param taskDTO the taskDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new taskDTO, or with status {@code 400 (Bad Request)} if the task has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public Mono<ResponseEntity<Task>> createTask(@RequestBody Task task) throws URISyntaxException {
-        log.debug("REST request to save Task : {}", task);
-        if (task.getId() != null) {
+    public Mono<ResponseEntity<TaskDTO>> createTask(@RequestBody TaskDTO taskDTO) throws URISyntaxException {
+        log.debug("REST request to save Task : {}", taskDTO);
+        if (taskDTO.getId() != null) {
             throw new BadRequestAlertException("A new task cannot already have an ID", ENTITY_NAME, "idexists");
         }
         return taskService
-            .save(task)
+            .save(taskDTO)
             .map(result -> {
                 try {
                     return ResponseEntity.created(new URI("/api/tasks/" + result.getId()))
@@ -74,21 +75,23 @@ public class TaskResource {
     /**
      * {@code PUT  /tasks/:id} : Updates an existing task.
      *
-     * @param id the id of the task to save.
-     * @param task the task to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated task,
-     * or with status {@code 400 (Bad Request)} if the task is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the task couldn't be updated.
+     * @param id the id of the taskDTO to save.
+     * @param taskDTO the taskDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated taskDTO,
+     * or with status {@code 400 (Bad Request)} if the taskDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the taskDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
-    public Mono<ResponseEntity<Task>> updateTask(@PathVariable(value = "id", required = false) final Long id, @RequestBody Task task)
-        throws URISyntaxException {
-        log.debug("REST request to update Task : {}, {}", id, task);
-        if (task.getId() == null) {
+    public Mono<ResponseEntity<TaskDTO>> updateTask(
+        @PathVariable(value = "id", required = false) final Long id,
+        @RequestBody TaskDTO taskDTO
+    ) throws URISyntaxException {
+        log.debug("REST request to update Task : {}, {}", id, taskDTO);
+        if (taskDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, task.getId())) {
+        if (!Objects.equals(id, taskDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -100,7 +103,7 @@ public class TaskResource {
                 }
 
                 return taskService
-                    .update(task)
+                    .update(taskDTO)
                     .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
                     .map(
                         result ->
@@ -114,24 +117,24 @@ public class TaskResource {
     /**
      * {@code PATCH  /tasks/:id} : Partial updates given fields of an existing task, field will ignore if it is null
      *
-     * @param id the id of the task to save.
-     * @param task the task to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated task,
-     * or with status {@code 400 (Bad Request)} if the task is not valid,
-     * or with status {@code 404 (Not Found)} if the task is not found,
-     * or with status {@code 500 (Internal Server Error)} if the task couldn't be updated.
+     * @param id the id of the taskDTO to save.
+     * @param taskDTO the taskDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated taskDTO,
+     * or with status {@code 400 (Bad Request)} if the taskDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the taskDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the taskDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public Mono<ResponseEntity<Task>> partialUpdateTask(
+    public Mono<ResponseEntity<TaskDTO>> partialUpdateTask(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody Task task
+        @RequestBody TaskDTO taskDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Task partially : {}, {}", id, task);
-        if (task.getId() == null) {
+        log.debug("REST request to partial update Task partially : {}, {}", id, taskDTO);
+        if (taskDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, task.getId())) {
+        if (!Objects.equals(id, taskDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -142,7 +145,7 @@ public class TaskResource {
                     return Mono.error(new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
                 }
 
-                Mono<Task> result = taskService.partialUpdate(task);
+                Mono<TaskDTO> result = taskService.partialUpdate(taskDTO);
 
                 return result
                     .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
@@ -158,41 +161,44 @@ public class TaskResource {
     /**
      * {@code GET  /tasks} : get all the tasks.
      *
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of tasks in body.
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<List<Task>> getAllTasks() {
-        log.debug("REST request to get all Tasks");
-        return taskService.findAll().collectList();
+    public Flux<TaskDTO> getAllTasks(TaskCriteria criteria) {
+        log.debug("REST request to get Tasks by criteria: {}", criteria);
+        return taskService.findByCriteria(criteria);
     }
 
     /**
-     * {@code GET  /tasks} : get all the tasks as a stream.
-     * @return the {@link Flux} of tasks.
+     * {@code GET  /tasks/count} : count all the tasks.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
      */
-    @GetMapping(value = "", produces = MediaType.APPLICATION_NDJSON_VALUE)
-    public Flux<Task> getAllTasksAsStream() {
-        log.debug("REST request to get all Tasks as a stream");
-        return taskService.findAll();
+    @GetMapping("/count")
+    public Mono<ResponseEntity<Long>> countTasks(TaskCriteria criteria) {
+        log.debug("REST request to count Tasks by criteria: {}", criteria);
+        return taskService.countByCriteria(criteria).map(count -> ResponseEntity.status(HttpStatus.OK).body(count));
     }
 
     /**
      * {@code GET  /tasks/:id} : get the "id" task.
      *
-     * @param id the id of the task to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the task, or with status {@code 404 (Not Found)}.
+     * @param id the id of the taskDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the taskDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public Mono<ResponseEntity<Task>> getTask(@PathVariable("id") Long id) {
+    public Mono<ResponseEntity<TaskDTO>> getTask(@PathVariable("id") Long id) {
         log.debug("REST request to get Task : {}", id);
-        Mono<Task> task = taskService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(task);
+        Mono<TaskDTO> taskDTO = taskService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(taskDTO);
     }
 
     /**
      * {@code DELETE  /tasks/:id} : delete the "id" task.
      *
-     * @param id the id of the task to delete.
+     * @param id the id of the taskDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
@@ -217,7 +223,7 @@ public class TaskResource {
      * @return the result of the search.
      */
     @GetMapping("/_search")
-    public Mono<List<Task>> searchTasks(@RequestParam("query") String query) {
+    public Mono<List<TaskDTO>> searchTasks(@RequestParam("query") String query) {
         log.debug("REST request to search Tasks for query {}", query);
         try {
             return taskService.search(query).collectList();

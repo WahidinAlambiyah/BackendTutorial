@@ -1,6 +1,7 @@
 package com.mycompany.myapp.service;
 
-import com.mycompany.myapp.domain.Province;
+import com.mycompany.myapp.domain.criteria.ProvinceCriteria;
+import com.mycompany.myapp.service.dto.ProvinceDTO;
 import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -12,34 +13,40 @@ public interface ProvinceService {
     /**
      * Save a province.
      *
-     * @param province the entity to save.
+     * @param provinceDTO the entity to save.
      * @return the persisted entity.
      */
-    Mono<Province> save(Province province);
+    Mono<ProvinceDTO> save(ProvinceDTO provinceDTO);
 
     /**
      * Updates a province.
      *
-     * @param province the entity to update.
+     * @param provinceDTO the entity to update.
      * @return the persisted entity.
      */
-    Mono<Province> update(Province province);
+    Mono<ProvinceDTO> update(ProvinceDTO provinceDTO);
 
     /**
      * Partially updates a province.
      *
-     * @param province the entity to update partially.
+     * @param provinceDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Mono<Province> partialUpdate(Province province);
-
+    Mono<ProvinceDTO> partialUpdate(ProvinceDTO provinceDTO);
     /**
-     * Get all the provinces.
+     * Find provinces by criteria.
      *
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<Province> findAll(Pageable pageable);
+    Flux<ProvinceDTO> findByCriteria(ProvinceCriteria criteria, Pageable pageable);
+
+    /**
+     * Find the count of provinces by criteria.
+     * @param criteria filtering criteria
+     * @return the count of provinces
+     */
+    public Mono<Long> countByCriteria(ProvinceCriteria criteria);
 
     /**
      * Get all the provinces with eager load of many-to-many relationships.
@@ -47,7 +54,7 @@ public interface ProvinceService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<Province> findAllWithEagerRelationships(Pageable pageable);
+    Flux<ProvinceDTO> findAllWithEagerRelationships(Pageable pageable);
 
     /**
      * Returns the number of provinces available.
@@ -68,7 +75,7 @@ public interface ProvinceService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Mono<Province> findOne(Long id);
+    Mono<ProvinceDTO> findOne(Long id);
 
     /**
      * Delete the "id" province.
@@ -86,5 +93,5 @@ public interface ProvinceService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<Province> search(String query, Pageable pageable);
+    Flux<ProvinceDTO> search(String query, Pageable pageable);
 }

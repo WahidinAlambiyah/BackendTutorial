@@ -10,32 +10,38 @@
 
 entity Region {
 	name String required
-	code String required unique
+	unm49Code String unique
+	isoAlpha2Code String unique
 }
 
 entity Country {
 	name String required
-	code String required unique
+	unm49Code String unique
+	isoAlpha2Code String unique
 }
 
 entity Province {
 	name String required
-	code String required unique
+	unm49Code String unique
+	isoAlpha2Code String unique
 }
 
 entity City {
 	name String required
-	code String required unique
+	unm49Code String unique
+	isoAlpha2Code String unique
 }
 
 entity District {
 	name String required
-	code String required unique
+	unm49Code String unique
+	isoAlpha2Code String unique
 }
 
 entity SubDistrict {
 	name String required
-	code String required unique
+	unm49Code String unique
+	isoAlpha2Code String unique
 }
 
 entity PostalCode {
@@ -151,9 +157,15 @@ paginate Job, Region, Country, Province, City, District, SubDistrict, PostalCode
 
 // Use Data Transfer Objects (DTO)
 // dto * with mapstruct
+dto * with mapstruct
 
 // Set service options to all except few
-service all with serviceImpl except Employee, Job
+// service all with serviceImpl except Employee, Job
+service all with serviceImpl
 
 // Set an angular suffix
 // angularSuffix * with mySuffix
+
+filter * 
+
+

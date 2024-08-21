@@ -72,8 +72,10 @@ export default defineComponent({
       hireDate: {},
       salary: {},
       commissionPct: {},
+      jobs: {},
       manager: {},
       department: {},
+      jobHistory: {},
     };
     const v$ = useVuelidate(validationRules, employee as any);
     v$.value.$validate();

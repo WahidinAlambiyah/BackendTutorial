@@ -1,9 +1,11 @@
 package com.mycompany.myapp.service.impl;
 
-import com.mycompany.myapp.domain.Task;
+import com.mycompany.myapp.domain.criteria.TaskCriteria;
 import com.mycompany.myapp.repository.TaskRepository;
 import com.mycompany.myapp.repository.search.TaskSearchRepository;
 import com.mycompany.myapp.service.TaskService;
+import com.mycompany.myapp.service.dto.TaskDTO;
+import com.mycompany.myapp.service.mapper.TaskMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,38 +24,36 @@ public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
 
+    private final TaskMapper taskMapper;
+
     private final TaskSearchRepository taskSearchRepository;
 
-    public TaskServiceImpl(TaskRepository taskRepository, TaskSearchRepository taskSearchRepository) {
+    public TaskServiceImpl(TaskRepository taskRepository, TaskMapper taskMapper, TaskSearchRepository taskSearchRepository) {
         this.taskRepository = taskRepository;
+        this.taskMapper = taskMapper;
         this.taskSearchRepository = taskSearchRepository;
     }
 
     @Override
-    public Mono<Task> save(Task task) {
-        log.debug("Request to save Task : {}", task);
-        return taskRepository.save(task).flatMap(taskSearchRepository::save);
+    public Mono<TaskDTO> save(TaskDTO taskDTO) {
+        log.debug("Request to save Task : {}", taskDTO);
+        return taskRepository.save(taskMapper.toEntity(taskDTO)).flatMap(taskSearchRepository::save).map(taskMapper::toDto);
     }
 
     @Override
-    public Mono<Task> update(Task task) {
-        log.debug("Request to update Task : {}", task);
-        return taskRepository.save(task).flatMap(taskSearchRepository::save);
+    public Mono<TaskDTO> update(TaskDTO taskDTO) {
+        log.debug("Request to update Task : {}", taskDTO);
+        return taskRepository.save(taskMapper.toEntity(taskDTO)).flatMap(taskSearchRepository::save).map(taskMapper::toDto);
     }
 
     @Override
-    public Mono<Task> partialUpdate(Task task) {
-        log.debug("Request to partially update Task : {}", task);
+    public Mono<TaskDTO> partialUpdate(TaskDTO taskDTO) {
+        log.debug("Request to partially update Task : {}", taskDTO);
 
         return taskRepository
-            .findById(task.getId())
+            .findById(taskDTO.getId())
             .map(existingTask -> {
-                if (task.getTitle() != null) {
-                    existingTask.setTitle(task.getTitle());
-                }
-                if (task.getDescription() != null) {
-                    existingTask.setDescription(task.getDescription());
-                }
+                taskMapper.partialUpdate(existingTask, taskDTO);
 
                 return existingTask;
             })
@@ -61,14 +61,25 @@ public class TaskServiceImpl implements TaskService {
             .flatMap(savedTask -> {
                 taskSearchRepository.save(savedTask);
                 return Mono.just(savedTask);
-            });
+            })
+            .map(taskMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<Task> findAll() {
-        log.debug("Request to get all Tasks");
-        return taskRepository.findAll();
+    public Flux<TaskDTO> findByCriteria(TaskCriteria criteria) {
+        log.debug("Request to get all Tasks by Criteria");
+        return taskRepository.findByCriteria(criteria, null).map(taskMapper::toDto);
+    }
+
+    /**
+     * Find the count of tasks by criteria.
+     * @param criteria filtering criteria
+     * @return the count of tasks
+     */
+    public Mono<Long> countByCriteria(TaskCriteria criteria) {
+        log.debug("Request to get the count of all Tasks by Criteria");
+        return taskRepository.countByCriteria(criteria);
     }
 
     public Mono<Long> countAll() {
@@ -81,9 +92,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public Mono<Task> findOne(Long id) {
+    public Mono<TaskDTO> findOne(Long id) {
         log.debug("Request to get Task : {}", id);
-        return taskRepository.findById(id);
+        return taskRepository.findById(id).map(taskMapper::toDto);
     }
 
     @Override
@@ -94,10 +105,10 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<Task> search(String query) {
+    public Flux<TaskDTO> search(String query) {
         log.debug("Request to search Tasks for query {}", query);
         try {
-            return taskSearchRepository.search(query);
+            return taskSearchRepository.search(query).map(taskMapper::toDto);
         } catch (RuntimeException e) {
             throw e;
         }

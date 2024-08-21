@@ -29,19 +29,37 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="form-control-label" v-text="t$('jHipsterMonolithApp.subDistrict.code')" for="sub-district-code"></label>
+            <label class="form-control-label" v-text="t$('jHipsterMonolithApp.subDistrict.unm49Code')" for="sub-district-unm49Code"></label>
             <input
               type="text"
               class="form-control"
-              name="code"
-              id="sub-district-code"
-              data-cy="code"
-              :class="{ valid: !v$.code.$invalid, invalid: v$.code.$invalid }"
-              v-model="v$.code.$model"
-              required
+              name="unm49Code"
+              id="sub-district-unm49Code"
+              data-cy="unm49Code"
+              :class="{ valid: !v$.unm49Code.$invalid, invalid: v$.unm49Code.$invalid }"
+              v-model="v$.unm49Code.$model"
             />
-            <div v-if="v$.code.$anyDirty && v$.code.$invalid">
-              <small class="form-text text-danger" v-for="error of v$.code.$errors" :key="error.$uid">{{ error.$message }}</small>
+            <div v-if="v$.unm49Code.$anyDirty && v$.unm49Code.$invalid">
+              <small class="form-text text-danger" v-for="error of v$.unm49Code.$errors" :key="error.$uid">{{ error.$message }}</small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label
+              class="form-control-label"
+              v-text="t$('jHipsterMonolithApp.subDistrict.isoAlpha2Code')"
+              for="sub-district-isoAlpha2Code"
+            ></label>
+            <input
+              type="text"
+              class="form-control"
+              name="isoAlpha2Code"
+              id="sub-district-isoAlpha2Code"
+              data-cy="isoAlpha2Code"
+              :class="{ valid: !v$.isoAlpha2Code.$invalid, invalid: v$.isoAlpha2Code.$invalid }"
+              v-model="v$.isoAlpha2Code.$model"
+            />
+            <div v-if="v$.isoAlpha2Code.$anyDirty && v$.isoAlpha2Code.$invalid">
+              <small class="form-text text-danger" v-for="error of v$.isoAlpha2Code.$errors" :key="error.$uid">{{ error.$message }}</small>
             </div>
           </div>
           <div class="form-group">

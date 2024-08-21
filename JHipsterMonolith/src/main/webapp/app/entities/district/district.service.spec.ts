@@ -29,7 +29,7 @@ describe('Service Tests', () => {
 
     beforeEach(() => {
       service = new DistrictService();
-      elemDefault = new District(123, 'AAAAAAA', 'AAAAAAA');
+      elemDefault = new District(123, 'AAAAAAA', 'AAAAAAA', 'AAAAAAA');
     });
 
     describe('Service methods', () => {
@@ -82,7 +82,8 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             name: 'BBBBBB',
-            code: 'BBBBBB',
+            unm49Code: 'BBBBBB',
+            isoAlpha2Code: 'BBBBBB',
           },
           elemDefault,
         );
@@ -107,7 +108,12 @@ describe('Service Tests', () => {
       });
 
       it('should partial update a District', async () => {
-        const patchObject = Object.assign({}, new District());
+        const patchObject = Object.assign(
+          {
+            unm49Code: 'BBBBBB',
+          },
+          new District(),
+        );
         const returnedFromService = Object.assign(patchObject, elemDefault);
 
         const expected = Object.assign({}, returnedFromService);
@@ -133,7 +139,8 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             name: 'BBBBBB',
-            code: 'BBBBBB',
+            unm49Code: 'BBBBBB',
+            isoAlpha2Code: 'BBBBBB',
           },
           elemDefault,
         );

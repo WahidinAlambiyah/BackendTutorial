@@ -3,10 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "description": "Description for J Hipster Monolith",
+  "license": "UNLICENSED",
   "scripts": {
-    "serve": "npm run start --",
-    "build": "npm run webapp:prod --",
-    "lint": "eslint . --ext .ts,.vue ",
     "app:start": "./mvnw",
     "app:up": "docker compose -f src/main/docker/app.yml up --wait",
     "backend:build-cache": "./mvnw dependency:go-offline -ntp",
@@ -16,12 +14,14 @@
     "backend:nohttp:test": "./mvnw -ntp checkstyle:check --batch-mode",
     "backend:start": "./mvnw -Dskip.installnodenpm -Dskip.npm",
     "backend:unit:test": "./mvnw -ntp -Dskip.installnodenpm -Dskip.npm verify --batch-mode -Dlogging.level.ROOT=OFF -Dlogging.level.tech.jhipster=OFF -Dlogging.level.com.mycompany.myapp=OFF -Dlogging.level.org.springframework=OFF -Dlogging.level.org.springframework.web=OFF -Dlogging.level.org.springframework.security=OFF",
+    "build": "npm run webapp:prod --",
     "build-watch": "concurrently 'npm run webapp:build:dev -- --watch' npm:backend:start",
     "ci:backend:test": "npm run backend:info && npm run backend:doc:test && npm run backend:nohttp:test && npm run backend:unit:test -- -P$npm_package_config_default_environment",
     "ci:e2e:package": "npm run java:$npm_package_config_packaging:$npm_package_config_default_environment -- -Pe2e -Denforcer.skip=true",
     "ci:e2e:prepare": "npm run ci:e2e:prepare:docker",
     "ci:e2e:prepare:docker": "npm run services:up --if-present && docker ps -a",
     "ci:e2e:run": "concurrently -k -s first \"npm run ci:e2e:server:start\" \"npm run e2e:headless\"",
+    "preci:e2e:server:start": "npm run services:db:await --if-present && npm run services:others:await --if-present",
     "ci:e2e:server:start": "java -jar target/e2e.$npm_package_config_packaging --spring.profiles.active=e2e,$npm_package_config_default_environment -Dlogging.level.ROOT=OFF -Dlogging.level.tech.jhipster=OFF -Dlogging.level.com.mycompany.myapp=OFF -Dlogging.level.org.springframework=OFF -Dlogging.level.org.springframework.web=OFF -Dlogging.level.org.springframework.security=OFF --logging.level.org.springframework.web=ERROR",
     "ci:e2e:teardown": "npm run ci:e2e:teardown:docker --if-present",
     "ci:e2e:teardown:docker": "docker compose -f src/main/docker/services.yml down -v && docker ps -a",
@@ -46,6 +46,7 @@
     "e2e:cypress:record": "npm run e2e:cypress -- --record",
     "e2e:dev": "concurrently -k -s first \"./mvnw\" \"npm run e2e\"",
     "e2e:devserver": "concurrently -k -s first \"npm run backend:start\" \"npm start\" \"wait-on -t 180000 http-get://127.0.0.1:9000 && npm run e2e:headless -- -c baseUrl=http://localhost:9000\"",
+    "pree2e:headless": "npm run ci:server:await",
     "e2e:headless": "npm run e2e:cypress --",
     "java:docker": "./mvnw -ntp verify -DskipTests -Pprod jib:dockerBuild",
     "java:docker:arm64": "npm run java:docker -- -Djib-maven-plugin.architecture=arm64",
@@ -57,15 +58,15 @@
     "java:war": "./mvnw -ntp verify -DskipTests --batch-mode -Pwar",
     "java:war:dev": "npm run java:war -- -Pdev,webapp",
     "java:war:prod": "npm run java:war -- -Pprod",
+    "lint": "eslint . --ext .ts,.vue ",
     "lint:fix": "eslint . --ext .ts,.vue --fix",
-    "preci:e2e:server:start": "npm run services:db:await --if-present && npm run services:others:await --if-present",
-    "pree2e:headless": "npm run ci:server:await",
-    "pretest": "npm run lint",
     "prettier:check": "prettier --check \"{,src/**/,.blueprint/**/}*.{md,json,yml,html,cjs,mjs,js,ts,tsx,css,scss,vue,java}\"",
     "prettier:format": "prettier --write \"{,src/**/,.blueprint/**/}*.{md,json,yml,html,cjs,mjs,js,ts,tsx,css,scss,vue,java}\"",
+    "serve": "npm run start --",
     "services:up": "docker compose -f src/main/docker/services.yml up --wait",
     "start": "npm run webapp:dev --",
     "start-tls": "npm run webapp:dev -- --env.tls",
+    "pretest": "npm run lint",
     "test": "npm run vitest-run --",
     "test:watch": "npm run vitest",
     "vite-build": "vite build",
@@ -81,6 +82,16 @@
     "webapp:serve": "npm run vite-serve",
     "webapp:test": "npm run test --"
   },
+  "config": {
+    "backend_port": 8080,
+    "default_environment": "prod",
+    "packaging": "jar"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ],
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "6.5.2",
     "@fortawesome/free-solid-svg-icons": "6.5.2",
@@ -95,7 +106,6 @@
     "dayjs": "1.11.11",
     "deepmerge": "4.3.1",
     "pinia": "2.1.7",
-    "register-service-worker": "^1.7.2",
     "vue": "3.4.21",
     "vue-i18n": "9.13.1",
     "vue-router": "4.4.0"
@@ -108,7 +118,6 @@
     "@types/sinon": "17.0.3",
     "@vitejs/plugin-vue": "5.0.5",
     "@vitest/coverage-v8": "1.6.0",
-    "@vue/cli-plugin-pwa": "~5.0.0",
     "@vue/eslint-config-prettier": "9.0.0",
     "@vue/eslint-config-typescript": "13.0.0",
     "@vue/test-utils": "2.4.6",
@@ -140,22 +149,11 @@
     "vitest-sonar-reporter": "2.0.0",
     "wait-on": "7.2.0"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ],
-  "cacheDirectories": [
-    "node_modules"
-  ],
-  "config": {
-    "backend_port": 8080,
-    "default_environment": "prod",
-    "packaging": "jar"
-  },
   "engines": {
     "node": ">=20.15.0",
     "npm": ">= 6.14.4"
   },
-  "license": "UNLICENSED"
+  "cacheDirectories": [
+    "node_modules"
+  ]
 }

@@ -1,6 +1,7 @@
 package com.mycompany.myapp.service;
 
-import com.mycompany.myapp.domain.Department;
+import com.mycompany.myapp.domain.criteria.DepartmentCriteria;
+import com.mycompany.myapp.service.dto.DepartmentDTO;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -11,40 +12,46 @@ public interface DepartmentService {
     /**
      * Save a department.
      *
-     * @param department the entity to save.
+     * @param departmentDTO the entity to save.
      * @return the persisted entity.
      */
-    Mono<Department> save(Department department);
+    Mono<DepartmentDTO> save(DepartmentDTO departmentDTO);
 
     /**
      * Updates a department.
      *
-     * @param department the entity to update.
+     * @param departmentDTO the entity to update.
      * @return the persisted entity.
      */
-    Mono<Department> update(Department department);
+    Mono<DepartmentDTO> update(DepartmentDTO departmentDTO);
 
     /**
      * Partially updates a department.
      *
-     * @param department the entity to update partially.
+     * @param departmentDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Mono<Department> partialUpdate(Department department);
-
+    Mono<DepartmentDTO> partialUpdate(DepartmentDTO departmentDTO);
     /**
-     * Get all the departments.
+     * Find departments by criteria.
      *
      * @return the list of entities.
      */
-    Flux<Department> findAll();
+    Flux<DepartmentDTO> findByCriteria(DepartmentCriteria criteria);
 
     /**
-     * Get all the Department where JobHistory is {@code null}.
+     * Find the count of departments by criteria.
+     * @param criteria filtering criteria
+     * @return the count of departments
+     */
+    public Mono<Long> countByCriteria(DepartmentCriteria criteria);
+
+    /**
+     * Get all the DepartmentDTO where JobHistory is {@code null}.
      *
      * @return the {@link Flux} of entities.
      */
-    Flux<Department> findAllWhereJobHistoryIsNull();
+    Flux<DepartmentDTO> findAllWhereJobHistoryIsNull();
 
     /**
      * Returns the number of departments available.
@@ -65,7 +72,7 @@ public interface DepartmentService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Mono<Department> findOne(Long id);
+    Mono<DepartmentDTO> findOne(Long id);
 
     /**
      * Delete the "id" department.
@@ -81,5 +88,5 @@ public interface DepartmentService {
      * @param query the query of the search.
      * @return the list of entities.
      */
-    Flux<Department> search(String query);
+    Flux<DepartmentDTO> search(String query);
 }

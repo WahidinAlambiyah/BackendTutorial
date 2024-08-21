@@ -1,6 +1,7 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.Task;
+import com.mycompany.myapp.domain.criteria.TaskCriteria;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import org.springframework.stereotype.Repository;
@@ -36,4 +37,7 @@ interface TaskRepositoryInternal {
     Mono<Task> findById(Long id);
     // this is not supported at the moment because of https://github.com/jhipster/generator-jhipster/issues/18269
     // Flux<Task> findAllBy(Pageable pageable, Criteria criteria);
+    Flux<Task> findByCriteria(TaskCriteria criteria, Pageable pageable);
+
+    Mono<Long> countByCriteria(TaskCriteria criteria);
 }

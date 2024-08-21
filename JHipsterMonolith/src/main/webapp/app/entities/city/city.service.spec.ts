@@ -29,7 +29,7 @@ describe('Service Tests', () => {
 
     beforeEach(() => {
       service = new CityService();
-      elemDefault = new City(123, 'AAAAAAA', 'AAAAAAA');
+      elemDefault = new City(123, 'AAAAAAA', 'AAAAAAA', 'AAAAAAA');
     });
 
     describe('Service methods', () => {
@@ -82,7 +82,8 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             name: 'BBBBBB',
-            code: 'BBBBBB',
+            unm49Code: 'BBBBBB',
+            isoAlpha2Code: 'BBBBBB',
           },
           elemDefault,
         );
@@ -109,7 +110,9 @@ describe('Service Tests', () => {
       it('should partial update a City', async () => {
         const patchObject = Object.assign(
           {
-            code: 'BBBBBB',
+            name: 'BBBBBB',
+            unm49Code: 'BBBBBB',
+            isoAlpha2Code: 'BBBBBB',
           },
           new City(),
         );
@@ -138,7 +141,8 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign(
           {
             name: 'BBBBBB',
-            code: 'BBBBBB',
+            unm49Code: 'BBBBBB',
+            isoAlpha2Code: 'BBBBBB',
           },
           elemDefault,
         );

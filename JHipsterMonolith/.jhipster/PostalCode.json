@@ -3,6 +3,7 @@
     "changelogDate": "20240821021644"
   },
   "applications": "*",
+  "dto": "mapstruct",
   "fields": [
     {
       "fieldName": "code",
@@ -10,6 +11,7 @@
       "fieldValidateRules": ["required", "unique"]
     }
   ],
+  "jpaMetamodelFiltering": true,
   "name": "PostalCode",
   "pagination": "pagination",
   "relationships": [

@@ -10,11 +10,15 @@ import static org.mockito.Mockito.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mycompany.myapp.IntegrationTest;
+import com.mycompany.myapp.domain.Country;
 import com.mycompany.myapp.domain.Province;
+import com.mycompany.myapp.repository.CountryRepository;
 import com.mycompany.myapp.repository.EntityManager;
 import com.mycompany.myapp.repository.ProvinceRepository;
 import com.mycompany.myapp.repository.search.ProvinceSearchRepository;
 import com.mycompany.myapp.service.ProvinceService;
+import com.mycompany.myapp.service.dto.ProvinceDTO;
+import com.mycompany.myapp.service.mapper.ProvinceMapper;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -46,8 +50,11 @@ class ProvinceResourceIT {
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
-    private static final String DEFAULT_CODE = "AAAAAAAAAA";
-    private static final String UPDATED_CODE = "BBBBBBBBBB";
+    private static final String DEFAULT_UNM_49_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_UNM_49_CODE = "BBBBBBBBBB";
+
+    private static final String DEFAULT_ISO_ALPHA_2_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_ISO_ALPHA_2_CODE = "BBBBBBBBBB";
 
     private static final String ENTITY_API_URL = "/api/provinces";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -65,6 +72,9 @@ class ProvinceResourceIT {
     @Mock
     private ProvinceRepository provinceRepositoryMock;
 
+    @Autowired
+    private ProvinceMapper provinceMapper;
+
     @Mock
     private ProvinceService provinceServiceMock;
 
@@ -81,6 +91,9 @@ class ProvinceResourceIT {
 
     private Province insertedProvince;
 
+    @Autowired
+    private CountryRepository countryRepository;
+
     /**
      * Create an entity for this test.
      *
@@ -88,7 +101,7 @@ class ProvinceResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Province createEntity(EntityManager em) {
-        Province province = new Province().name(DEFAULT_NAME).code(DEFAULT_CODE);
+        Province province = new Province().name(DEFAULT_NAME).unm49Code(DEFAULT_UNM_49_CODE).isoAlpha2Code(DEFAULT_ISO_ALPHA_2_CODE);
         return province;
     }
 
@@ -99,7 +112,7 @@ class ProvinceResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Province createUpdatedEntity(EntityManager em) {
-        Province province = new Province().name(UPDATED_NAME).code(UPDATED_CODE);
+        Province province = new Province().name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
         return province;
     }
 
@@ -131,20 +144,22 @@ class ProvinceResourceIT {
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(provinceSearchRepository.findAll().collectList().block());
         // Create the Province
-        var returnedProvince = webTestClient
+        ProvinceDTO provinceDTO = provinceMapper.toDto(province);
+        var returnedProvinceDTO = webTestClient
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(province))
+            .bodyValue(om.writeValueAsBytes(provinceDTO))
             .exchange()
             .expectStatus()
             .isCreated()
-            .expectBody(Province.class)
+            .expectBody(ProvinceDTO.class)
             .returnResult()
             .getResponseBody();
 
         // Validate the Province in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        var returnedProvince = provinceMapper.toEntity(returnedProvinceDTO);
         assertProvinceUpdatableFieldsEquals(returnedProvince, getPersistedProvince(returnedProvince));
 
         await()
@@ -161,6 +176,7 @@ class ProvinceResourceIT {
     void createProvinceWithExistingId() throws Exception {
         // Create the Province with an existing ID
         province.setId(1L);
+        ProvinceDTO provinceDTO = provinceMapper.toDto(province);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(provinceSearchRepository.findAll().collectList().block());
@@ -170,7 +186,7 @@ class ProvinceResourceIT {
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(province))
+            .bodyValue(om.writeValueAsBytes(provinceDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -189,36 +205,13 @@ class ProvinceResourceIT {
         province.setName(null);
 
         // Create the Province, which fails.
+        ProvinceDTO provinceDTO = provinceMapper.toDto(province);
 
         webTestClient
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(province))
-            .exchange()
-            .expectStatus()
-            .isBadRequest();
-
-        assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(provinceSearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
-    }
-
-    @Test
-    void checkCodeIsRequired() throws Exception {
-        long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(provinceSearchRepository.findAll().collectList().block());
-        // set the field null
-        province.setCode(null);
-
-        // Create the Province, which fails.
-
-        webTestClient
-            .post()
-            .uri(ENTITY_API_URL)
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(province))
+            .bodyValue(om.writeValueAsBytes(provinceDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -249,8 +242,10 @@ class ProvinceResourceIT {
             .value(hasItem(province.getId().intValue()))
             .jsonPath("$.[*].name")
             .value(hasItem(DEFAULT_NAME))
-            .jsonPath("$.[*].code")
-            .value(hasItem(DEFAULT_CODE));
+            .jsonPath("$.[*].unm49Code")
+            .value(hasItem(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.[*].isoAlpha2Code")
+            .value(hasItem(DEFAULT_ISO_ALPHA_2_CODE));
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -290,8 +285,259 @@ class ProvinceResourceIT {
             .value(is(province.getId().intValue()))
             .jsonPath("$.name")
             .value(is(DEFAULT_NAME))
-            .jsonPath("$.code")
-            .value(is(DEFAULT_CODE));
+            .jsonPath("$.unm49Code")
+            .value(is(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.isoAlpha2Code")
+            .value(is(DEFAULT_ISO_ALPHA_2_CODE));
+    }
+
+    @Test
+    void getProvincesByIdFiltering() {
+        // Initialize the database
+        insertedProvince = provinceRepository.save(province).block();
+
+        Long id = province.getId();
+
+        defaultProvinceFiltering("id.equals=" + id, "id.notEquals=" + id);
+
+        defaultProvinceFiltering("id.greaterThanOrEqual=" + id, "id.greaterThan=" + id);
+
+        defaultProvinceFiltering("id.lessThanOrEqual=" + id, "id.lessThan=" + id);
+    }
+
+    @Test
+    void getAllProvincesByNameIsEqualToSomething() {
+        // Initialize the database
+        insertedProvince = provinceRepository.save(province).block();
+
+        // Get all the provinceList where name equals to
+        defaultProvinceFiltering("name.equals=" + DEFAULT_NAME, "name.equals=" + UPDATED_NAME);
+    }
+
+    @Test
+    void getAllProvincesByNameIsInShouldWork() {
+        // Initialize the database
+        insertedProvince = provinceRepository.save(province).block();
+
+        // Get all the provinceList where name in
+        defaultProvinceFiltering("name.in=" + DEFAULT_NAME + "," + UPDATED_NAME, "name.in=" + UPDATED_NAME);
+    }
+
+    @Test
+    void getAllProvincesByNameIsNullOrNotNull() {
+        // Initialize the database
+        insertedProvince = provinceRepository.save(province).block();
+
+        // Get all the provinceList where name is not null
+        defaultProvinceFiltering("name.specified=true", "name.specified=false");
+    }
+
+    @Test
+    void getAllProvincesByNameContainsSomething() {
+        // Initialize the database
+        insertedProvince = provinceRepository.save(province).block();
+
+        // Get all the provinceList where name contains
+        defaultProvinceFiltering("name.contains=" + DEFAULT_NAME, "name.contains=" + UPDATED_NAME);
+    }
+
+    @Test
+    void getAllProvincesByNameNotContainsSomething() {
+        // Initialize the database
+        insertedProvince = provinceRepository.save(province).block();
+
+        // Get all the provinceList where name does not contain
+        defaultProvinceFiltering("name.doesNotContain=" + UPDATED_NAME, "name.doesNotContain=" + DEFAULT_NAME);
+    }
+
+    @Test
+    void getAllProvincesByUnm49CodeIsEqualToSomething() {
+        // Initialize the database
+        insertedProvince = provinceRepository.save(province).block();
+
+        // Get all the provinceList where unm49Code equals to
+        defaultProvinceFiltering("unm49Code.equals=" + DEFAULT_UNM_49_CODE, "unm49Code.equals=" + UPDATED_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllProvincesByUnm49CodeIsInShouldWork() {
+        // Initialize the database
+        insertedProvince = provinceRepository.save(province).block();
+
+        // Get all the provinceList where unm49Code in
+        defaultProvinceFiltering("unm49Code.in=" + DEFAULT_UNM_49_CODE + "," + UPDATED_UNM_49_CODE, "unm49Code.in=" + UPDATED_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllProvincesByUnm49CodeIsNullOrNotNull() {
+        // Initialize the database
+        insertedProvince = provinceRepository.save(province).block();
+
+        // Get all the provinceList where unm49Code is not null
+        defaultProvinceFiltering("unm49Code.specified=true", "unm49Code.specified=false");
+    }
+
+    @Test
+    void getAllProvincesByUnm49CodeContainsSomething() {
+        // Initialize the database
+        insertedProvince = provinceRepository.save(province).block();
+
+        // Get all the provinceList where unm49Code contains
+        defaultProvinceFiltering("unm49Code.contains=" + DEFAULT_UNM_49_CODE, "unm49Code.contains=" + UPDATED_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllProvincesByUnm49CodeNotContainsSomething() {
+        // Initialize the database
+        insertedProvince = provinceRepository.save(province).block();
+
+        // Get all the provinceList where unm49Code does not contain
+        defaultProvinceFiltering("unm49Code.doesNotContain=" + UPDATED_UNM_49_CODE, "unm49Code.doesNotContain=" + DEFAULT_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllProvincesByIsoAlpha2CodeIsEqualToSomething() {
+        // Initialize the database
+        insertedProvince = provinceRepository.save(province).block();
+
+        // Get all the provinceList where isoAlpha2Code equals to
+        defaultProvinceFiltering("isoAlpha2Code.equals=" + DEFAULT_ISO_ALPHA_2_CODE, "isoAlpha2Code.equals=" + UPDATED_ISO_ALPHA_2_CODE);
+    }
+
+    @Test
+    void getAllProvincesByIsoAlpha2CodeIsInShouldWork() {
+        // Initialize the database
+        insertedProvince = provinceRepository.save(province).block();
+
+        // Get all the provinceList where isoAlpha2Code in
+        defaultProvinceFiltering(
+            "isoAlpha2Code.in=" + DEFAULT_ISO_ALPHA_2_CODE + "," + UPDATED_ISO_ALPHA_2_CODE,
+            "isoAlpha2Code.in=" + UPDATED_ISO_ALPHA_2_CODE
+        );
+    }
+
+    @Test
+    void getAllProvincesByIsoAlpha2CodeIsNullOrNotNull() {
+        // Initialize the database
+        insertedProvince = provinceRepository.save(province).block();
+
+        // Get all the provinceList where isoAlpha2Code is not null
+        defaultProvinceFiltering("isoAlpha2Code.specified=true", "isoAlpha2Code.specified=false");
+    }
+
+    @Test
+    void getAllProvincesByIsoAlpha2CodeContainsSomething() {
+        // Initialize the database
+        insertedProvince = provinceRepository.save(province).block();
+
+        // Get all the provinceList where isoAlpha2Code contains
+        defaultProvinceFiltering(
+            "isoAlpha2Code.contains=" + DEFAULT_ISO_ALPHA_2_CODE,
+            "isoAlpha2Code.contains=" + UPDATED_ISO_ALPHA_2_CODE
+        );
+    }
+
+    @Test
+    void getAllProvincesByIsoAlpha2CodeNotContainsSomething() {
+        // Initialize the database
+        insertedProvince = provinceRepository.save(province).block();
+
+        // Get all the provinceList where isoAlpha2Code does not contain
+        defaultProvinceFiltering(
+            "isoAlpha2Code.doesNotContain=" + UPDATED_ISO_ALPHA_2_CODE,
+            "isoAlpha2Code.doesNotContain=" + DEFAULT_ISO_ALPHA_2_CODE
+        );
+    }
+
+    @Test
+    void getAllProvincesByCountryIsEqualToSomething() {
+        Country country = CountryResourceIT.createEntity(em);
+        countryRepository.save(country).block();
+        Long countryId = country.getId();
+        province.setCountryId(countryId);
+        insertedProvince = provinceRepository.save(province).block();
+        // Get all the provinceList where country equals to countryId
+        defaultProvinceShouldBeFound("countryId.equals=" + countryId);
+
+        // Get all the provinceList where country equals to (countryId + 1)
+        defaultProvinceShouldNotBeFound("countryId.equals=" + (countryId + 1));
+    }
+
+    private void defaultProvinceFiltering(String shouldBeFound, String shouldNotBeFound) {
+        defaultProvinceShouldBeFound(shouldBeFound);
+        defaultProvinceShouldNotBeFound(shouldNotBeFound);
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultProvinceShouldBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$.[*].id")
+            .value(hasItem(province.getId().intValue()))
+            .jsonPath("$.[*].name")
+            .value(hasItem(DEFAULT_NAME))
+            .jsonPath("$.[*].unm49Code")
+            .value(hasItem(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.[*].isoAlpha2Code")
+            .value(hasItem(DEFAULT_ISO_ALPHA_2_CODE));
+
+        // Check, that the count call also returns 1
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultProvinceShouldNotBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .isArray()
+            .jsonPath("$")
+            .isEmpty();
+
+        // Check, that the count call also returns 0
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(0));
     }
 
     @Test
@@ -317,13 +563,14 @@ class ProvinceResourceIT {
 
         // Update the province
         Province updatedProvince = provinceRepository.findById(province.getId()).block();
-        updatedProvince.name(UPDATED_NAME).code(UPDATED_CODE);
+        updatedProvince.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
+        ProvinceDTO provinceDTO = provinceMapper.toDto(updatedProvince);
 
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, updatedProvince.getId())
+            .uri(ENTITY_API_URL_ID, provinceDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(updatedProvince))
+            .bodyValue(om.writeValueAsBytes(provinceDTO))
             .exchange()
             .expectStatus()
             .isOk();
@@ -352,12 +599,15 @@ class ProvinceResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(provinceSearchRepository.findAll().collectList().block());
         province.setId(longCount.incrementAndGet());
 
+        // Create the Province
+        ProvinceDTO provinceDTO = provinceMapper.toDto(province);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, province.getId())
+            .uri(ENTITY_API_URL_ID, provinceDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(province))
+            .bodyValue(om.writeValueAsBytes(provinceDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -374,12 +624,15 @@ class ProvinceResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(provinceSearchRepository.findAll().collectList().block());
         province.setId(longCount.incrementAndGet());
 
+        // Create the Province
+        ProvinceDTO provinceDTO = provinceMapper.toDto(province);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(province))
+            .bodyValue(om.writeValueAsBytes(provinceDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -396,12 +649,15 @@ class ProvinceResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(provinceSearchRepository.findAll().collectList().block());
         province.setId(longCount.incrementAndGet());
 
+        // Create the Province
+        ProvinceDTO provinceDTO = provinceMapper.toDto(province);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(province))
+            .bodyValue(om.writeValueAsBytes(provinceDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);
@@ -422,6 +678,8 @@ class ProvinceResourceIT {
         // Update the province using partial update
         Province partialUpdatedProvince = new Province();
         partialUpdatedProvince.setId(province.getId());
+
+        partialUpdatedProvince.isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
 
         webTestClient
             .patch()
@@ -449,7 +707,7 @@ class ProvinceResourceIT {
         Province partialUpdatedProvince = new Province();
         partialUpdatedProvince.setId(province.getId());
 
-        partialUpdatedProvince.name(UPDATED_NAME).code(UPDATED_CODE);
+        partialUpdatedProvince.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
 
         webTestClient
             .patch()
@@ -472,12 +730,15 @@ class ProvinceResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(provinceSearchRepository.findAll().collectList().block());
         province.setId(longCount.incrementAndGet());
 
+        // Create the Province
+        ProvinceDTO provinceDTO = provinceMapper.toDto(province);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
-            .uri(ENTITY_API_URL_ID, province.getId())
+            .uri(ENTITY_API_URL_ID, provinceDTO.getId())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(province))
+            .bodyValue(om.writeValueAsBytes(provinceDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -494,12 +755,15 @@ class ProvinceResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(provinceSearchRepository.findAll().collectList().block());
         province.setId(longCount.incrementAndGet());
 
+        // Create the Province
+        ProvinceDTO provinceDTO = provinceMapper.toDto(province);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(province))
+            .bodyValue(om.writeValueAsBytes(provinceDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -516,12 +780,15 @@ class ProvinceResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(provinceSearchRepository.findAll().collectList().block());
         province.setId(longCount.incrementAndGet());
 
+        // Create the Province
+        ProvinceDTO provinceDTO = provinceMapper.toDto(province);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(province))
+            .bodyValue(om.writeValueAsBytes(provinceDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);
@@ -578,8 +845,10 @@ class ProvinceResourceIT {
             .value(hasItem(province.getId().intValue()))
             .jsonPath("$.[*].name")
             .value(hasItem(DEFAULT_NAME))
-            .jsonPath("$.[*].code")
-            .value(hasItem(DEFAULT_CODE));
+            .jsonPath("$.[*].unm49Code")
+            .value(hasItem(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.[*].isoAlpha2Code")
+            .value(hasItem(DEFAULT_ISO_ALPHA_2_CODE));
     }
 
     protected long getRepositoryCount() {

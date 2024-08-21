@@ -4,6 +4,7 @@
   },
   "applications": "*",
   "documentation": "Task entity.\\n@author The JHipster team.",
+  "dto": "mapstruct",
   "fields": [
     {
       "fieldName": "title",
@@ -14,6 +15,7 @@
       "fieldType": "String"
     }
   ],
+  "jpaMetamodelFiltering": true,
   "name": "Task",
   "relationships": [
     {

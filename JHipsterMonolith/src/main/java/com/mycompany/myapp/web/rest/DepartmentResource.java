@@ -1,8 +1,9 @@
 package com.mycompany.myapp.web.rest;
 
-import com.mycompany.myapp.domain.Department;
+import com.mycompany.myapp.domain.criteria.DepartmentCriteria;
 import com.mycompany.myapp.repository.DepartmentRepository;
 import com.mycompany.myapp.service.DepartmentService;
+import com.mycompany.myapp.service.dto.DepartmentDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import com.mycompany.myapp.web.rest.errors.ElasticsearchExceptionMapper;
 import jakarta.validation.Valid;
@@ -50,18 +51,18 @@ public class DepartmentResource {
     /**
      * {@code POST  /departments} : Create a new department.
      *
-     * @param department the department to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new department, or with status {@code 400 (Bad Request)} if the department has already an ID.
+     * @param departmentDTO the departmentDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new departmentDTO, or with status {@code 400 (Bad Request)} if the department has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public Mono<ResponseEntity<Department>> createDepartment(@Valid @RequestBody Department department) throws URISyntaxException {
-        log.debug("REST request to save Department : {}", department);
-        if (department.getId() != null) {
+    public Mono<ResponseEntity<DepartmentDTO>> createDepartment(@Valid @RequestBody DepartmentDTO departmentDTO) throws URISyntaxException {
+        log.debug("REST request to save Department : {}", departmentDTO);
+        if (departmentDTO.getId() != null) {
             throw new BadRequestAlertException("A new department cannot already have an ID", ENTITY_NAME, "idexists");
         }
         return departmentService
-            .save(department)
+            .save(departmentDTO)
             .map(result -> {
                 try {
                     return ResponseEntity.created(new URI("/api/departments/" + result.getId()))
@@ -76,23 +77,23 @@ public class DepartmentResource {
     /**
      * {@code PUT  /departments/:id} : Updates an existing department.
      *
-     * @param id the id of the department to save.
-     * @param department the department to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated department,
-     * or with status {@code 400 (Bad Request)} if the department is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the department couldn't be updated.
+     * @param id the id of the departmentDTO to save.
+     * @param departmentDTO the departmentDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated departmentDTO,
+     * or with status {@code 400 (Bad Request)} if the departmentDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the departmentDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
-    public Mono<ResponseEntity<Department>> updateDepartment(
+    public Mono<ResponseEntity<DepartmentDTO>> updateDepartment(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody Department department
+        @Valid @RequestBody DepartmentDTO departmentDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update Department : {}, {}", id, department);
-        if (department.getId() == null) {
+        log.debug("REST request to update Department : {}, {}", id, departmentDTO);
+        if (departmentDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, department.getId())) {
+        if (!Objects.equals(id, departmentDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -104,7 +105,7 @@ public class DepartmentResource {
                 }
 
                 return departmentService
-                    .update(department)
+                    .update(departmentDTO)
                     .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
                     .map(
                         result ->
@@ -118,24 +119,24 @@ public class DepartmentResource {
     /**
      * {@code PATCH  /departments/:id} : Partial updates given fields of an existing department, field will ignore if it is null
      *
-     * @param id the id of the department to save.
-     * @param department the department to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated department,
-     * or with status {@code 400 (Bad Request)} if the department is not valid,
-     * or with status {@code 404 (Not Found)} if the department is not found,
-     * or with status {@code 500 (Internal Server Error)} if the department couldn't be updated.
+     * @param id the id of the departmentDTO to save.
+     * @param departmentDTO the departmentDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated departmentDTO,
+     * or with status {@code 400 (Bad Request)} if the departmentDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the departmentDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the departmentDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public Mono<ResponseEntity<Department>> partialUpdateDepartment(
+    public Mono<ResponseEntity<DepartmentDTO>> partialUpdateDepartment(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody Department department
+        @NotNull @RequestBody DepartmentDTO departmentDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Department partially : {}, {}", id, department);
-        if (department.getId() == null) {
+        log.debug("REST request to partial update Department partially : {}, {}", id, departmentDTO);
+        if (departmentDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, department.getId())) {
+        if (!Objects.equals(id, departmentDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -146,7 +147,7 @@ public class DepartmentResource {
                     return Mono.error(new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
                 }
 
-                Mono<Department> result = departmentService.partialUpdate(department);
+                Mono<DepartmentDTO> result = departmentService.partialUpdate(departmentDTO);
 
                 return result
                     .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
@@ -162,46 +163,44 @@ public class DepartmentResource {
     /**
      * {@code GET  /departments} : get all the departments.
      *
-     * @param filter the filter of the request.
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of departments in body.
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<List<Department>> getAllDepartments(@RequestParam(name = "filter", required = false) String filter) {
-        if ("jobhistory-is-null".equals(filter)) {
-            log.debug("REST request to get all Departments where jobHistory is null");
-            return departmentService.findAllWhereJobHistoryIsNull().collectList();
-        }
-        log.debug("REST request to get all Departments");
-        return departmentService.findAll().collectList();
+    public Flux<DepartmentDTO> getAllDepartments(DepartmentCriteria criteria) {
+        log.debug("REST request to get Departments by criteria: {}", criteria);
+        return departmentService.findByCriteria(criteria);
     }
 
     /**
-     * {@code GET  /departments} : get all the departments as a stream.
-     * @return the {@link Flux} of departments.
+     * {@code GET  /departments/count} : count all the departments.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
      */
-    @GetMapping(value = "", produces = MediaType.APPLICATION_NDJSON_VALUE)
-    public Flux<Department> getAllDepartmentsAsStream() {
-        log.debug("REST request to get all Departments as a stream");
-        return departmentService.findAll();
+    @GetMapping("/count")
+    public Mono<ResponseEntity<Long>> countDepartments(DepartmentCriteria criteria) {
+        log.debug("REST request to count Departments by criteria: {}", criteria);
+        return departmentService.countByCriteria(criteria).map(count -> ResponseEntity.status(HttpStatus.OK).body(count));
     }
 
     /**
      * {@code GET  /departments/:id} : get the "id" department.
      *
-     * @param id the id of the department to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the department, or with status {@code 404 (Not Found)}.
+     * @param id the id of the departmentDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the departmentDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public Mono<ResponseEntity<Department>> getDepartment(@PathVariable("id") Long id) {
+    public Mono<ResponseEntity<DepartmentDTO>> getDepartment(@PathVariable("id") Long id) {
         log.debug("REST request to get Department : {}", id);
-        Mono<Department> department = departmentService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(department);
+        Mono<DepartmentDTO> departmentDTO = departmentService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(departmentDTO);
     }
 
     /**
      * {@code DELETE  /departments/:id} : delete the "id" department.
      *
-     * @param id the id of the department to delete.
+     * @param id the id of the departmentDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
@@ -226,7 +225,7 @@ public class DepartmentResource {
      * @return the result of the search.
      */
     @GetMapping("/_search")
-    public Mono<List<Department>> searchDepartments(@RequestParam("query") String query) {
+    public Mono<List<DepartmentDTO>> searchDepartments(@RequestParam("query") String query) {
         log.debug("REST request to search Departments for query {}", query);
         try {
             return departmentService.search(query).collectList();

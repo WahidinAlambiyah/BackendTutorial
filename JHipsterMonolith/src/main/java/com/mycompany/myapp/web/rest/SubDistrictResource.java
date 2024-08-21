@@ -1,8 +1,9 @@
 package com.mycompany.myapp.web.rest;
 
-import com.mycompany.myapp.domain.SubDistrict;
+import com.mycompany.myapp.domain.criteria.SubDistrictCriteria;
 import com.mycompany.myapp.repository.SubDistrictRepository;
 import com.mycompany.myapp.service.SubDistrictService;
+import com.mycompany.myapp.service.dto.SubDistrictDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -55,18 +56,19 @@ public class SubDistrictResource {
     /**
      * {@code POST  /sub-districts} : Create a new subDistrict.
      *
-     * @param subDistrict the subDistrict to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new subDistrict, or with status {@code 400 (Bad Request)} if the subDistrict has already an ID.
+     * @param subDistrictDTO the subDistrictDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new subDistrictDTO, or with status {@code 400 (Bad Request)} if the subDistrict has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public Mono<ResponseEntity<SubDistrict>> createSubDistrict(@Valid @RequestBody SubDistrict subDistrict) throws URISyntaxException {
-        log.debug("REST request to save SubDistrict : {}", subDistrict);
-        if (subDistrict.getId() != null) {
+    public Mono<ResponseEntity<SubDistrictDTO>> createSubDistrict(@Valid @RequestBody SubDistrictDTO subDistrictDTO)
+        throws URISyntaxException {
+        log.debug("REST request to save SubDistrict : {}", subDistrictDTO);
+        if (subDistrictDTO.getId() != null) {
             throw new BadRequestAlertException("A new subDistrict cannot already have an ID", ENTITY_NAME, "idexists");
         }
         return subDistrictService
-            .save(subDistrict)
+            .save(subDistrictDTO)
             .map(result -> {
                 try {
                     return ResponseEntity.created(new URI("/api/sub-districts/" + result.getId()))
@@ -81,23 +83,23 @@ public class SubDistrictResource {
     /**
      * {@code PUT  /sub-districts/:id} : Updates an existing subDistrict.
      *
-     * @param id the id of the subDistrict to save.
-     * @param subDistrict the subDistrict to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated subDistrict,
-     * or with status {@code 400 (Bad Request)} if the subDistrict is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the subDistrict couldn't be updated.
+     * @param id the id of the subDistrictDTO to save.
+     * @param subDistrictDTO the subDistrictDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated subDistrictDTO,
+     * or with status {@code 400 (Bad Request)} if the subDistrictDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the subDistrictDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
-    public Mono<ResponseEntity<SubDistrict>> updateSubDistrict(
+    public Mono<ResponseEntity<SubDistrictDTO>> updateSubDistrict(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody SubDistrict subDistrict
+        @Valid @RequestBody SubDistrictDTO subDistrictDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update SubDistrict : {}, {}", id, subDistrict);
-        if (subDistrict.getId() == null) {
+        log.debug("REST request to update SubDistrict : {}, {}", id, subDistrictDTO);
+        if (subDistrictDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, subDistrict.getId())) {
+        if (!Objects.equals(id, subDistrictDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -109,7 +111,7 @@ public class SubDistrictResource {
                 }
 
                 return subDistrictService
-                    .update(subDistrict)
+                    .update(subDistrictDTO)
                     .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
                     .map(
                         result ->
@@ -123,24 +125,24 @@ public class SubDistrictResource {
     /**
      * {@code PATCH  /sub-districts/:id} : Partial updates given fields of an existing subDistrict, field will ignore if it is null
      *
-     * @param id the id of the subDistrict to save.
-     * @param subDistrict the subDistrict to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated subDistrict,
-     * or with status {@code 400 (Bad Request)} if the subDistrict is not valid,
-     * or with status {@code 404 (Not Found)} if the subDistrict is not found,
-     * or with status {@code 500 (Internal Server Error)} if the subDistrict couldn't be updated.
+     * @param id the id of the subDistrictDTO to save.
+     * @param subDistrictDTO the subDistrictDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated subDistrictDTO,
+     * or with status {@code 400 (Bad Request)} if the subDistrictDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the subDistrictDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the subDistrictDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public Mono<ResponseEntity<SubDistrict>> partialUpdateSubDistrict(
+    public Mono<ResponseEntity<SubDistrictDTO>> partialUpdateSubDistrict(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody SubDistrict subDistrict
+        @NotNull @RequestBody SubDistrictDTO subDistrictDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update SubDistrict partially : {}, {}", id, subDistrict);
-        if (subDistrict.getId() == null) {
+        log.debug("REST request to partial update SubDistrict partially : {}, {}", id, subDistrictDTO);
+        if (subDistrictDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, subDistrict.getId())) {
+        if (!Objects.equals(id, subDistrictDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -151,7 +153,7 @@ public class SubDistrictResource {
                     return Mono.error(new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
                 }
 
-                Mono<SubDistrict> result = subDistrictService.partialUpdate(subDistrict);
+                Mono<SubDistrictDTO> result = subDistrictService.partialUpdate(subDistrictDTO);
 
                 return result
                     .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
@@ -169,19 +171,19 @@ public class SubDistrictResource {
      *
      * @param pageable the pagination information.
      * @param request a {@link ServerHttpRequest} request.
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of subDistricts in body.
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<List<SubDistrict>>> getAllSubDistricts(
+    public Mono<ResponseEntity<List<SubDistrictDTO>>> getAllSubDistricts(
+        SubDistrictCriteria criteria,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        ServerHttpRequest request,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        ServerHttpRequest request
     ) {
-        log.debug("REST request to get a page of SubDistricts");
+        log.debug("REST request to get SubDistricts by criteria: {}", criteria);
         return subDistrictService
-            .countAll()
-            .zipWith(subDistrictService.findAll(pageable).collectList())
+            .countByCriteria(criteria)
+            .zipWith(subDistrictService.findByCriteria(criteria, pageable).collectList())
             .map(
                 countWithEntities ->
                     ResponseEntity.ok()
@@ -196,22 +198,34 @@ public class SubDistrictResource {
     }
 
     /**
+     * {@code GET  /sub-districts/count} : count all the subDistricts.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public Mono<ResponseEntity<Long>> countSubDistricts(SubDistrictCriteria criteria) {
+        log.debug("REST request to count SubDistricts by criteria: {}", criteria);
+        return subDistrictService.countByCriteria(criteria).map(count -> ResponseEntity.status(HttpStatus.OK).body(count));
+    }
+
+    /**
      * {@code GET  /sub-districts/:id} : get the "id" subDistrict.
      *
-     * @param id the id of the subDistrict to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the subDistrict, or with status {@code 404 (Not Found)}.
+     * @param id the id of the subDistrictDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the subDistrictDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public Mono<ResponseEntity<SubDistrict>> getSubDistrict(@PathVariable("id") Long id) {
+    public Mono<ResponseEntity<SubDistrictDTO>> getSubDistrict(@PathVariable("id") Long id) {
         log.debug("REST request to get SubDistrict : {}", id);
-        Mono<SubDistrict> subDistrict = subDistrictService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(subDistrict);
+        Mono<SubDistrictDTO> subDistrictDTO = subDistrictService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(subDistrictDTO);
     }
 
     /**
      * {@code DELETE  /sub-districts/:id} : delete the "id" subDistrict.
      *
-     * @param id the id of the subDistrict to delete.
+     * @param id the id of the subDistrictDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
@@ -238,7 +252,7 @@ public class SubDistrictResource {
      * @return the result of the search.
      */
     @GetMapping("/_search")
-    public Mono<ResponseEntity<Flux<SubDistrict>>> searchSubDistricts(
+    public Mono<ResponseEntity<Flux<SubDistrictDTO>>> searchSubDistricts(
         @RequestParam("query") String query,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         ServerHttpRequest request

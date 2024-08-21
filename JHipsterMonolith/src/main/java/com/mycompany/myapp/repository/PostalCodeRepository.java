@@ -1,6 +1,7 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.PostalCode;
+import com.mycompany.myapp.domain.criteria.PostalCodeCriteria;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
@@ -54,6 +55,9 @@ interface PostalCodeRepositoryInternal {
     Mono<PostalCode> findById(Long id);
     // this is not supported at the moment because of https://github.com/jhipster/generator-jhipster/issues/18269
     // Flux<PostalCode> findAllBy(Pageable pageable, Criteria criteria);
+    Flux<PostalCode> findByCriteria(PostalCodeCriteria criteria, Pageable pageable);
+
+    Mono<Long> countByCriteria(PostalCodeCriteria criteria);
 
     Mono<PostalCode> findOneWithEagerRelationships(Long id);
 

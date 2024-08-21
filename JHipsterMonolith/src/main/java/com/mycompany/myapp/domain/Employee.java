@@ -1,7 +1,6 @@
 package com.mycompany.myapp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
@@ -14,7 +13,6 @@ import org.springframework.data.relational.core.mapping.Table;
 /**
  * The Employee entity.
  */
-@Schema(description = "The Employee entity.")
 @Table("employee")
 @org.springframework.data.elasticsearch.annotations.Document(indexName = "employee")
 @SuppressWarnings("common-java:DuplicatedBlocks")
@@ -29,7 +27,6 @@ public class Employee implements Serializable {
     /**
      * The firstname attribute.
      */
-    @Schema(description = "The firstname attribute.")
     @Column("first_name")
     @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String firstName;

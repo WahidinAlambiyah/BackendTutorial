@@ -3,6 +3,7 @@
     "changelogDate": "20240816094139"
   },
   "applications": "*",
+  "dto": "mapstruct",
   "fields": [
     {
       "fieldName": "departmentName",
@@ -10,6 +11,7 @@
       "fieldValidateRules": ["required"]
     }
   ],
+  "jpaMetamodelFiltering": true,
   "name": "Department",
   "relationships": [
     {

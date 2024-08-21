@@ -29,10 +29,13 @@ public class City implements Serializable {
     @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String name;
 
-    @NotNull(message = "must not be null")
-    @Column("code")
+    @Column("unm_49_code")
     @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
-    private String code;
+    private String unm49Code;
+
+    @Column("iso_alpha_2_code")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String isoAlpha2Code;
 
     @Transient
     @JsonIgnoreProperties(value = { "subDistricts", "city" }, allowSetters = true)
@@ -73,17 +76,30 @@ public class City implements Serializable {
         this.name = name;
     }
 
-    public String getCode() {
-        return this.code;
+    public String getUnm49Code() {
+        return this.unm49Code;
     }
 
-    public City code(String code) {
-        this.setCode(code);
+    public City unm49Code(String unm49Code) {
+        this.setUnm49Code(unm49Code);
         return this;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setUnm49Code(String unm49Code) {
+        this.unm49Code = unm49Code;
+    }
+
+    public String getIsoAlpha2Code() {
+        return this.isoAlpha2Code;
+    }
+
+    public City isoAlpha2Code(String isoAlpha2Code) {
+        this.setIsoAlpha2Code(isoAlpha2Code);
+        return this;
+    }
+
+    public void setIsoAlpha2Code(String isoAlpha2Code) {
+        this.isoAlpha2Code = isoAlpha2Code;
     }
 
     public Set<District> getDistricts() {
@@ -164,7 +180,8 @@ public class City implements Serializable {
         return "City{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", code='" + getCode() + "'" +
+            ", unm49Code='" + getUnm49Code() + "'" +
+            ", isoAlpha2Code='" + getIsoAlpha2Code() + "'" +
             "}";
     }
 }

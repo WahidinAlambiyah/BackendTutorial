@@ -1,6 +1,7 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.Department;
+import com.mycompany.myapp.domain.criteria.DepartmentCriteria;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
@@ -46,4 +47,7 @@ interface DepartmentRepositoryInternal {
     Mono<Department> findById(Long id);
     // this is not supported at the moment because of https://github.com/jhipster/generator-jhipster/issues/18269
     // Flux<Department> findAllBy(Pageable pageable, Criteria criteria);
+    Flux<Department> findByCriteria(DepartmentCriteria criteria, Pageable pageable);
+
+    Mono<Long> countByCriteria(DepartmentCriteria criteria);
 }

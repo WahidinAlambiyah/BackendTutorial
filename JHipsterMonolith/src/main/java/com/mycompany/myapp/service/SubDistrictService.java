@@ -1,6 +1,7 @@
 package com.mycompany.myapp.service;
 
-import com.mycompany.myapp.domain.SubDistrict;
+import com.mycompany.myapp.domain.criteria.SubDistrictCriteria;
+import com.mycompany.myapp.service.dto.SubDistrictDTO;
 import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -12,34 +13,40 @@ public interface SubDistrictService {
     /**
      * Save a subDistrict.
      *
-     * @param subDistrict the entity to save.
+     * @param subDistrictDTO the entity to save.
      * @return the persisted entity.
      */
-    Mono<SubDistrict> save(SubDistrict subDistrict);
+    Mono<SubDistrictDTO> save(SubDistrictDTO subDistrictDTO);
 
     /**
      * Updates a subDistrict.
      *
-     * @param subDistrict the entity to update.
+     * @param subDistrictDTO the entity to update.
      * @return the persisted entity.
      */
-    Mono<SubDistrict> update(SubDistrict subDistrict);
+    Mono<SubDistrictDTO> update(SubDistrictDTO subDistrictDTO);
 
     /**
      * Partially updates a subDistrict.
      *
-     * @param subDistrict the entity to update partially.
+     * @param subDistrictDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Mono<SubDistrict> partialUpdate(SubDistrict subDistrict);
-
+    Mono<SubDistrictDTO> partialUpdate(SubDistrictDTO subDistrictDTO);
     /**
-     * Get all the subDistricts.
+     * Find subDistricts by criteria.
      *
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<SubDistrict> findAll(Pageable pageable);
+    Flux<SubDistrictDTO> findByCriteria(SubDistrictCriteria criteria, Pageable pageable);
+
+    /**
+     * Find the count of subDistricts by criteria.
+     * @param criteria filtering criteria
+     * @return the count of subDistricts
+     */
+    public Mono<Long> countByCriteria(SubDistrictCriteria criteria);
 
     /**
      * Get all the subDistricts with eager load of many-to-many relationships.
@@ -47,7 +54,7 @@ public interface SubDistrictService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<SubDistrict> findAllWithEagerRelationships(Pageable pageable);
+    Flux<SubDistrictDTO> findAllWithEagerRelationships(Pageable pageable);
 
     /**
      * Returns the number of subDistricts available.
@@ -68,7 +75,7 @@ public interface SubDistrictService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Mono<SubDistrict> findOne(Long id);
+    Mono<SubDistrictDTO> findOne(Long id);
 
     /**
      * Delete the "id" subDistrict.
@@ -86,5 +93,5 @@ public interface SubDistrictService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<SubDistrict> search(String query, Pageable pageable);
+    Flux<SubDistrictDTO> search(String query, Pageable pageable);
 }

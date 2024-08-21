@@ -38,6 +38,10 @@ export default defineComponent({
       retrieveLocation(route.params.locationId);
     }
 
+    const initRelationships = () => {};
+
+    initRelationships();
+
     const { t: t$ } = useI18n();
     const validations = useValidation();
     const validationRules = {
@@ -45,6 +49,7 @@ export default defineComponent({
       postalCode: {},
       city: {},
       stateProvince: {},
+      department: {},
     };
     const v$ = useVuelidate(validationRules, location as any);
     v$.value.$validate();

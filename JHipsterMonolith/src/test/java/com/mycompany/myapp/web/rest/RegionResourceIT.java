@@ -14,6 +14,8 @@ import com.mycompany.myapp.domain.Region;
 import com.mycompany.myapp.repository.EntityManager;
 import com.mycompany.myapp.repository.RegionRepository;
 import com.mycompany.myapp.repository.search.RegionSearchRepository;
+import com.mycompany.myapp.service.dto.RegionDTO;
+import com.mycompany.myapp.service.mapper.RegionMapper;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -40,8 +42,11 @@ class RegionResourceIT {
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
-    private static final String DEFAULT_CODE = "AAAAAAAAAA";
-    private static final String UPDATED_CODE = "BBBBBBBBBB";
+    private static final String DEFAULT_UNM_49_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_UNM_49_CODE = "BBBBBBBBBB";
+
+    private static final String DEFAULT_ISO_ALPHA_2_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_ISO_ALPHA_2_CODE = "BBBBBBBBBB";
 
     private static final String ENTITY_API_URL = "/api/regions";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -55,6 +60,9 @@ class RegionResourceIT {
 
     @Autowired
     private RegionRepository regionRepository;
+
+    @Autowired
+    private RegionMapper regionMapper;
 
     @Autowired
     private RegionSearchRepository regionSearchRepository;
@@ -76,7 +84,7 @@ class RegionResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Region createEntity(EntityManager em) {
-        Region region = new Region().name(DEFAULT_NAME).code(DEFAULT_CODE);
+        Region region = new Region().name(DEFAULT_NAME).unm49Code(DEFAULT_UNM_49_CODE).isoAlpha2Code(DEFAULT_ISO_ALPHA_2_CODE);
         return region;
     }
 
@@ -87,7 +95,7 @@ class RegionResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Region createUpdatedEntity(EntityManager em) {
-        Region region = new Region().name(UPDATED_NAME).code(UPDATED_CODE);
+        Region region = new Region().name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
         return region;
     }
 
@@ -119,20 +127,22 @@ class RegionResourceIT {
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(regionSearchRepository.findAll().collectList().block());
         // Create the Region
-        var returnedRegion = webTestClient
+        RegionDTO regionDTO = regionMapper.toDto(region);
+        var returnedRegionDTO = webTestClient
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(region))
+            .bodyValue(om.writeValueAsBytes(regionDTO))
             .exchange()
             .expectStatus()
             .isCreated()
-            .expectBody(Region.class)
+            .expectBody(RegionDTO.class)
             .returnResult()
             .getResponseBody();
 
         // Validate the Region in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        var returnedRegion = regionMapper.toEntity(returnedRegionDTO);
         assertRegionUpdatableFieldsEquals(returnedRegion, getPersistedRegion(returnedRegion));
 
         await()
@@ -149,6 +159,7 @@ class RegionResourceIT {
     void createRegionWithExistingId() throws Exception {
         // Create the Region with an existing ID
         region.setId(1L);
+        RegionDTO regionDTO = regionMapper.toDto(region);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(regionSearchRepository.findAll().collectList().block());
@@ -158,7 +169,7 @@ class RegionResourceIT {
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(region))
+            .bodyValue(om.writeValueAsBytes(regionDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -177,36 +188,13 @@ class RegionResourceIT {
         region.setName(null);
 
         // Create the Region, which fails.
+        RegionDTO regionDTO = regionMapper.toDto(region);
 
         webTestClient
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(region))
-            .exchange()
-            .expectStatus()
-            .isBadRequest();
-
-        assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(regionSearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
-    }
-
-    @Test
-    void checkCodeIsRequired() throws Exception {
-        long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(regionSearchRepository.findAll().collectList().block());
-        // set the field null
-        region.setCode(null);
-
-        // Create the Region, which fails.
-
-        webTestClient
-            .post()
-            .uri(ENTITY_API_URL)
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(region))
+            .bodyValue(om.writeValueAsBytes(regionDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -237,8 +225,10 @@ class RegionResourceIT {
             .value(hasItem(region.getId().intValue()))
             .jsonPath("$.[*].name")
             .value(hasItem(DEFAULT_NAME))
-            .jsonPath("$.[*].code")
-            .value(hasItem(DEFAULT_CODE));
+            .jsonPath("$.[*].unm49Code")
+            .value(hasItem(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.[*].isoAlpha2Code")
+            .value(hasItem(DEFAULT_ISO_ALPHA_2_CODE));
     }
 
     @Test
@@ -261,8 +251,242 @@ class RegionResourceIT {
             .value(is(region.getId().intValue()))
             .jsonPath("$.name")
             .value(is(DEFAULT_NAME))
-            .jsonPath("$.code")
-            .value(is(DEFAULT_CODE));
+            .jsonPath("$.unm49Code")
+            .value(is(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.isoAlpha2Code")
+            .value(is(DEFAULT_ISO_ALPHA_2_CODE));
+    }
+
+    @Test
+    void getRegionsByIdFiltering() {
+        // Initialize the database
+        insertedRegion = regionRepository.save(region).block();
+
+        Long id = region.getId();
+
+        defaultRegionFiltering("id.equals=" + id, "id.notEquals=" + id);
+
+        defaultRegionFiltering("id.greaterThanOrEqual=" + id, "id.greaterThan=" + id);
+
+        defaultRegionFiltering("id.lessThanOrEqual=" + id, "id.lessThan=" + id);
+    }
+
+    @Test
+    void getAllRegionsByNameIsEqualToSomething() {
+        // Initialize the database
+        insertedRegion = regionRepository.save(region).block();
+
+        // Get all the regionList where name equals to
+        defaultRegionFiltering("name.equals=" + DEFAULT_NAME, "name.equals=" + UPDATED_NAME);
+    }
+
+    @Test
+    void getAllRegionsByNameIsInShouldWork() {
+        // Initialize the database
+        insertedRegion = regionRepository.save(region).block();
+
+        // Get all the regionList where name in
+        defaultRegionFiltering("name.in=" + DEFAULT_NAME + "," + UPDATED_NAME, "name.in=" + UPDATED_NAME);
+    }
+
+    @Test
+    void getAllRegionsByNameIsNullOrNotNull() {
+        // Initialize the database
+        insertedRegion = regionRepository.save(region).block();
+
+        // Get all the regionList where name is not null
+        defaultRegionFiltering("name.specified=true", "name.specified=false");
+    }
+
+    @Test
+    void getAllRegionsByNameContainsSomething() {
+        // Initialize the database
+        insertedRegion = regionRepository.save(region).block();
+
+        // Get all the regionList where name contains
+        defaultRegionFiltering("name.contains=" + DEFAULT_NAME, "name.contains=" + UPDATED_NAME);
+    }
+
+    @Test
+    void getAllRegionsByNameNotContainsSomething() {
+        // Initialize the database
+        insertedRegion = regionRepository.save(region).block();
+
+        // Get all the regionList where name does not contain
+        defaultRegionFiltering("name.doesNotContain=" + UPDATED_NAME, "name.doesNotContain=" + DEFAULT_NAME);
+    }
+
+    @Test
+    void getAllRegionsByUnm49CodeIsEqualToSomething() {
+        // Initialize the database
+        insertedRegion = regionRepository.save(region).block();
+
+        // Get all the regionList where unm49Code equals to
+        defaultRegionFiltering("unm49Code.equals=" + DEFAULT_UNM_49_CODE, "unm49Code.equals=" + UPDATED_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllRegionsByUnm49CodeIsInShouldWork() {
+        // Initialize the database
+        insertedRegion = regionRepository.save(region).block();
+
+        // Get all the regionList where unm49Code in
+        defaultRegionFiltering("unm49Code.in=" + DEFAULT_UNM_49_CODE + "," + UPDATED_UNM_49_CODE, "unm49Code.in=" + UPDATED_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllRegionsByUnm49CodeIsNullOrNotNull() {
+        // Initialize the database
+        insertedRegion = regionRepository.save(region).block();
+
+        // Get all the regionList where unm49Code is not null
+        defaultRegionFiltering("unm49Code.specified=true", "unm49Code.specified=false");
+    }
+
+    @Test
+    void getAllRegionsByUnm49CodeContainsSomething() {
+        // Initialize the database
+        insertedRegion = regionRepository.save(region).block();
+
+        // Get all the regionList where unm49Code contains
+        defaultRegionFiltering("unm49Code.contains=" + DEFAULT_UNM_49_CODE, "unm49Code.contains=" + UPDATED_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllRegionsByUnm49CodeNotContainsSomething() {
+        // Initialize the database
+        insertedRegion = regionRepository.save(region).block();
+
+        // Get all the regionList where unm49Code does not contain
+        defaultRegionFiltering("unm49Code.doesNotContain=" + UPDATED_UNM_49_CODE, "unm49Code.doesNotContain=" + DEFAULT_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllRegionsByIsoAlpha2CodeIsEqualToSomething() {
+        // Initialize the database
+        insertedRegion = regionRepository.save(region).block();
+
+        // Get all the regionList where isoAlpha2Code equals to
+        defaultRegionFiltering("isoAlpha2Code.equals=" + DEFAULT_ISO_ALPHA_2_CODE, "isoAlpha2Code.equals=" + UPDATED_ISO_ALPHA_2_CODE);
+    }
+
+    @Test
+    void getAllRegionsByIsoAlpha2CodeIsInShouldWork() {
+        // Initialize the database
+        insertedRegion = regionRepository.save(region).block();
+
+        // Get all the regionList where isoAlpha2Code in
+        defaultRegionFiltering(
+            "isoAlpha2Code.in=" + DEFAULT_ISO_ALPHA_2_CODE + "," + UPDATED_ISO_ALPHA_2_CODE,
+            "isoAlpha2Code.in=" + UPDATED_ISO_ALPHA_2_CODE
+        );
+    }
+
+    @Test
+    void getAllRegionsByIsoAlpha2CodeIsNullOrNotNull() {
+        // Initialize the database
+        insertedRegion = regionRepository.save(region).block();
+
+        // Get all the regionList where isoAlpha2Code is not null
+        defaultRegionFiltering("isoAlpha2Code.specified=true", "isoAlpha2Code.specified=false");
+    }
+
+    @Test
+    void getAllRegionsByIsoAlpha2CodeContainsSomething() {
+        // Initialize the database
+        insertedRegion = regionRepository.save(region).block();
+
+        // Get all the regionList where isoAlpha2Code contains
+        defaultRegionFiltering("isoAlpha2Code.contains=" + DEFAULT_ISO_ALPHA_2_CODE, "isoAlpha2Code.contains=" + UPDATED_ISO_ALPHA_2_CODE);
+    }
+
+    @Test
+    void getAllRegionsByIsoAlpha2CodeNotContainsSomething() {
+        // Initialize the database
+        insertedRegion = regionRepository.save(region).block();
+
+        // Get all the regionList where isoAlpha2Code does not contain
+        defaultRegionFiltering(
+            "isoAlpha2Code.doesNotContain=" + UPDATED_ISO_ALPHA_2_CODE,
+            "isoAlpha2Code.doesNotContain=" + DEFAULT_ISO_ALPHA_2_CODE
+        );
+    }
+
+    private void defaultRegionFiltering(String shouldBeFound, String shouldNotBeFound) {
+        defaultRegionShouldBeFound(shouldBeFound);
+        defaultRegionShouldNotBeFound(shouldNotBeFound);
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultRegionShouldBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$.[*].id")
+            .value(hasItem(region.getId().intValue()))
+            .jsonPath("$.[*].name")
+            .value(hasItem(DEFAULT_NAME))
+            .jsonPath("$.[*].unm49Code")
+            .value(hasItem(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.[*].isoAlpha2Code")
+            .value(hasItem(DEFAULT_ISO_ALPHA_2_CODE));
+
+        // Check, that the count call also returns 1
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultRegionShouldNotBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .isArray()
+            .jsonPath("$")
+            .isEmpty();
+
+        // Check, that the count call also returns 0
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(0));
     }
 
     @Test
@@ -288,13 +512,14 @@ class RegionResourceIT {
 
         // Update the region
         Region updatedRegion = regionRepository.findById(region.getId()).block();
-        updatedRegion.name(UPDATED_NAME).code(UPDATED_CODE);
+        updatedRegion.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
+        RegionDTO regionDTO = regionMapper.toDto(updatedRegion);
 
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, updatedRegion.getId())
+            .uri(ENTITY_API_URL_ID, regionDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(updatedRegion))
+            .bodyValue(om.writeValueAsBytes(regionDTO))
             .exchange()
             .expectStatus()
             .isOk();
@@ -323,12 +548,15 @@ class RegionResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(regionSearchRepository.findAll().collectList().block());
         region.setId(longCount.incrementAndGet());
 
+        // Create the Region
+        RegionDTO regionDTO = regionMapper.toDto(region);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, region.getId())
+            .uri(ENTITY_API_URL_ID, regionDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(region))
+            .bodyValue(om.writeValueAsBytes(regionDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -345,12 +573,15 @@ class RegionResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(regionSearchRepository.findAll().collectList().block());
         region.setId(longCount.incrementAndGet());
 
+        // Create the Region
+        RegionDTO regionDTO = regionMapper.toDto(region);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(region))
+            .bodyValue(om.writeValueAsBytes(regionDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -367,12 +598,15 @@ class RegionResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(regionSearchRepository.findAll().collectList().block());
         region.setId(longCount.incrementAndGet());
 
+        // Create the Region
+        RegionDTO regionDTO = regionMapper.toDto(region);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(region))
+            .bodyValue(om.writeValueAsBytes(regionDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);
@@ -394,7 +628,7 @@ class RegionResourceIT {
         Region partialUpdatedRegion = new Region();
         partialUpdatedRegion.setId(region.getId());
 
-        partialUpdatedRegion.name(UPDATED_NAME).code(UPDATED_CODE);
+        partialUpdatedRegion.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE);
 
         webTestClient
             .patch()
@@ -422,7 +656,7 @@ class RegionResourceIT {
         Region partialUpdatedRegion = new Region();
         partialUpdatedRegion.setId(region.getId());
 
-        partialUpdatedRegion.name(UPDATED_NAME).code(UPDATED_CODE);
+        partialUpdatedRegion.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
 
         webTestClient
             .patch()
@@ -445,12 +679,15 @@ class RegionResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(regionSearchRepository.findAll().collectList().block());
         region.setId(longCount.incrementAndGet());
 
+        // Create the Region
+        RegionDTO regionDTO = regionMapper.toDto(region);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
-            .uri(ENTITY_API_URL_ID, region.getId())
+            .uri(ENTITY_API_URL_ID, regionDTO.getId())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(region))
+            .bodyValue(om.writeValueAsBytes(regionDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -467,12 +704,15 @@ class RegionResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(regionSearchRepository.findAll().collectList().block());
         region.setId(longCount.incrementAndGet());
 
+        // Create the Region
+        RegionDTO regionDTO = regionMapper.toDto(region);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(region))
+            .bodyValue(om.writeValueAsBytes(regionDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -489,12 +729,15 @@ class RegionResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(regionSearchRepository.findAll().collectList().block());
         region.setId(longCount.incrementAndGet());
 
+        // Create the Region
+        RegionDTO regionDTO = regionMapper.toDto(region);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(region))
+            .bodyValue(om.writeValueAsBytes(regionDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);
@@ -551,8 +794,10 @@ class RegionResourceIT {
             .value(hasItem(region.getId().intValue()))
             .jsonPath("$.[*].name")
             .value(hasItem(DEFAULT_NAME))
-            .jsonPath("$.[*].code")
-            .value(hasItem(DEFAULT_CODE));
+            .jsonPath("$.[*].unm49Code")
+            .value(hasItem(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.[*].isoAlpha2Code")
+            .value(hasItem(DEFAULT_ISO_ALPHA_2_CODE));
     }
 
     protected long getRepositoryCount() {

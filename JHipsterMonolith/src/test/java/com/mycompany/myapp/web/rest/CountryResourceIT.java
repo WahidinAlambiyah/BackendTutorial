@@ -11,10 +11,14 @@ import static org.mockito.Mockito.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mycompany.myapp.IntegrationTest;
 import com.mycompany.myapp.domain.Country;
+import com.mycompany.myapp.domain.Region;
 import com.mycompany.myapp.repository.CountryRepository;
 import com.mycompany.myapp.repository.EntityManager;
+import com.mycompany.myapp.repository.RegionRepository;
 import com.mycompany.myapp.repository.search.CountrySearchRepository;
 import com.mycompany.myapp.service.CountryService;
+import com.mycompany.myapp.service.dto.CountryDTO;
+import com.mycompany.myapp.service.mapper.CountryMapper;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -46,8 +50,11 @@ class CountryResourceIT {
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
-    private static final String DEFAULT_CODE = "AAAAAAAAAA";
-    private static final String UPDATED_CODE = "BBBBBBBBBB";
+    private static final String DEFAULT_UNM_49_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_UNM_49_CODE = "BBBBBBBBBB";
+
+    private static final String DEFAULT_ISO_ALPHA_2_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_ISO_ALPHA_2_CODE = "BBBBBBBBBB";
 
     private static final String ENTITY_API_URL = "/api/countries";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -65,6 +72,9 @@ class CountryResourceIT {
     @Mock
     private CountryRepository countryRepositoryMock;
 
+    @Autowired
+    private CountryMapper countryMapper;
+
     @Mock
     private CountryService countryServiceMock;
 
@@ -81,6 +91,9 @@ class CountryResourceIT {
 
     private Country insertedCountry;
 
+    @Autowired
+    private RegionRepository regionRepository;
+
     /**
      * Create an entity for this test.
      *
@@ -88,7 +101,7 @@ class CountryResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Country createEntity(EntityManager em) {
-        Country country = new Country().name(DEFAULT_NAME).code(DEFAULT_CODE);
+        Country country = new Country().name(DEFAULT_NAME).unm49Code(DEFAULT_UNM_49_CODE).isoAlpha2Code(DEFAULT_ISO_ALPHA_2_CODE);
         return country;
     }
 
@@ -99,7 +112,7 @@ class CountryResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Country createUpdatedEntity(EntityManager em) {
-        Country country = new Country().name(UPDATED_NAME).code(UPDATED_CODE);
+        Country country = new Country().name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
         return country;
     }
 
@@ -131,20 +144,22 @@ class CountryResourceIT {
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(countrySearchRepository.findAll().collectList().block());
         // Create the Country
-        var returnedCountry = webTestClient
+        CountryDTO countryDTO = countryMapper.toDto(country);
+        var returnedCountryDTO = webTestClient
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(country))
+            .bodyValue(om.writeValueAsBytes(countryDTO))
             .exchange()
             .expectStatus()
             .isCreated()
-            .expectBody(Country.class)
+            .expectBody(CountryDTO.class)
             .returnResult()
             .getResponseBody();
 
         // Validate the Country in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        var returnedCountry = countryMapper.toEntity(returnedCountryDTO);
         assertCountryUpdatableFieldsEquals(returnedCountry, getPersistedCountry(returnedCountry));
 
         await()
@@ -161,6 +176,7 @@ class CountryResourceIT {
     void createCountryWithExistingId() throws Exception {
         // Create the Country with an existing ID
         country.setId(1L);
+        CountryDTO countryDTO = countryMapper.toDto(country);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(countrySearchRepository.findAll().collectList().block());
@@ -170,7 +186,7 @@ class CountryResourceIT {
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(country))
+            .bodyValue(om.writeValueAsBytes(countryDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -189,36 +205,13 @@ class CountryResourceIT {
         country.setName(null);
 
         // Create the Country, which fails.
+        CountryDTO countryDTO = countryMapper.toDto(country);
 
         webTestClient
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(country))
-            .exchange()
-            .expectStatus()
-            .isBadRequest();
-
-        assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(countrySearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
-    }
-
-    @Test
-    void checkCodeIsRequired() throws Exception {
-        long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(countrySearchRepository.findAll().collectList().block());
-        // set the field null
-        country.setCode(null);
-
-        // Create the Country, which fails.
-
-        webTestClient
-            .post()
-            .uri(ENTITY_API_URL)
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(country))
+            .bodyValue(om.writeValueAsBytes(countryDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -249,8 +242,10 @@ class CountryResourceIT {
             .value(hasItem(country.getId().intValue()))
             .jsonPath("$.[*].name")
             .value(hasItem(DEFAULT_NAME))
-            .jsonPath("$.[*].code")
-            .value(hasItem(DEFAULT_CODE));
+            .jsonPath("$.[*].unm49Code")
+            .value(hasItem(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.[*].isoAlpha2Code")
+            .value(hasItem(DEFAULT_ISO_ALPHA_2_CODE));
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -290,8 +285,256 @@ class CountryResourceIT {
             .value(is(country.getId().intValue()))
             .jsonPath("$.name")
             .value(is(DEFAULT_NAME))
-            .jsonPath("$.code")
-            .value(is(DEFAULT_CODE));
+            .jsonPath("$.unm49Code")
+            .value(is(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.isoAlpha2Code")
+            .value(is(DEFAULT_ISO_ALPHA_2_CODE));
+    }
+
+    @Test
+    void getCountriesByIdFiltering() {
+        // Initialize the database
+        insertedCountry = countryRepository.save(country).block();
+
+        Long id = country.getId();
+
+        defaultCountryFiltering("id.equals=" + id, "id.notEquals=" + id);
+
+        defaultCountryFiltering("id.greaterThanOrEqual=" + id, "id.greaterThan=" + id);
+
+        defaultCountryFiltering("id.lessThanOrEqual=" + id, "id.lessThan=" + id);
+    }
+
+    @Test
+    void getAllCountriesByNameIsEqualToSomething() {
+        // Initialize the database
+        insertedCountry = countryRepository.save(country).block();
+
+        // Get all the countryList where name equals to
+        defaultCountryFiltering("name.equals=" + DEFAULT_NAME, "name.equals=" + UPDATED_NAME);
+    }
+
+    @Test
+    void getAllCountriesByNameIsInShouldWork() {
+        // Initialize the database
+        insertedCountry = countryRepository.save(country).block();
+
+        // Get all the countryList where name in
+        defaultCountryFiltering("name.in=" + DEFAULT_NAME + "," + UPDATED_NAME, "name.in=" + UPDATED_NAME);
+    }
+
+    @Test
+    void getAllCountriesByNameIsNullOrNotNull() {
+        // Initialize the database
+        insertedCountry = countryRepository.save(country).block();
+
+        // Get all the countryList where name is not null
+        defaultCountryFiltering("name.specified=true", "name.specified=false");
+    }
+
+    @Test
+    void getAllCountriesByNameContainsSomething() {
+        // Initialize the database
+        insertedCountry = countryRepository.save(country).block();
+
+        // Get all the countryList where name contains
+        defaultCountryFiltering("name.contains=" + DEFAULT_NAME, "name.contains=" + UPDATED_NAME);
+    }
+
+    @Test
+    void getAllCountriesByNameNotContainsSomething() {
+        // Initialize the database
+        insertedCountry = countryRepository.save(country).block();
+
+        // Get all the countryList where name does not contain
+        defaultCountryFiltering("name.doesNotContain=" + UPDATED_NAME, "name.doesNotContain=" + DEFAULT_NAME);
+    }
+
+    @Test
+    void getAllCountriesByUnm49CodeIsEqualToSomething() {
+        // Initialize the database
+        insertedCountry = countryRepository.save(country).block();
+
+        // Get all the countryList where unm49Code equals to
+        defaultCountryFiltering("unm49Code.equals=" + DEFAULT_UNM_49_CODE, "unm49Code.equals=" + UPDATED_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllCountriesByUnm49CodeIsInShouldWork() {
+        // Initialize the database
+        insertedCountry = countryRepository.save(country).block();
+
+        // Get all the countryList where unm49Code in
+        defaultCountryFiltering("unm49Code.in=" + DEFAULT_UNM_49_CODE + "," + UPDATED_UNM_49_CODE, "unm49Code.in=" + UPDATED_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllCountriesByUnm49CodeIsNullOrNotNull() {
+        // Initialize the database
+        insertedCountry = countryRepository.save(country).block();
+
+        // Get all the countryList where unm49Code is not null
+        defaultCountryFiltering("unm49Code.specified=true", "unm49Code.specified=false");
+    }
+
+    @Test
+    void getAllCountriesByUnm49CodeContainsSomething() {
+        // Initialize the database
+        insertedCountry = countryRepository.save(country).block();
+
+        // Get all the countryList where unm49Code contains
+        defaultCountryFiltering("unm49Code.contains=" + DEFAULT_UNM_49_CODE, "unm49Code.contains=" + UPDATED_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllCountriesByUnm49CodeNotContainsSomething() {
+        // Initialize the database
+        insertedCountry = countryRepository.save(country).block();
+
+        // Get all the countryList where unm49Code does not contain
+        defaultCountryFiltering("unm49Code.doesNotContain=" + UPDATED_UNM_49_CODE, "unm49Code.doesNotContain=" + DEFAULT_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllCountriesByIsoAlpha2CodeIsEqualToSomething() {
+        // Initialize the database
+        insertedCountry = countryRepository.save(country).block();
+
+        // Get all the countryList where isoAlpha2Code equals to
+        defaultCountryFiltering("isoAlpha2Code.equals=" + DEFAULT_ISO_ALPHA_2_CODE, "isoAlpha2Code.equals=" + UPDATED_ISO_ALPHA_2_CODE);
+    }
+
+    @Test
+    void getAllCountriesByIsoAlpha2CodeIsInShouldWork() {
+        // Initialize the database
+        insertedCountry = countryRepository.save(country).block();
+
+        // Get all the countryList where isoAlpha2Code in
+        defaultCountryFiltering(
+            "isoAlpha2Code.in=" + DEFAULT_ISO_ALPHA_2_CODE + "," + UPDATED_ISO_ALPHA_2_CODE,
+            "isoAlpha2Code.in=" + UPDATED_ISO_ALPHA_2_CODE
+        );
+    }
+
+    @Test
+    void getAllCountriesByIsoAlpha2CodeIsNullOrNotNull() {
+        // Initialize the database
+        insertedCountry = countryRepository.save(country).block();
+
+        // Get all the countryList where isoAlpha2Code is not null
+        defaultCountryFiltering("isoAlpha2Code.specified=true", "isoAlpha2Code.specified=false");
+    }
+
+    @Test
+    void getAllCountriesByIsoAlpha2CodeContainsSomething() {
+        // Initialize the database
+        insertedCountry = countryRepository.save(country).block();
+
+        // Get all the countryList where isoAlpha2Code contains
+        defaultCountryFiltering("isoAlpha2Code.contains=" + DEFAULT_ISO_ALPHA_2_CODE, "isoAlpha2Code.contains=" + UPDATED_ISO_ALPHA_2_CODE);
+    }
+
+    @Test
+    void getAllCountriesByIsoAlpha2CodeNotContainsSomething() {
+        // Initialize the database
+        insertedCountry = countryRepository.save(country).block();
+
+        // Get all the countryList where isoAlpha2Code does not contain
+        defaultCountryFiltering(
+            "isoAlpha2Code.doesNotContain=" + UPDATED_ISO_ALPHA_2_CODE,
+            "isoAlpha2Code.doesNotContain=" + DEFAULT_ISO_ALPHA_2_CODE
+        );
+    }
+
+    @Test
+    void getAllCountriesByRegionIsEqualToSomething() {
+        Region region = RegionResourceIT.createEntity(em);
+        regionRepository.save(region).block();
+        Long regionId = region.getId();
+        country.setRegionId(regionId);
+        insertedCountry = countryRepository.save(country).block();
+        // Get all the countryList where region equals to regionId
+        defaultCountryShouldBeFound("regionId.equals=" + regionId);
+
+        // Get all the countryList where region equals to (regionId + 1)
+        defaultCountryShouldNotBeFound("regionId.equals=" + (regionId + 1));
+    }
+
+    private void defaultCountryFiltering(String shouldBeFound, String shouldNotBeFound) {
+        defaultCountryShouldBeFound(shouldBeFound);
+        defaultCountryShouldNotBeFound(shouldNotBeFound);
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultCountryShouldBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$.[*].id")
+            .value(hasItem(country.getId().intValue()))
+            .jsonPath("$.[*].name")
+            .value(hasItem(DEFAULT_NAME))
+            .jsonPath("$.[*].unm49Code")
+            .value(hasItem(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.[*].isoAlpha2Code")
+            .value(hasItem(DEFAULT_ISO_ALPHA_2_CODE));
+
+        // Check, that the count call also returns 1
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultCountryShouldNotBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .isArray()
+            .jsonPath("$")
+            .isEmpty();
+
+        // Check, that the count call also returns 0
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(0));
     }
 
     @Test
@@ -317,13 +560,14 @@ class CountryResourceIT {
 
         // Update the country
         Country updatedCountry = countryRepository.findById(country.getId()).block();
-        updatedCountry.name(UPDATED_NAME).code(UPDATED_CODE);
+        updatedCountry.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
+        CountryDTO countryDTO = countryMapper.toDto(updatedCountry);
 
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, updatedCountry.getId())
+            .uri(ENTITY_API_URL_ID, countryDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(updatedCountry))
+            .bodyValue(om.writeValueAsBytes(countryDTO))
             .exchange()
             .expectStatus()
             .isOk();
@@ -352,12 +596,15 @@ class CountryResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(countrySearchRepository.findAll().collectList().block());
         country.setId(longCount.incrementAndGet());
 
+        // Create the Country
+        CountryDTO countryDTO = countryMapper.toDto(country);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, country.getId())
+            .uri(ENTITY_API_URL_ID, countryDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(country))
+            .bodyValue(om.writeValueAsBytes(countryDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -374,12 +621,15 @@ class CountryResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(countrySearchRepository.findAll().collectList().block());
         country.setId(longCount.incrementAndGet());
 
+        // Create the Country
+        CountryDTO countryDTO = countryMapper.toDto(country);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(country))
+            .bodyValue(om.writeValueAsBytes(countryDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -396,12 +646,15 @@ class CountryResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(countrySearchRepository.findAll().collectList().block());
         country.setId(longCount.incrementAndGet());
 
+        // Create the Country
+        CountryDTO countryDTO = countryMapper.toDto(country);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(country))
+            .bodyValue(om.writeValueAsBytes(countryDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);
@@ -423,7 +676,7 @@ class CountryResourceIT {
         Country partialUpdatedCountry = new Country();
         partialUpdatedCountry.setId(country.getId());
 
-        partialUpdatedCountry.code(UPDATED_CODE);
+        partialUpdatedCountry.unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
 
         webTestClient
             .patch()
@@ -451,7 +704,7 @@ class CountryResourceIT {
         Country partialUpdatedCountry = new Country();
         partialUpdatedCountry.setId(country.getId());
 
-        partialUpdatedCountry.name(UPDATED_NAME).code(UPDATED_CODE);
+        partialUpdatedCountry.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
 
         webTestClient
             .patch()
@@ -474,12 +727,15 @@ class CountryResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(countrySearchRepository.findAll().collectList().block());
         country.setId(longCount.incrementAndGet());
 
+        // Create the Country
+        CountryDTO countryDTO = countryMapper.toDto(country);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
-            .uri(ENTITY_API_URL_ID, country.getId())
+            .uri(ENTITY_API_URL_ID, countryDTO.getId())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(country))
+            .bodyValue(om.writeValueAsBytes(countryDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -496,12 +752,15 @@ class CountryResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(countrySearchRepository.findAll().collectList().block());
         country.setId(longCount.incrementAndGet());
 
+        // Create the Country
+        CountryDTO countryDTO = countryMapper.toDto(country);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(country))
+            .bodyValue(om.writeValueAsBytes(countryDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -518,12 +777,15 @@ class CountryResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(countrySearchRepository.findAll().collectList().block());
         country.setId(longCount.incrementAndGet());
 
+        // Create the Country
+        CountryDTO countryDTO = countryMapper.toDto(country);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(country))
+            .bodyValue(om.writeValueAsBytes(countryDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);
@@ -580,8 +842,10 @@ class CountryResourceIT {
             .value(hasItem(country.getId().intValue()))
             .jsonPath("$.[*].name")
             .value(hasItem(DEFAULT_NAME))
-            .jsonPath("$.[*].code")
-            .value(hasItem(DEFAULT_CODE));
+            .jsonPath("$.[*].unm49Code")
+            .value(hasItem(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.[*].isoAlpha2Code")
+            .value(hasItem(DEFAULT_ISO_ALPHA_2_CODE));
     }
 
     protected long getRepositoryCount() {

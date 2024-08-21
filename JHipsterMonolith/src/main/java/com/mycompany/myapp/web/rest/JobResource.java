@@ -1,8 +1,9 @@
 package com.mycompany.myapp.web.rest;
 
-import com.mycompany.myapp.domain.Job;
+import com.mycompany.myapp.domain.criteria.JobCriteria;
 import com.mycompany.myapp.repository.JobRepository;
-import com.mycompany.myapp.repository.search.JobSearchRepository;
+import com.mycompany.myapp.service.JobService;
+import com.mycompany.myapp.service.dto.JobDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -18,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.ForwardedHeaderUtils;
@@ -33,7 +33,6 @@ import tech.jhipster.web.util.reactive.ResponseUtil;
  */
 @RestController
 @RequestMapping("/api/jobs")
-@Transactional
 public class JobResource {
 
     private static final Logger log = LoggerFactory.getLogger(JobResource.class);
@@ -43,31 +42,30 @@ public class JobResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final JobService jobService;
+
     private final JobRepository jobRepository;
 
-    private final JobSearchRepository jobSearchRepository;
-
-    public JobResource(JobRepository jobRepository, JobSearchRepository jobSearchRepository) {
+    public JobResource(JobService jobService, JobRepository jobRepository) {
+        this.jobService = jobService;
         this.jobRepository = jobRepository;
-        this.jobSearchRepository = jobSearchRepository;
     }
 
     /**
      * {@code POST  /jobs} : Create a new job.
      *
-     * @param job the job to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new job, or with status {@code 400 (Bad Request)} if the job has already an ID.
+     * @param jobDTO the jobDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new jobDTO, or with status {@code 400 (Bad Request)} if the job has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public Mono<ResponseEntity<Job>> createJob(@RequestBody Job job) throws URISyntaxException {
-        log.debug("REST request to save Job : {}", job);
-        if (job.getId() != null) {
+    public Mono<ResponseEntity<JobDTO>> createJob(@RequestBody JobDTO jobDTO) throws URISyntaxException {
+        log.debug("REST request to save Job : {}", jobDTO);
+        if (jobDTO.getId() != null) {
             throw new BadRequestAlertException("A new job cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        return jobRepository
-            .save(job)
-            .flatMap(jobSearchRepository::save)
+        return jobService
+            .save(jobDTO)
             .map(result -> {
                 try {
                     return ResponseEntity.created(new URI("/api/jobs/" + result.getId()))
@@ -82,21 +80,21 @@ public class JobResource {
     /**
      * {@code PUT  /jobs/:id} : Updates an existing job.
      *
-     * @param id the id of the job to save.
-     * @param job the job to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated job,
-     * or with status {@code 400 (Bad Request)} if the job is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the job couldn't be updated.
+     * @param id the id of the jobDTO to save.
+     * @param jobDTO the jobDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated jobDTO,
+     * or with status {@code 400 (Bad Request)} if the jobDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the jobDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
-    public Mono<ResponseEntity<Job>> updateJob(@PathVariable(value = "id", required = false) final Long id, @RequestBody Job job)
+    public Mono<ResponseEntity<JobDTO>> updateJob(@PathVariable(value = "id", required = false) final Long id, @RequestBody JobDTO jobDTO)
         throws URISyntaxException {
-        log.debug("REST request to update Job : {}, {}", id, job);
-        if (job.getId() == null) {
+        log.debug("REST request to update Job : {}, {}", id, jobDTO);
+        if (jobDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, job.getId())) {
+        if (!Objects.equals(id, jobDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -107,9 +105,8 @@ public class JobResource {
                     return Mono.error(new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
                 }
 
-                return jobRepository
-                    .save(job)
-                    .flatMap(jobSearchRepository::save)
+                return jobService
+                    .update(jobDTO)
                     .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
                     .map(
                         result ->
@@ -123,22 +120,24 @@ public class JobResource {
     /**
      * {@code PATCH  /jobs/:id} : Partial updates given fields of an existing job, field will ignore if it is null
      *
-     * @param id the id of the job to save.
-     * @param job the job to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated job,
-     * or with status {@code 400 (Bad Request)} if the job is not valid,
-     * or with status {@code 404 (Not Found)} if the job is not found,
-     * or with status {@code 500 (Internal Server Error)} if the job couldn't be updated.
+     * @param id the id of the jobDTO to save.
+     * @param jobDTO the jobDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated jobDTO,
+     * or with status {@code 400 (Bad Request)} if the jobDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the jobDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the jobDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public Mono<ResponseEntity<Job>> partialUpdateJob(@PathVariable(value = "id", required = false) final Long id, @RequestBody Job job)
-        throws URISyntaxException {
-        log.debug("REST request to partial update Job partially : {}, {}", id, job);
-        if (job.getId() == null) {
+    public Mono<ResponseEntity<JobDTO>> partialUpdateJob(
+        @PathVariable(value = "id", required = false) final Long id,
+        @RequestBody JobDTO jobDTO
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update Job partially : {}, {}", id, jobDTO);
+        if (jobDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, job.getId())) {
+        if (!Objects.equals(id, jobDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -149,26 +148,7 @@ public class JobResource {
                     return Mono.error(new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
                 }
 
-                Mono<Job> result = jobRepository
-                    .findById(job.getId())
-                    .map(existingJob -> {
-                        if (job.getJobTitle() != null) {
-                            existingJob.setJobTitle(job.getJobTitle());
-                        }
-                        if (job.getMinSalary() != null) {
-                            existingJob.setMinSalary(job.getMinSalary());
-                        }
-                        if (job.getMaxSalary() != null) {
-                            existingJob.setMaxSalary(job.getMaxSalary());
-                        }
-
-                        return existingJob;
-                    })
-                    .flatMap(jobRepository::save)
-                    .flatMap(savedJob -> {
-                        jobSearchRepository.save(savedJob);
-                        return Mono.just(savedJob);
-                    });
+                Mono<JobDTO> result = jobService.partialUpdate(jobDTO);
 
                 return result
                     .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
@@ -186,25 +166,19 @@ public class JobResource {
      *
      * @param pageable the pagination information.
      * @param request a {@link ServerHttpRequest} request.
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
-     * @param filter the filter of the request.
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of jobs in body.
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<List<Job>>> getAllJobs(
+    public Mono<ResponseEntity<List<JobDTO>>> getAllJobs(
+        JobCriteria criteria,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        ServerHttpRequest request,
-        @RequestParam(name = "filter", required = false) String filter,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        ServerHttpRequest request
     ) {
-        if ("jobhistory-is-null".equals(filter)) {
-            log.debug("REST request to get all Jobs where jobHistory is null");
-            return jobRepository.findAllWhereJobHistoryIsNull().collectList().map(ResponseEntity::ok);
-        }
-        log.debug("REST request to get a page of Jobs");
-        return jobRepository
-            .count()
-            .zipWith(jobRepository.findAllBy(pageable).collectList())
+        log.debug("REST request to get Jobs by criteria: {}", criteria);
+        return jobService
+            .countByCriteria(criteria)
+            .zipWith(jobService.findByCriteria(criteria, pageable).collectList())
             .map(
                 countWithEntities ->
                     ResponseEntity.ok()
@@ -219,30 +193,41 @@ public class JobResource {
     }
 
     /**
+     * {@code GET  /jobs/count} : count all the jobs.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public Mono<ResponseEntity<Long>> countJobs(JobCriteria criteria) {
+        log.debug("REST request to count Jobs by criteria: {}", criteria);
+        return jobService.countByCriteria(criteria).map(count -> ResponseEntity.status(HttpStatus.OK).body(count));
+    }
+
+    /**
      * {@code GET  /jobs/:id} : get the "id" job.
      *
-     * @param id the id of the job to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the job, or with status {@code 404 (Not Found)}.
+     * @param id the id of the jobDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the jobDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public Mono<ResponseEntity<Job>> getJob(@PathVariable("id") Long id) {
+    public Mono<ResponseEntity<JobDTO>> getJob(@PathVariable("id") Long id) {
         log.debug("REST request to get Job : {}", id);
-        Mono<Job> job = jobRepository.findOneWithEagerRelationships(id);
-        return ResponseUtil.wrapOrNotFound(job);
+        Mono<JobDTO> jobDTO = jobService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(jobDTO);
     }
 
     /**
      * {@code DELETE  /jobs/:id} : delete the "id" job.
      *
-     * @param id the id of the job to delete.
+     * @param id the id of the jobDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
     public Mono<ResponseEntity<Void>> deleteJob(@PathVariable("id") Long id) {
         log.debug("REST request to delete Job : {}", id);
-        return jobRepository
-            .deleteById(id)
-            .then(jobSearchRepository.deleteById(id))
+        return jobService
+            .delete(id)
             .then(
                 Mono.just(
                     ResponseEntity.noContent()
@@ -262,14 +247,14 @@ public class JobResource {
      * @return the result of the search.
      */
     @GetMapping("/_search")
-    public Mono<ResponseEntity<Flux<Job>>> searchJobs(
+    public Mono<ResponseEntity<Flux<JobDTO>>> searchJobs(
         @RequestParam("query") String query,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         ServerHttpRequest request
     ) {
         log.debug("REST request to search for a page of Jobs for query {}", query);
-        return jobSearchRepository
-            .count()
+        return jobService
+            .searchCount()
             .map(total -> new PageImpl<>(new ArrayList<>(), pageable, total))
             .map(
                 page ->
@@ -278,6 +263,6 @@ public class JobResource {
                         page
                     )
             )
-            .map(headers -> ResponseEntity.ok().headers(headers).body(jobSearchRepository.search(query, pageable)));
+            .map(headers -> ResponseEntity.ok().headers(headers).body(jobService.search(query, pageable)));
     }
 }

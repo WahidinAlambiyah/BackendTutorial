@@ -15,7 +15,7 @@ describe('Province e2e test', () => {
   const provincePageUrlPattern = new RegExp('/province(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const provinceSample = { name: 'alongside', code: 'puzzle' };
+  const provinceSample = { name: 'across following' };
 
   let province;
 
@@ -125,7 +125,7 @@ describe('Province e2e test', () => {
         cy.url().should('match', provincePageUrlPattern);
       });
 
-      it('edit button click should load edit Province page and save', () => {
+      it.skip('edit button click should load edit Province page and save', () => {
         cy.get(entityEditButtonSelector).first().click();
         cy.getEntityCreateUpdateHeading('Province');
         cy.get(entityCreateSaveButtonSelector).click();
@@ -160,11 +160,14 @@ describe('Province e2e test', () => {
     });
 
     it('should create an instance of Province', () => {
-      cy.get(`[data-cy="name"]`).type('wrongly proliferate');
-      cy.get(`[data-cy="name"]`).should('have.value', 'wrongly proliferate');
+      cy.get(`[data-cy="name"]`).type('athwart since');
+      cy.get(`[data-cy="name"]`).should('have.value', 'athwart since');
 
-      cy.get(`[data-cy="code"]`).type('boatyard realign hearty');
-      cy.get(`[data-cy="code"]`).should('have.value', 'boatyard realign hearty');
+      cy.get(`[data-cy="unm49Code"]`).type('below');
+      cy.get(`[data-cy="unm49Code"]`).should('have.value', 'below');
+
+      cy.get(`[data-cy="isoAlpha2Code"]`).type('ford yahoo');
+      cy.get(`[data-cy="isoAlpha2Code"]`).should('have.value', 'ford yahoo');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

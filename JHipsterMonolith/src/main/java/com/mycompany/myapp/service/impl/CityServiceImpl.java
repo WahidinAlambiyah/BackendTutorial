@@ -1,9 +1,11 @@
 package com.mycompany.myapp.service.impl;
 
-import com.mycompany.myapp.domain.City;
+import com.mycompany.myapp.domain.criteria.CityCriteria;
 import com.mycompany.myapp.repository.CityRepository;
 import com.mycompany.myapp.repository.search.CitySearchRepository;
 import com.mycompany.myapp.service.CityService;
+import com.mycompany.myapp.service.dto.CityDTO;
+import com.mycompany.myapp.service.mapper.CityMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
@@ -23,38 +25,36 @@ public class CityServiceImpl implements CityService {
 
     private final CityRepository cityRepository;
 
+    private final CityMapper cityMapper;
+
     private final CitySearchRepository citySearchRepository;
 
-    public CityServiceImpl(CityRepository cityRepository, CitySearchRepository citySearchRepository) {
+    public CityServiceImpl(CityRepository cityRepository, CityMapper cityMapper, CitySearchRepository citySearchRepository) {
         this.cityRepository = cityRepository;
+        this.cityMapper = cityMapper;
         this.citySearchRepository = citySearchRepository;
     }
 
     @Override
-    public Mono<City> save(City city) {
-        log.debug("Request to save City : {}", city);
-        return cityRepository.save(city).flatMap(citySearchRepository::save);
+    public Mono<CityDTO> save(CityDTO cityDTO) {
+        log.debug("Request to save City : {}", cityDTO);
+        return cityRepository.save(cityMapper.toEntity(cityDTO)).flatMap(citySearchRepository::save).map(cityMapper::toDto);
     }
 
     @Override
-    public Mono<City> update(City city) {
-        log.debug("Request to update City : {}", city);
-        return cityRepository.save(city).flatMap(citySearchRepository::save);
+    public Mono<CityDTO> update(CityDTO cityDTO) {
+        log.debug("Request to update City : {}", cityDTO);
+        return cityRepository.save(cityMapper.toEntity(cityDTO)).flatMap(citySearchRepository::save).map(cityMapper::toDto);
     }
 
     @Override
-    public Mono<City> partialUpdate(City city) {
-        log.debug("Request to partially update City : {}", city);
+    public Mono<CityDTO> partialUpdate(CityDTO cityDTO) {
+        log.debug("Request to partially update City : {}", cityDTO);
 
         return cityRepository
-            .findById(city.getId())
+            .findById(cityDTO.getId())
             .map(existingCity -> {
-                if (city.getName() != null) {
-                    existingCity.setName(city.getName());
-                }
-                if (city.getCode() != null) {
-                    existingCity.setCode(city.getCode());
-                }
+                cityMapper.partialUpdate(existingCity, cityDTO);
 
                 return existingCity;
             })
@@ -62,18 +62,29 @@ public class CityServiceImpl implements CityService {
             .flatMap(savedCity -> {
                 citySearchRepository.save(savedCity);
                 return Mono.just(savedCity);
-            });
+            })
+            .map(cityMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<City> findAll(Pageable pageable) {
-        log.debug("Request to get all Cities");
-        return cityRepository.findAllBy(pageable);
+    public Flux<CityDTO> findByCriteria(CityCriteria criteria, Pageable pageable) {
+        log.debug("Request to get all Cities by Criteria");
+        return cityRepository.findByCriteria(criteria, pageable).map(cityMapper::toDto);
     }
 
-    public Flux<City> findAllWithEagerRelationships(Pageable pageable) {
-        return cityRepository.findAllWithEagerRelationships(pageable);
+    /**
+     * Find the count of cities by criteria.
+     * @param criteria filtering criteria
+     * @return the count of cities
+     */
+    public Mono<Long> countByCriteria(CityCriteria criteria) {
+        log.debug("Request to get the count of all Cities by Criteria");
+        return cityRepository.countByCriteria(criteria);
+    }
+
+    public Flux<CityDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return cityRepository.findAllWithEagerRelationships(pageable).map(cityMapper::toDto);
     }
 
     public Mono<Long> countAll() {
@@ -86,9 +97,9 @@ public class CityServiceImpl implements CityService {
 
     @Override
     @Transactional(readOnly = true)
-    public Mono<City> findOne(Long id) {
+    public Mono<CityDTO> findOne(Long id) {
         log.debug("Request to get City : {}", id);
-        return cityRepository.findOneWithEagerRelationships(id);
+        return cityRepository.findOneWithEagerRelationships(id).map(cityMapper::toDto);
     }
 
     @Override
@@ -99,8 +110,8 @@ public class CityServiceImpl implements CityService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<City> search(String query, Pageable pageable) {
+    public Flux<CityDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of Cities for query {}", query);
-        return citySearchRepository.search(query, pageable);
+        return citySearchRepository.search(query, pageable).map(cityMapper::toDto);
     }
 }

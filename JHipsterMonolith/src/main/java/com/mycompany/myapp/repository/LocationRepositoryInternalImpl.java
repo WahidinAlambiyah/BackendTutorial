@@ -1,9 +1,12 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.Location;
+import com.mycompany.myapp.domain.criteria.LocationCriteria;
+import com.mycompany.myapp.repository.rowmapper.ColumnConverter;
 import com.mycompany.myapp.repository.rowmapper.LocationRowMapper;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.r2dbc.convert.R2dbcConverter;
@@ -22,6 +25,7 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.r2dbc.core.RowsFetchSpec;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import tech.jhipster.service.ConditionBuilder;
 
 /**
  * Spring Data R2DBC custom repository implementation for the Location entity.
@@ -34,6 +38,7 @@ class LocationRepositoryInternalImpl extends SimpleR2dbcRepository<Location, Lon
     private final EntityManager entityManager;
 
     private final LocationRowMapper locationMapper;
+    private final ColumnConverter columnConverter;
 
     private static final Table entityTable = Table.aliased("location", EntityManager.ENTITY_ALIAS);
 
@@ -42,7 +47,8 @@ class LocationRepositoryInternalImpl extends SimpleR2dbcRepository<Location, Lon
         EntityManager entityManager,
         LocationRowMapper locationMapper,
         R2dbcEntityOperations entityOperations,
-        R2dbcConverter converter
+        R2dbcConverter converter,
+        ColumnConverter columnConverter
     ) {
         super(
             new MappingRelationalEntityInformation(converter.getMappingContext().getRequiredPersistentEntity(Location.class)),
@@ -53,6 +59,7 @@ class LocationRepositoryInternalImpl extends SimpleR2dbcRepository<Location, Lon
         this.r2dbcEntityTemplate = template;
         this.entityManager = entityManager;
         this.locationMapper = locationMapper;
+        this.columnConverter = columnConverter;
     }
 
     @Override
@@ -87,5 +94,40 @@ class LocationRepositoryInternalImpl extends SimpleR2dbcRepository<Location, Lon
     @Override
     public <S extends Location> Mono<S> save(S entity) {
         return super.save(entity);
+    }
+
+    @Override
+    public Flux<Location> findByCriteria(LocationCriteria locationCriteria, Pageable page) {
+        return createQuery(page, buildConditions(locationCriteria)).all();
+    }
+
+    @Override
+    public Mono<Long> countByCriteria(LocationCriteria criteria) {
+        return findByCriteria(criteria, null)
+            .collectList()
+            .map(collectedList -> collectedList != null ? (long) collectedList.size() : (long) 0);
+    }
+
+    private Condition buildConditions(LocationCriteria criteria) {
+        ConditionBuilder builder = new ConditionBuilder(this.columnConverter);
+        List<Condition> allConditions = new ArrayList<Condition>();
+        if (criteria != null) {
+            if (criteria.getId() != null) {
+                builder.buildFilterConditionForField(criteria.getId(), entityTable.column("id"));
+            }
+            if (criteria.getStreetAddress() != null) {
+                builder.buildFilterConditionForField(criteria.getStreetAddress(), entityTable.column("street_address"));
+            }
+            if (criteria.getPostalCode() != null) {
+                builder.buildFilterConditionForField(criteria.getPostalCode(), entityTable.column("postal_code"));
+            }
+            if (criteria.getCity() != null) {
+                builder.buildFilterConditionForField(criteria.getCity(), entityTable.column("city"));
+            }
+            if (criteria.getStateProvince() != null) {
+                builder.buildFilterConditionForField(criteria.getStateProvince(), entityTable.column("state_province"));
+            }
+        }
+        return builder.buildConditions();
     }
 }

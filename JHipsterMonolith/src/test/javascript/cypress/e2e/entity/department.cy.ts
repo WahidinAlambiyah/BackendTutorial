@@ -122,7 +122,7 @@ describe('Department e2e test', () => {
         cy.url().should('match', departmentPageUrlPattern);
       });
 
-      it('edit button click should load edit Department page and save', () => {
+      it.skip('edit button click should load edit Department page and save', () => {
         cy.get(entityEditButtonSelector).first().click();
         cy.getEntityCreateUpdateHeading('Department');
         cy.get(entityCreateSaveButtonSelector).click();

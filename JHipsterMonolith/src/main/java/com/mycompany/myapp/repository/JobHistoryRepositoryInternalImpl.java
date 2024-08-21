@@ -1,12 +1,15 @@
 package com.mycompany.myapp.repository;
 
 import com.mycompany.myapp.domain.JobHistory;
+import com.mycompany.myapp.domain.criteria.JobHistoryCriteria;
+import com.mycompany.myapp.repository.rowmapper.ColumnConverter;
 import com.mycompany.myapp.repository.rowmapper.DepartmentRowMapper;
 import com.mycompany.myapp.repository.rowmapper.EmployeeRowMapper;
 import com.mycompany.myapp.repository.rowmapper.JobHistoryRowMapper;
 import com.mycompany.myapp.repository.rowmapper.JobRowMapper;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.r2dbc.convert.R2dbcConverter;
@@ -26,6 +29,7 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.r2dbc.core.RowsFetchSpec;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import tech.jhipster.service.ConditionBuilder;
 
 /**
  * Spring Data R2DBC custom repository implementation for the JobHistory entity.
@@ -41,6 +45,7 @@ class JobHistoryRepositoryInternalImpl extends SimpleR2dbcRepository<JobHistory,
     private final DepartmentRowMapper departmentMapper;
     private final EmployeeRowMapper employeeMapper;
     private final JobHistoryRowMapper jobhistoryMapper;
+    private final ColumnConverter columnConverter;
 
     private static final Table entityTable = Table.aliased("job_history", EntityManager.ENTITY_ALIAS);
     private static final Table jobTable = Table.aliased("job", "job");
@@ -55,7 +60,8 @@ class JobHistoryRepositoryInternalImpl extends SimpleR2dbcRepository<JobHistory,
         EmployeeRowMapper employeeMapper,
         JobHistoryRowMapper jobhistoryMapper,
         R2dbcEntityOperations entityOperations,
-        R2dbcConverter converter
+        R2dbcConverter converter,
+        ColumnConverter columnConverter
     ) {
         super(
             new MappingRelationalEntityInformation(converter.getMappingContext().getRequiredPersistentEntity(JobHistory.class)),
@@ -69,6 +75,7 @@ class JobHistoryRepositoryInternalImpl extends SimpleR2dbcRepository<JobHistory,
         this.departmentMapper = departmentMapper;
         this.employeeMapper = employeeMapper;
         this.jobhistoryMapper = jobhistoryMapper;
+        this.columnConverter = columnConverter;
     }
 
     @Override
@@ -120,5 +127,46 @@ class JobHistoryRepositoryInternalImpl extends SimpleR2dbcRepository<JobHistory,
     @Override
     public <S extends JobHistory> Mono<S> save(S entity) {
         return super.save(entity);
+    }
+
+    @Override
+    public Flux<JobHistory> findByCriteria(JobHistoryCriteria jobHistoryCriteria, Pageable page) {
+        return createQuery(page, buildConditions(jobHistoryCriteria)).all();
+    }
+
+    @Override
+    public Mono<Long> countByCriteria(JobHistoryCriteria criteria) {
+        return findByCriteria(criteria, null)
+            .collectList()
+            .map(collectedList -> collectedList != null ? (long) collectedList.size() : (long) 0);
+    }
+
+    private Condition buildConditions(JobHistoryCriteria criteria) {
+        ConditionBuilder builder = new ConditionBuilder(this.columnConverter);
+        List<Condition> allConditions = new ArrayList<Condition>();
+        if (criteria != null) {
+            if (criteria.getId() != null) {
+                builder.buildFilterConditionForField(criteria.getId(), entityTable.column("id"));
+            }
+            if (criteria.getStartDate() != null) {
+                builder.buildFilterConditionForField(criteria.getStartDate(), entityTable.column("start_date"));
+            }
+            if (criteria.getEndDate() != null) {
+                builder.buildFilterConditionForField(criteria.getEndDate(), entityTable.column("end_date"));
+            }
+            if (criteria.getLanguage() != null) {
+                builder.buildFilterConditionForField(criteria.getLanguage(), entityTable.column("language"));
+            }
+            if (criteria.getJobId() != null) {
+                builder.buildFilterConditionForField(criteria.getJobId(), jobTable.column("id"));
+            }
+            if (criteria.getDepartmentId() != null) {
+                builder.buildFilterConditionForField(criteria.getDepartmentId(), departmentTable.column("id"));
+            }
+            if (criteria.getEmployeeId() != null) {
+                builder.buildFilterConditionForField(criteria.getEmployeeId(), employeeTable.column("id"));
+            }
+        }
+        return builder.buildConditions();
     }
 }

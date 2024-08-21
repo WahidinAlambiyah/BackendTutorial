@@ -58,9 +58,13 @@
               <span v-text="t$('jHipsterMonolithApp.subDistrict.name')"></span>
               <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'name'"></jhi-sort-indicator>
             </th>
-            <th scope="row" v-on:click="changeOrder('code')">
-              <span v-text="t$('jHipsterMonolithApp.subDistrict.code')"></span>
-              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'code'"></jhi-sort-indicator>
+            <th scope="row" v-on:click="changeOrder('unm49Code')">
+              <span v-text="t$('jHipsterMonolithApp.subDistrict.unm49Code')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'unm49Code'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('isoAlpha2Code')">
+              <span v-text="t$('jHipsterMonolithApp.subDistrict.isoAlpha2Code')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'isoAlpha2Code'"></jhi-sort-indicator>
             </th>
             <th scope="row" v-on:click="changeOrder('district.name')">
               <span v-text="t$('jHipsterMonolithApp.subDistrict.district')"></span>
@@ -75,7 +79,8 @@
               <router-link :to="{ name: 'SubDistrictView', params: { subDistrictId: subDistrict.id } }">{{ subDistrict.id }}</router-link>
             </td>
             <td>{{ subDistrict.name }}</td>
-            <td>{{ subDistrict.code }}</td>
+            <td>{{ subDistrict.unm49Code }}</td>
+            <td>{{ subDistrict.isoAlpha2Code }}</td>
             <td>
               <div v-if="subDistrict.district">
                 <router-link :to="{ name: 'DistrictView', params: { districtId: subDistrict.district.id } }">{{

@@ -10,11 +10,15 @@ import static org.mockito.Mockito.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mycompany.myapp.IntegrationTest;
+import com.mycompany.myapp.domain.District;
 import com.mycompany.myapp.domain.SubDistrict;
+import com.mycompany.myapp.repository.DistrictRepository;
 import com.mycompany.myapp.repository.EntityManager;
 import com.mycompany.myapp.repository.SubDistrictRepository;
 import com.mycompany.myapp.repository.search.SubDistrictSearchRepository;
 import com.mycompany.myapp.service.SubDistrictService;
+import com.mycompany.myapp.service.dto.SubDistrictDTO;
+import com.mycompany.myapp.service.mapper.SubDistrictMapper;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -46,8 +50,11 @@ class SubDistrictResourceIT {
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
-    private static final String DEFAULT_CODE = "AAAAAAAAAA";
-    private static final String UPDATED_CODE = "BBBBBBBBBB";
+    private static final String DEFAULT_UNM_49_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_UNM_49_CODE = "BBBBBBBBBB";
+
+    private static final String DEFAULT_ISO_ALPHA_2_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_ISO_ALPHA_2_CODE = "BBBBBBBBBB";
 
     private static final String ENTITY_API_URL = "/api/sub-districts";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -65,6 +72,9 @@ class SubDistrictResourceIT {
     @Mock
     private SubDistrictRepository subDistrictRepositoryMock;
 
+    @Autowired
+    private SubDistrictMapper subDistrictMapper;
+
     @Mock
     private SubDistrictService subDistrictServiceMock;
 
@@ -81,6 +91,9 @@ class SubDistrictResourceIT {
 
     private SubDistrict insertedSubDistrict;
 
+    @Autowired
+    private DistrictRepository districtRepository;
+
     /**
      * Create an entity for this test.
      *
@@ -88,7 +101,10 @@ class SubDistrictResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static SubDistrict createEntity(EntityManager em) {
-        SubDistrict subDistrict = new SubDistrict().name(DEFAULT_NAME).code(DEFAULT_CODE);
+        SubDistrict subDistrict = new SubDistrict()
+            .name(DEFAULT_NAME)
+            .unm49Code(DEFAULT_UNM_49_CODE)
+            .isoAlpha2Code(DEFAULT_ISO_ALPHA_2_CODE);
         return subDistrict;
     }
 
@@ -99,7 +115,10 @@ class SubDistrictResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static SubDistrict createUpdatedEntity(EntityManager em) {
-        SubDistrict subDistrict = new SubDistrict().name(UPDATED_NAME).code(UPDATED_CODE);
+        SubDistrict subDistrict = new SubDistrict()
+            .name(UPDATED_NAME)
+            .unm49Code(UPDATED_UNM_49_CODE)
+            .isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
         return subDistrict;
     }
 
@@ -131,20 +150,22 @@ class SubDistrictResourceIT {
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(subDistrictSearchRepository.findAll().collectList().block());
         // Create the SubDistrict
-        var returnedSubDistrict = webTestClient
+        SubDistrictDTO subDistrictDTO = subDistrictMapper.toDto(subDistrict);
+        var returnedSubDistrictDTO = webTestClient
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(subDistrict))
+            .bodyValue(om.writeValueAsBytes(subDistrictDTO))
             .exchange()
             .expectStatus()
             .isCreated()
-            .expectBody(SubDistrict.class)
+            .expectBody(SubDistrictDTO.class)
             .returnResult()
             .getResponseBody();
 
         // Validate the SubDistrict in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        var returnedSubDistrict = subDistrictMapper.toEntity(returnedSubDistrictDTO);
         assertSubDistrictUpdatableFieldsEquals(returnedSubDistrict, getPersistedSubDistrict(returnedSubDistrict));
 
         await()
@@ -161,6 +182,7 @@ class SubDistrictResourceIT {
     void createSubDistrictWithExistingId() throws Exception {
         // Create the SubDistrict with an existing ID
         subDistrict.setId(1L);
+        SubDistrictDTO subDistrictDTO = subDistrictMapper.toDto(subDistrict);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(subDistrictSearchRepository.findAll().collectList().block());
@@ -170,7 +192,7 @@ class SubDistrictResourceIT {
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(subDistrict))
+            .bodyValue(om.writeValueAsBytes(subDistrictDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -189,36 +211,13 @@ class SubDistrictResourceIT {
         subDistrict.setName(null);
 
         // Create the SubDistrict, which fails.
+        SubDistrictDTO subDistrictDTO = subDistrictMapper.toDto(subDistrict);
 
         webTestClient
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(subDistrict))
-            .exchange()
-            .expectStatus()
-            .isBadRequest();
-
-        assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(subDistrictSearchRepository.findAll().collectList().block());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
-    }
-
-    @Test
-    void checkCodeIsRequired() throws Exception {
-        long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(subDistrictSearchRepository.findAll().collectList().block());
-        // set the field null
-        subDistrict.setCode(null);
-
-        // Create the SubDistrict, which fails.
-
-        webTestClient
-            .post()
-            .uri(ENTITY_API_URL)
-            .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(subDistrict))
+            .bodyValue(om.writeValueAsBytes(subDistrictDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -249,8 +248,10 @@ class SubDistrictResourceIT {
             .value(hasItem(subDistrict.getId().intValue()))
             .jsonPath("$.[*].name")
             .value(hasItem(DEFAULT_NAME))
-            .jsonPath("$.[*].code")
-            .value(hasItem(DEFAULT_CODE));
+            .jsonPath("$.[*].unm49Code")
+            .value(hasItem(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.[*].isoAlpha2Code")
+            .value(hasItem(DEFAULT_ISO_ALPHA_2_CODE));
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -290,8 +291,262 @@ class SubDistrictResourceIT {
             .value(is(subDistrict.getId().intValue()))
             .jsonPath("$.name")
             .value(is(DEFAULT_NAME))
-            .jsonPath("$.code")
-            .value(is(DEFAULT_CODE));
+            .jsonPath("$.unm49Code")
+            .value(is(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.isoAlpha2Code")
+            .value(is(DEFAULT_ISO_ALPHA_2_CODE));
+    }
+
+    @Test
+    void getSubDistrictsByIdFiltering() {
+        // Initialize the database
+        insertedSubDistrict = subDistrictRepository.save(subDistrict).block();
+
+        Long id = subDistrict.getId();
+
+        defaultSubDistrictFiltering("id.equals=" + id, "id.notEquals=" + id);
+
+        defaultSubDistrictFiltering("id.greaterThanOrEqual=" + id, "id.greaterThan=" + id);
+
+        defaultSubDistrictFiltering("id.lessThanOrEqual=" + id, "id.lessThan=" + id);
+    }
+
+    @Test
+    void getAllSubDistrictsByNameIsEqualToSomething() {
+        // Initialize the database
+        insertedSubDistrict = subDistrictRepository.save(subDistrict).block();
+
+        // Get all the subDistrictList where name equals to
+        defaultSubDistrictFiltering("name.equals=" + DEFAULT_NAME, "name.equals=" + UPDATED_NAME);
+    }
+
+    @Test
+    void getAllSubDistrictsByNameIsInShouldWork() {
+        // Initialize the database
+        insertedSubDistrict = subDistrictRepository.save(subDistrict).block();
+
+        // Get all the subDistrictList where name in
+        defaultSubDistrictFiltering("name.in=" + DEFAULT_NAME + "," + UPDATED_NAME, "name.in=" + UPDATED_NAME);
+    }
+
+    @Test
+    void getAllSubDistrictsByNameIsNullOrNotNull() {
+        // Initialize the database
+        insertedSubDistrict = subDistrictRepository.save(subDistrict).block();
+
+        // Get all the subDistrictList where name is not null
+        defaultSubDistrictFiltering("name.specified=true", "name.specified=false");
+    }
+
+    @Test
+    void getAllSubDistrictsByNameContainsSomething() {
+        // Initialize the database
+        insertedSubDistrict = subDistrictRepository.save(subDistrict).block();
+
+        // Get all the subDistrictList where name contains
+        defaultSubDistrictFiltering("name.contains=" + DEFAULT_NAME, "name.contains=" + UPDATED_NAME);
+    }
+
+    @Test
+    void getAllSubDistrictsByNameNotContainsSomething() {
+        // Initialize the database
+        insertedSubDistrict = subDistrictRepository.save(subDistrict).block();
+
+        // Get all the subDistrictList where name does not contain
+        defaultSubDistrictFiltering("name.doesNotContain=" + UPDATED_NAME, "name.doesNotContain=" + DEFAULT_NAME);
+    }
+
+    @Test
+    void getAllSubDistrictsByUnm49CodeIsEqualToSomething() {
+        // Initialize the database
+        insertedSubDistrict = subDistrictRepository.save(subDistrict).block();
+
+        // Get all the subDistrictList where unm49Code equals to
+        defaultSubDistrictFiltering("unm49Code.equals=" + DEFAULT_UNM_49_CODE, "unm49Code.equals=" + UPDATED_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllSubDistrictsByUnm49CodeIsInShouldWork() {
+        // Initialize the database
+        insertedSubDistrict = subDistrictRepository.save(subDistrict).block();
+
+        // Get all the subDistrictList where unm49Code in
+        defaultSubDistrictFiltering(
+            "unm49Code.in=" + DEFAULT_UNM_49_CODE + "," + UPDATED_UNM_49_CODE,
+            "unm49Code.in=" + UPDATED_UNM_49_CODE
+        );
+    }
+
+    @Test
+    void getAllSubDistrictsByUnm49CodeIsNullOrNotNull() {
+        // Initialize the database
+        insertedSubDistrict = subDistrictRepository.save(subDistrict).block();
+
+        // Get all the subDistrictList where unm49Code is not null
+        defaultSubDistrictFiltering("unm49Code.specified=true", "unm49Code.specified=false");
+    }
+
+    @Test
+    void getAllSubDistrictsByUnm49CodeContainsSomething() {
+        // Initialize the database
+        insertedSubDistrict = subDistrictRepository.save(subDistrict).block();
+
+        // Get all the subDistrictList where unm49Code contains
+        defaultSubDistrictFiltering("unm49Code.contains=" + DEFAULT_UNM_49_CODE, "unm49Code.contains=" + UPDATED_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllSubDistrictsByUnm49CodeNotContainsSomething() {
+        // Initialize the database
+        insertedSubDistrict = subDistrictRepository.save(subDistrict).block();
+
+        // Get all the subDistrictList where unm49Code does not contain
+        defaultSubDistrictFiltering("unm49Code.doesNotContain=" + UPDATED_UNM_49_CODE, "unm49Code.doesNotContain=" + DEFAULT_UNM_49_CODE);
+    }
+
+    @Test
+    void getAllSubDistrictsByIsoAlpha2CodeIsEqualToSomething() {
+        // Initialize the database
+        insertedSubDistrict = subDistrictRepository.save(subDistrict).block();
+
+        // Get all the subDistrictList where isoAlpha2Code equals to
+        defaultSubDistrictFiltering("isoAlpha2Code.equals=" + DEFAULT_ISO_ALPHA_2_CODE, "isoAlpha2Code.equals=" + UPDATED_ISO_ALPHA_2_CODE);
+    }
+
+    @Test
+    void getAllSubDistrictsByIsoAlpha2CodeIsInShouldWork() {
+        // Initialize the database
+        insertedSubDistrict = subDistrictRepository.save(subDistrict).block();
+
+        // Get all the subDistrictList where isoAlpha2Code in
+        defaultSubDistrictFiltering(
+            "isoAlpha2Code.in=" + DEFAULT_ISO_ALPHA_2_CODE + "," + UPDATED_ISO_ALPHA_2_CODE,
+            "isoAlpha2Code.in=" + UPDATED_ISO_ALPHA_2_CODE
+        );
+    }
+
+    @Test
+    void getAllSubDistrictsByIsoAlpha2CodeIsNullOrNotNull() {
+        // Initialize the database
+        insertedSubDistrict = subDistrictRepository.save(subDistrict).block();
+
+        // Get all the subDistrictList where isoAlpha2Code is not null
+        defaultSubDistrictFiltering("isoAlpha2Code.specified=true", "isoAlpha2Code.specified=false");
+    }
+
+    @Test
+    void getAllSubDistrictsByIsoAlpha2CodeContainsSomething() {
+        // Initialize the database
+        insertedSubDistrict = subDistrictRepository.save(subDistrict).block();
+
+        // Get all the subDistrictList where isoAlpha2Code contains
+        defaultSubDistrictFiltering(
+            "isoAlpha2Code.contains=" + DEFAULT_ISO_ALPHA_2_CODE,
+            "isoAlpha2Code.contains=" + UPDATED_ISO_ALPHA_2_CODE
+        );
+    }
+
+    @Test
+    void getAllSubDistrictsByIsoAlpha2CodeNotContainsSomething() {
+        // Initialize the database
+        insertedSubDistrict = subDistrictRepository.save(subDistrict).block();
+
+        // Get all the subDistrictList where isoAlpha2Code does not contain
+        defaultSubDistrictFiltering(
+            "isoAlpha2Code.doesNotContain=" + UPDATED_ISO_ALPHA_2_CODE,
+            "isoAlpha2Code.doesNotContain=" + DEFAULT_ISO_ALPHA_2_CODE
+        );
+    }
+
+    @Test
+    void getAllSubDistrictsByDistrictIsEqualToSomething() {
+        District district = DistrictResourceIT.createEntity(em);
+        districtRepository.save(district).block();
+        Long districtId = district.getId();
+        subDistrict.setDistrictId(districtId);
+        insertedSubDistrict = subDistrictRepository.save(subDistrict).block();
+        // Get all the subDistrictList where district equals to districtId
+        defaultSubDistrictShouldBeFound("districtId.equals=" + districtId);
+
+        // Get all the subDistrictList where district equals to (districtId + 1)
+        defaultSubDistrictShouldNotBeFound("districtId.equals=" + (districtId + 1));
+    }
+
+    private void defaultSubDistrictFiltering(String shouldBeFound, String shouldNotBeFound) {
+        defaultSubDistrictShouldBeFound(shouldBeFound);
+        defaultSubDistrictShouldNotBeFound(shouldNotBeFound);
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultSubDistrictShouldBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$.[*].id")
+            .value(hasItem(subDistrict.getId().intValue()))
+            .jsonPath("$.[*].name")
+            .value(hasItem(DEFAULT_NAME))
+            .jsonPath("$.[*].unm49Code")
+            .value(hasItem(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.[*].isoAlpha2Code")
+            .value(hasItem(DEFAULT_ISO_ALPHA_2_CODE));
+
+        // Check, that the count call also returns 1
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultSubDistrictShouldNotBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .isArray()
+            .jsonPath("$")
+            .isEmpty();
+
+        // Check, that the count call also returns 0
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(0));
     }
 
     @Test
@@ -317,13 +572,14 @@ class SubDistrictResourceIT {
 
         // Update the subDistrict
         SubDistrict updatedSubDistrict = subDistrictRepository.findById(subDistrict.getId()).block();
-        updatedSubDistrict.name(UPDATED_NAME).code(UPDATED_CODE);
+        updatedSubDistrict.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
+        SubDistrictDTO subDistrictDTO = subDistrictMapper.toDto(updatedSubDistrict);
 
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, updatedSubDistrict.getId())
+            .uri(ENTITY_API_URL_ID, subDistrictDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(updatedSubDistrict))
+            .bodyValue(om.writeValueAsBytes(subDistrictDTO))
             .exchange()
             .expectStatus()
             .isOk();
@@ -354,12 +610,15 @@ class SubDistrictResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(subDistrictSearchRepository.findAll().collectList().block());
         subDistrict.setId(longCount.incrementAndGet());
 
+        // Create the SubDistrict
+        SubDistrictDTO subDistrictDTO = subDistrictMapper.toDto(subDistrict);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, subDistrict.getId())
+            .uri(ENTITY_API_URL_ID, subDistrictDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(subDistrict))
+            .bodyValue(om.writeValueAsBytes(subDistrictDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -376,12 +635,15 @@ class SubDistrictResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(subDistrictSearchRepository.findAll().collectList().block());
         subDistrict.setId(longCount.incrementAndGet());
 
+        // Create the SubDistrict
+        SubDistrictDTO subDistrictDTO = subDistrictMapper.toDto(subDistrict);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(subDistrict))
+            .bodyValue(om.writeValueAsBytes(subDistrictDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -398,12 +660,15 @@ class SubDistrictResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(subDistrictSearchRepository.findAll().collectList().block());
         subDistrict.setId(longCount.incrementAndGet());
 
+        // Create the SubDistrict
+        SubDistrictDTO subDistrictDTO = subDistrictMapper.toDto(subDistrict);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(subDistrict))
+            .bodyValue(om.writeValueAsBytes(subDistrictDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);
@@ -425,7 +690,7 @@ class SubDistrictResourceIT {
         SubDistrict partialUpdatedSubDistrict = new SubDistrict();
         partialUpdatedSubDistrict.setId(subDistrict.getId());
 
-        partialUpdatedSubDistrict.name(UPDATED_NAME).code(UPDATED_CODE);
+        partialUpdatedSubDistrict.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE);
 
         webTestClient
             .patch()
@@ -456,7 +721,7 @@ class SubDistrictResourceIT {
         SubDistrict partialUpdatedSubDistrict = new SubDistrict();
         partialUpdatedSubDistrict.setId(subDistrict.getId());
 
-        partialUpdatedSubDistrict.name(UPDATED_NAME).code(UPDATED_CODE);
+        partialUpdatedSubDistrict.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
 
         webTestClient
             .patch()
@@ -479,12 +744,15 @@ class SubDistrictResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(subDistrictSearchRepository.findAll().collectList().block());
         subDistrict.setId(longCount.incrementAndGet());
 
+        // Create the SubDistrict
+        SubDistrictDTO subDistrictDTO = subDistrictMapper.toDto(subDistrict);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
-            .uri(ENTITY_API_URL_ID, subDistrict.getId())
+            .uri(ENTITY_API_URL_ID, subDistrictDTO.getId())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(subDistrict))
+            .bodyValue(om.writeValueAsBytes(subDistrictDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -501,12 +769,15 @@ class SubDistrictResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(subDistrictSearchRepository.findAll().collectList().block());
         subDistrict.setId(longCount.incrementAndGet());
 
+        // Create the SubDistrict
+        SubDistrictDTO subDistrictDTO = subDistrictMapper.toDto(subDistrict);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(subDistrict))
+            .bodyValue(om.writeValueAsBytes(subDistrictDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -523,12 +794,15 @@ class SubDistrictResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(subDistrictSearchRepository.findAll().collectList().block());
         subDistrict.setId(longCount.incrementAndGet());
 
+        // Create the SubDistrict
+        SubDistrictDTO subDistrictDTO = subDistrictMapper.toDto(subDistrict);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(subDistrict))
+            .bodyValue(om.writeValueAsBytes(subDistrictDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);
@@ -585,8 +859,10 @@ class SubDistrictResourceIT {
             .value(hasItem(subDistrict.getId().intValue()))
             .jsonPath("$.[*].name")
             .value(hasItem(DEFAULT_NAME))
-            .jsonPath("$.[*].code")
-            .value(hasItem(DEFAULT_CODE));
+            .jsonPath("$.[*].unm49Code")
+            .value(hasItem(DEFAULT_UNM_49_CODE))
+            .jsonPath("$.[*].isoAlpha2Code")
+            .value(hasItem(DEFAULT_ISO_ALPHA_2_CODE));
     }
 
     protected long getRepositoryCount() {

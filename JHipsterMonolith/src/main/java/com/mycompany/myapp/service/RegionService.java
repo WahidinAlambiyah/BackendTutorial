@@ -1,6 +1,7 @@
 package com.mycompany.myapp.service;
 
-import com.mycompany.myapp.domain.Region;
+import com.mycompany.myapp.domain.criteria.RegionCriteria;
+import com.mycompany.myapp.service.dto.RegionDTO;
 import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -12,34 +13,40 @@ public interface RegionService {
     /**
      * Save a region.
      *
-     * @param region the entity to save.
+     * @param regionDTO the entity to save.
      * @return the persisted entity.
      */
-    Mono<Region> save(Region region);
+    Mono<RegionDTO> save(RegionDTO regionDTO);
 
     /**
      * Updates a region.
      *
-     * @param region the entity to update.
+     * @param regionDTO the entity to update.
      * @return the persisted entity.
      */
-    Mono<Region> update(Region region);
+    Mono<RegionDTO> update(RegionDTO regionDTO);
 
     /**
      * Partially updates a region.
      *
-     * @param region the entity to update partially.
+     * @param regionDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Mono<Region> partialUpdate(Region region);
-
+    Mono<RegionDTO> partialUpdate(RegionDTO regionDTO);
     /**
-     * Get all the regions.
+     * Find regions by criteria.
      *
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<Region> findAll(Pageable pageable);
+    Flux<RegionDTO> findByCriteria(RegionCriteria criteria, Pageable pageable);
+
+    /**
+     * Find the count of regions by criteria.
+     * @param criteria filtering criteria
+     * @return the count of regions
+     */
+    public Mono<Long> countByCriteria(RegionCriteria criteria);
 
     /**
      * Returns the number of regions available.
@@ -60,7 +67,7 @@ public interface RegionService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Mono<Region> findOne(Long id);
+    Mono<RegionDTO> findOne(Long id);
 
     /**
      * Delete the "id" region.
@@ -78,5 +85,5 @@ public interface RegionService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<Region> search(String query, Pageable pageable);
+    Flux<RegionDTO> search(String query, Pageable pageable);
 }

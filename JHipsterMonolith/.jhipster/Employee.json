@@ -4,6 +4,7 @@
   },
   "applications": "*",
   "documentation": "The Employee entity.",
+  "dto": "mapstruct",
   "fields": [
     {
       "documentation": "The firstname attribute.",
@@ -35,6 +36,7 @@
       "fieldType": "Long"
     }
   ],
+  "jpaMetamodelFiltering": true,
   "name": "Employee",
   "pagination": "infinite-scroll",
   "relationships": [
@@ -58,5 +60,6 @@
       "relationshipSide": "right",
       "relationshipType": "many-to-one"
     }
-  ]
+  ],
+  "service": "serviceImpl"
 }

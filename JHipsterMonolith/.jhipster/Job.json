@@ -3,6 +3,7 @@
     "changelogDate": "20240816094142"
   },
   "applications": "*",
+  "dto": "mapstruct",
   "fields": [
     {
       "fieldName": "jobTitle",
@@ -17,6 +18,7 @@
       "fieldType": "Long"
     }
   ],
+  "jpaMetamodelFiltering": true,
   "name": "Job",
   "pagination": "pagination",
   "relationships": [
@@ -34,5 +36,6 @@
       "relationshipSide": "right",
       "relationshipType": "many-to-one"
     }
-  ]
+  ],
+  "service": "serviceImpl"
 }

@@ -1,8 +1,9 @@
 package com.mycompany.myapp.web.rest;
 
-import com.mycompany.myapp.domain.District;
+import com.mycompany.myapp.domain.criteria.DistrictCriteria;
 import com.mycompany.myapp.repository.DistrictRepository;
 import com.mycompany.myapp.service.DistrictService;
+import com.mycompany.myapp.service.dto.DistrictDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -55,18 +56,18 @@ public class DistrictResource {
     /**
      * {@code POST  /districts} : Create a new district.
      *
-     * @param district the district to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new district, or with status {@code 400 (Bad Request)} if the district has already an ID.
+     * @param districtDTO the districtDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new districtDTO, or with status {@code 400 (Bad Request)} if the district has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public Mono<ResponseEntity<District>> createDistrict(@Valid @RequestBody District district) throws URISyntaxException {
-        log.debug("REST request to save District : {}", district);
-        if (district.getId() != null) {
+    public Mono<ResponseEntity<DistrictDTO>> createDistrict(@Valid @RequestBody DistrictDTO districtDTO) throws URISyntaxException {
+        log.debug("REST request to save District : {}", districtDTO);
+        if (districtDTO.getId() != null) {
             throw new BadRequestAlertException("A new district cannot already have an ID", ENTITY_NAME, "idexists");
         }
         return districtService
-            .save(district)
+            .save(districtDTO)
             .map(result -> {
                 try {
                     return ResponseEntity.created(new URI("/api/districts/" + result.getId()))
@@ -81,23 +82,23 @@ public class DistrictResource {
     /**
      * {@code PUT  /districts/:id} : Updates an existing district.
      *
-     * @param id the id of the district to save.
-     * @param district the district to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated district,
-     * or with status {@code 400 (Bad Request)} if the district is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the district couldn't be updated.
+     * @param id the id of the districtDTO to save.
+     * @param districtDTO the districtDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated districtDTO,
+     * or with status {@code 400 (Bad Request)} if the districtDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the districtDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/{id}")
-    public Mono<ResponseEntity<District>> updateDistrict(
+    public Mono<ResponseEntity<DistrictDTO>> updateDistrict(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody District district
+        @Valid @RequestBody DistrictDTO districtDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update District : {}, {}", id, district);
-        if (district.getId() == null) {
+        log.debug("REST request to update District : {}, {}", id, districtDTO);
+        if (districtDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, district.getId())) {
+        if (!Objects.equals(id, districtDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -109,7 +110,7 @@ public class DistrictResource {
                 }
 
                 return districtService
-                    .update(district)
+                    .update(districtDTO)
                     .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
                     .map(
                         result ->
@@ -123,24 +124,24 @@ public class DistrictResource {
     /**
      * {@code PATCH  /districts/:id} : Partial updates given fields of an existing district, field will ignore if it is null
      *
-     * @param id the id of the district to save.
-     * @param district the district to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated district,
-     * or with status {@code 400 (Bad Request)} if the district is not valid,
-     * or with status {@code 404 (Not Found)} if the district is not found,
-     * or with status {@code 500 (Internal Server Error)} if the district couldn't be updated.
+     * @param id the id of the districtDTO to save.
+     * @param districtDTO the districtDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated districtDTO,
+     * or with status {@code 400 (Bad Request)} if the districtDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the districtDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the districtDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public Mono<ResponseEntity<District>> partialUpdateDistrict(
+    public Mono<ResponseEntity<DistrictDTO>> partialUpdateDistrict(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody District district
+        @NotNull @RequestBody DistrictDTO districtDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update District partially : {}, {}", id, district);
-        if (district.getId() == null) {
+        log.debug("REST request to partial update District partially : {}, {}", id, districtDTO);
+        if (districtDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, district.getId())) {
+        if (!Objects.equals(id, districtDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -151,7 +152,7 @@ public class DistrictResource {
                     return Mono.error(new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
                 }
 
-                Mono<District> result = districtService.partialUpdate(district);
+                Mono<DistrictDTO> result = districtService.partialUpdate(districtDTO);
 
                 return result
                     .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)))
@@ -169,19 +170,19 @@ public class DistrictResource {
      *
      * @param pageable the pagination information.
      * @param request a {@link ServerHttpRequest} request.
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
+     * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of districts in body.
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<List<District>>> getAllDistricts(
+    public Mono<ResponseEntity<List<DistrictDTO>>> getAllDistricts(
+        DistrictCriteria criteria,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
-        ServerHttpRequest request,
-        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+        ServerHttpRequest request
     ) {
-        log.debug("REST request to get a page of Districts");
+        log.debug("REST request to get Districts by criteria: {}", criteria);
         return districtService
-            .countAll()
-            .zipWith(districtService.findAll(pageable).collectList())
+            .countByCriteria(criteria)
+            .zipWith(districtService.findByCriteria(criteria, pageable).collectList())
             .map(
                 countWithEntities ->
                     ResponseEntity.ok()
@@ -196,22 +197,34 @@ public class DistrictResource {
     }
 
     /**
+     * {@code GET  /districts/count} : count all the districts.
+     *
+     * @param criteria the criteria which the requested entities should match.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
+     */
+    @GetMapping("/count")
+    public Mono<ResponseEntity<Long>> countDistricts(DistrictCriteria criteria) {
+        log.debug("REST request to count Districts by criteria: {}", criteria);
+        return districtService.countByCriteria(criteria).map(count -> ResponseEntity.status(HttpStatus.OK).body(count));
+    }
+
+    /**
      * {@code GET  /districts/:id} : get the "id" district.
      *
-     * @param id the id of the district to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the district, or with status {@code 404 (Not Found)}.
+     * @param id the id of the districtDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the districtDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public Mono<ResponseEntity<District>> getDistrict(@PathVariable("id") Long id) {
+    public Mono<ResponseEntity<DistrictDTO>> getDistrict(@PathVariable("id") Long id) {
         log.debug("REST request to get District : {}", id);
-        Mono<District> district = districtService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(district);
+        Mono<DistrictDTO> districtDTO = districtService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(districtDTO);
     }
 
     /**
      * {@code DELETE  /districts/:id} : delete the "id" district.
      *
-     * @param id the id of the district to delete.
+     * @param id the id of the districtDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
@@ -238,7 +251,7 @@ public class DistrictResource {
      * @return the result of the search.
      */
     @GetMapping("/_search")
-    public Mono<ResponseEntity<Flux<District>>> searchDistricts(
+    public Mono<ResponseEntity<Flux<DistrictDTO>>> searchDistricts(
         @RequestParam("query") String query,
         @org.springdoc.core.annotations.ParameterObject Pageable pageable,
         ServerHttpRequest request

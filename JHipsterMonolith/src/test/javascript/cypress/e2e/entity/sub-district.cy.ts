@@ -15,7 +15,7 @@ describe('SubDistrict e2e test', () => {
   const subDistrictPageUrlPattern = new RegExp('/sub-district(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const subDistrictSample = { name: 'slit exhaustion unexpectedly', code: 'nor readily' };
+  const subDistrictSample = { name: 'unlucky nick' };
 
   let subDistrict;
 
@@ -125,7 +125,7 @@ describe('SubDistrict e2e test', () => {
         cy.url().should('match', subDistrictPageUrlPattern);
       });
 
-      it('edit button click should load edit SubDistrict page and save', () => {
+      it.skip('edit button click should load edit SubDistrict page and save', () => {
         cy.get(entityEditButtonSelector).first().click();
         cy.getEntityCreateUpdateHeading('SubDistrict');
         cy.get(entityCreateSaveButtonSelector).click();
@@ -160,11 +160,14 @@ describe('SubDistrict e2e test', () => {
     });
 
     it('should create an instance of SubDistrict', () => {
-      cy.get(`[data-cy="name"]`).type('hiking jealously');
-      cy.get(`[data-cy="name"]`).should('have.value', 'hiking jealously');
+      cy.get(`[data-cy="name"]`).type('pizza floodplain');
+      cy.get(`[data-cy="name"]`).should('have.value', 'pizza floodplain');
 
-      cy.get(`[data-cy="code"]`).type('accidentally staircase');
-      cy.get(`[data-cy="code"]`).should('have.value', 'accidentally staircase');
+      cy.get(`[data-cy="unm49Code"]`).type('despise ego fooey');
+      cy.get(`[data-cy="unm49Code"]`).should('have.value', 'despise ego fooey');
+
+      cy.get(`[data-cy="isoAlpha2Code"]`).type('so');
+      cy.get(`[data-cy="isoAlpha2Code"]`).should('have.value', 'so');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

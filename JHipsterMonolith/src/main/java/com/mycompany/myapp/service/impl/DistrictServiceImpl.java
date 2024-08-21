@@ -1,9 +1,11 @@
 package com.mycompany.myapp.service.impl;
 
-import com.mycompany.myapp.domain.District;
+import com.mycompany.myapp.domain.criteria.DistrictCriteria;
 import com.mycompany.myapp.repository.DistrictRepository;
 import com.mycompany.myapp.repository.search.DistrictSearchRepository;
 import com.mycompany.myapp.service.DistrictService;
+import com.mycompany.myapp.service.dto.DistrictDTO;
+import com.mycompany.myapp.service.mapper.DistrictMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
@@ -23,38 +25,46 @@ public class DistrictServiceImpl implements DistrictService {
 
     private final DistrictRepository districtRepository;
 
+    private final DistrictMapper districtMapper;
+
     private final DistrictSearchRepository districtSearchRepository;
 
-    public DistrictServiceImpl(DistrictRepository districtRepository, DistrictSearchRepository districtSearchRepository) {
+    public DistrictServiceImpl(
+        DistrictRepository districtRepository,
+        DistrictMapper districtMapper,
+        DistrictSearchRepository districtSearchRepository
+    ) {
         this.districtRepository = districtRepository;
+        this.districtMapper = districtMapper;
         this.districtSearchRepository = districtSearchRepository;
     }
 
     @Override
-    public Mono<District> save(District district) {
-        log.debug("Request to save District : {}", district);
-        return districtRepository.save(district).flatMap(districtSearchRepository::save);
+    public Mono<DistrictDTO> save(DistrictDTO districtDTO) {
+        log.debug("Request to save District : {}", districtDTO);
+        return districtRepository
+            .save(districtMapper.toEntity(districtDTO))
+            .flatMap(districtSearchRepository::save)
+            .map(districtMapper::toDto);
     }
 
     @Override
-    public Mono<District> update(District district) {
-        log.debug("Request to update District : {}", district);
-        return districtRepository.save(district).flatMap(districtSearchRepository::save);
+    public Mono<DistrictDTO> update(DistrictDTO districtDTO) {
+        log.debug("Request to update District : {}", districtDTO);
+        return districtRepository
+            .save(districtMapper.toEntity(districtDTO))
+            .flatMap(districtSearchRepository::save)
+            .map(districtMapper::toDto);
     }
 
     @Override
-    public Mono<District> partialUpdate(District district) {
-        log.debug("Request to partially update District : {}", district);
+    public Mono<DistrictDTO> partialUpdate(DistrictDTO districtDTO) {
+        log.debug("Request to partially update District : {}", districtDTO);
 
         return districtRepository
-            .findById(district.getId())
+            .findById(districtDTO.getId())
             .map(existingDistrict -> {
-                if (district.getName() != null) {
-                    existingDistrict.setName(district.getName());
-                }
-                if (district.getCode() != null) {
-                    existingDistrict.setCode(district.getCode());
-                }
+                districtMapper.partialUpdate(existingDistrict, districtDTO);
 
                 return existingDistrict;
             })
@@ -62,18 +72,29 @@ public class DistrictServiceImpl implements DistrictService {
             .flatMap(savedDistrict -> {
                 districtSearchRepository.save(savedDistrict);
                 return Mono.just(savedDistrict);
-            });
+            })
+            .map(districtMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<District> findAll(Pageable pageable) {
-        log.debug("Request to get all Districts");
-        return districtRepository.findAllBy(pageable);
+    public Flux<DistrictDTO> findByCriteria(DistrictCriteria criteria, Pageable pageable) {
+        log.debug("Request to get all Districts by Criteria");
+        return districtRepository.findByCriteria(criteria, pageable).map(districtMapper::toDto);
     }
 
-    public Flux<District> findAllWithEagerRelationships(Pageable pageable) {
-        return districtRepository.findAllWithEagerRelationships(pageable);
+    /**
+     * Find the count of districts by criteria.
+     * @param criteria filtering criteria
+     * @return the count of districts
+     */
+    public Mono<Long> countByCriteria(DistrictCriteria criteria) {
+        log.debug("Request to get the count of all Districts by Criteria");
+        return districtRepository.countByCriteria(criteria);
+    }
+
+    public Flux<DistrictDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return districtRepository.findAllWithEagerRelationships(pageable).map(districtMapper::toDto);
     }
 
     public Mono<Long> countAll() {
@@ -86,9 +107,9 @@ public class DistrictServiceImpl implements DistrictService {
 
     @Override
     @Transactional(readOnly = true)
-    public Mono<District> findOne(Long id) {
+    public Mono<DistrictDTO> findOne(Long id) {
         log.debug("Request to get District : {}", id);
-        return districtRepository.findOneWithEagerRelationships(id);
+        return districtRepository.findOneWithEagerRelationships(id).map(districtMapper::toDto);
     }
 
     @Override
@@ -99,8 +120,8 @@ public class DistrictServiceImpl implements DistrictService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<District> search(String query, Pageable pageable) {
+    public Flux<DistrictDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of Districts for query {}", query);
-        return districtSearchRepository.search(query, pageable);
+        return districtSearchRepository.search(query, pageable).map(districtMapper::toDto);
     }
 }

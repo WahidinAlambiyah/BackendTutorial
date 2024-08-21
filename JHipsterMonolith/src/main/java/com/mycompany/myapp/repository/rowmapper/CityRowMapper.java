@@ -26,7 +26,8 @@ public class CityRowMapper implements BiFunction<Row, String, City> {
         City entity = new City();
         entity.setId(converter.fromRow(row, prefix + "_id", Long.class));
         entity.setName(converter.fromRow(row, prefix + "_name", String.class));
-        entity.setCode(converter.fromRow(row, prefix + "_code", String.class));
+        entity.setUnm49Code(converter.fromRow(row, prefix + "_unm_49_code", String.class));
+        entity.setIsoAlpha2Code(converter.fromRow(row, prefix + "_iso_alpha_2_code", String.class));
         entity.setProvinceId(converter.fromRow(row, prefix + "_province_id", Long.class));
         return entity;
     }

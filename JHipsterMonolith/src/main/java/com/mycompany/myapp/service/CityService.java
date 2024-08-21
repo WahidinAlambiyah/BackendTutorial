@@ -1,6 +1,7 @@
 package com.mycompany.myapp.service;
 
-import com.mycompany.myapp.domain.City;
+import com.mycompany.myapp.domain.criteria.CityCriteria;
+import com.mycompany.myapp.service.dto.CityDTO;
 import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -12,34 +13,40 @@ public interface CityService {
     /**
      * Save a city.
      *
-     * @param city the entity to save.
+     * @param cityDTO the entity to save.
      * @return the persisted entity.
      */
-    Mono<City> save(City city);
+    Mono<CityDTO> save(CityDTO cityDTO);
 
     /**
      * Updates a city.
      *
-     * @param city the entity to update.
+     * @param cityDTO the entity to update.
      * @return the persisted entity.
      */
-    Mono<City> update(City city);
+    Mono<CityDTO> update(CityDTO cityDTO);
 
     /**
      * Partially updates a city.
      *
-     * @param city the entity to update partially.
+     * @param cityDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Mono<City> partialUpdate(City city);
-
+    Mono<CityDTO> partialUpdate(CityDTO cityDTO);
     /**
-     * Get all the cities.
+     * Find cities by criteria.
      *
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<City> findAll(Pageable pageable);
+    Flux<CityDTO> findByCriteria(CityCriteria criteria, Pageable pageable);
+
+    /**
+     * Find the count of cities by criteria.
+     * @param criteria filtering criteria
+     * @return the count of cities
+     */
+    public Mono<Long> countByCriteria(CityCriteria criteria);
 
     /**
      * Get all the cities with eager load of many-to-many relationships.
@@ -47,7 +54,7 @@ public interface CityService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<City> findAllWithEagerRelationships(Pageable pageable);
+    Flux<CityDTO> findAllWithEagerRelationships(Pageable pageable);
 
     /**
      * Returns the number of cities available.
@@ -68,7 +75,7 @@ public interface CityService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Mono<City> findOne(Long id);
+    Mono<CityDTO> findOne(Long id);
 
     /**
      * Delete the "id" city.
@@ -86,5 +93,5 @@ public interface CityService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<City> search(String query, Pageable pageable);
+    Flux<CityDTO> search(String query, Pageable pageable);
 }

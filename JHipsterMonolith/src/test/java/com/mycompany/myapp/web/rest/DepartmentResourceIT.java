@@ -11,10 +11,13 @@ import static org.mockito.Mockito.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mycompany.myapp.IntegrationTest;
 import com.mycompany.myapp.domain.Department;
+import com.mycompany.myapp.domain.Location;
 import com.mycompany.myapp.repository.DepartmentRepository;
 import com.mycompany.myapp.repository.EntityManager;
+import com.mycompany.myapp.repository.LocationRepository;
 import com.mycompany.myapp.repository.search.DepartmentSearchRepository;
-import java.time.Duration;
+import com.mycompany.myapp.service.dto.DepartmentDTO;
+import com.mycompany.myapp.service.mapper.DepartmentMapper;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -55,6 +58,9 @@ class DepartmentResourceIT {
     private DepartmentRepository departmentRepository;
 
     @Autowired
+    private DepartmentMapper departmentMapper;
+
+    @Autowired
     private DepartmentSearchRepository departmentSearchRepository;
 
     @Autowired
@@ -66,6 +72,9 @@ class DepartmentResourceIT {
     private Department department;
 
     private Department insertedDepartment;
+
+    @Autowired
+    private LocationRepository locationRepository;
 
     /**
      * Create an entity for this test.
@@ -117,20 +126,22 @@ class DepartmentResourceIT {
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(departmentSearchRepository.findAll().collectList().block());
         // Create the Department
-        var returnedDepartment = webTestClient
+        DepartmentDTO departmentDTO = departmentMapper.toDto(department);
+        var returnedDepartmentDTO = webTestClient
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(department))
+            .bodyValue(om.writeValueAsBytes(departmentDTO))
             .exchange()
             .expectStatus()
             .isCreated()
-            .expectBody(Department.class)
+            .expectBody(DepartmentDTO.class)
             .returnResult()
             .getResponseBody();
 
         // Validate the Department in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        var returnedDepartment = departmentMapper.toEntity(returnedDepartmentDTO);
         assertDepartmentUpdatableFieldsEquals(returnedDepartment, getPersistedDepartment(returnedDepartment));
 
         await()
@@ -147,6 +158,7 @@ class DepartmentResourceIT {
     void createDepartmentWithExistingId() throws Exception {
         // Create the Department with an existing ID
         department.setId(1L);
+        DepartmentDTO departmentDTO = departmentMapper.toDto(department);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(departmentSearchRepository.findAll().collectList().block());
@@ -156,7 +168,7 @@ class DepartmentResourceIT {
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(department))
+            .bodyValue(om.writeValueAsBytes(departmentDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -175,12 +187,13 @@ class DepartmentResourceIT {
         department.setDepartmentName(null);
 
         // Create the Department, which fails.
+        DepartmentDTO departmentDTO = departmentMapper.toDto(department);
 
         webTestClient
             .post()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(department))
+            .bodyValue(om.writeValueAsBytes(departmentDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -189,35 +202,6 @@ class DepartmentResourceIT {
 
         int searchDatabaseSizeAfter = IterableUtil.sizeOf(departmentSearchRepository.findAll().collectList().block());
         assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
-    }
-
-    @Test
-    void getAllDepartmentsAsStream() {
-        // Initialize the database
-        departmentRepository.save(department).block();
-
-        List<Department> departmentList = webTestClient
-            .get()
-            .uri(ENTITY_API_URL)
-            .accept(MediaType.APPLICATION_NDJSON)
-            .exchange()
-            .expectStatus()
-            .isOk()
-            .expectHeader()
-            .contentTypeCompatibleWith(MediaType.APPLICATION_NDJSON)
-            .returnResult(Department.class)
-            .getResponseBody()
-            .filter(department::equals)
-            .collectList()
-            .block(Duration.ofSeconds(5));
-
-        assertThat(departmentList).isNotNull();
-        assertThat(departmentList).hasSize(1);
-        Department testDepartment = departmentList.get(0);
-
-        // Test fails because reactive api returns an empty object instead of null
-        // assertDepartmentAllPropertiesEquals(department, testDepartment);
-        assertDepartmentUpdatableFieldsEquals(department, testDepartment);
     }
 
     @Test
@@ -265,6 +249,161 @@ class DepartmentResourceIT {
     }
 
     @Test
+    void getDepartmentsByIdFiltering() {
+        // Initialize the database
+        insertedDepartment = departmentRepository.save(department).block();
+
+        Long id = department.getId();
+
+        defaultDepartmentFiltering("id.equals=" + id, "id.notEquals=" + id);
+
+        defaultDepartmentFiltering("id.greaterThanOrEqual=" + id, "id.greaterThan=" + id);
+
+        defaultDepartmentFiltering("id.lessThanOrEqual=" + id, "id.lessThan=" + id);
+    }
+
+    @Test
+    void getAllDepartmentsByDepartmentNameIsEqualToSomething() {
+        // Initialize the database
+        insertedDepartment = departmentRepository.save(department).block();
+
+        // Get all the departmentList where departmentName equals to
+        defaultDepartmentFiltering("departmentName.equals=" + DEFAULT_DEPARTMENT_NAME, "departmentName.equals=" + UPDATED_DEPARTMENT_NAME);
+    }
+
+    @Test
+    void getAllDepartmentsByDepartmentNameIsInShouldWork() {
+        // Initialize the database
+        insertedDepartment = departmentRepository.save(department).block();
+
+        // Get all the departmentList where departmentName in
+        defaultDepartmentFiltering(
+            "departmentName.in=" + DEFAULT_DEPARTMENT_NAME + "," + UPDATED_DEPARTMENT_NAME,
+            "departmentName.in=" + UPDATED_DEPARTMENT_NAME
+        );
+    }
+
+    @Test
+    void getAllDepartmentsByDepartmentNameIsNullOrNotNull() {
+        // Initialize the database
+        insertedDepartment = departmentRepository.save(department).block();
+
+        // Get all the departmentList where departmentName is not null
+        defaultDepartmentFiltering("departmentName.specified=true", "departmentName.specified=false");
+    }
+
+    @Test
+    void getAllDepartmentsByDepartmentNameContainsSomething() {
+        // Initialize the database
+        insertedDepartment = departmentRepository.save(department).block();
+
+        // Get all the departmentList where departmentName contains
+        defaultDepartmentFiltering(
+            "departmentName.contains=" + DEFAULT_DEPARTMENT_NAME,
+            "departmentName.contains=" + UPDATED_DEPARTMENT_NAME
+        );
+    }
+
+    @Test
+    void getAllDepartmentsByDepartmentNameNotContainsSomething() {
+        // Initialize the database
+        insertedDepartment = departmentRepository.save(department).block();
+
+        // Get all the departmentList where departmentName does not contain
+        defaultDepartmentFiltering(
+            "departmentName.doesNotContain=" + UPDATED_DEPARTMENT_NAME,
+            "departmentName.doesNotContain=" + DEFAULT_DEPARTMENT_NAME
+        );
+    }
+
+    @Test
+    void getAllDepartmentsByLocationIsEqualToSomething() {
+        Location location = LocationResourceIT.createEntity(em);
+        locationRepository.save(location).block();
+        Long locationId = location.getId();
+        department.setLocationId(locationId);
+        insertedDepartment = departmentRepository.save(department).block();
+        // Get all the departmentList where location equals to locationId
+        defaultDepartmentShouldBeFound("locationId.equals=" + locationId);
+
+        // Get all the departmentList where location equals to (locationId + 1)
+        defaultDepartmentShouldNotBeFound("locationId.equals=" + (locationId + 1));
+    }
+
+    private void defaultDepartmentFiltering(String shouldBeFound, String shouldNotBeFound) {
+        defaultDepartmentShouldBeFound(shouldBeFound);
+        defaultDepartmentShouldNotBeFound(shouldNotBeFound);
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is returned.
+     */
+    private void defaultDepartmentShouldBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$.[*].id")
+            .value(hasItem(department.getId().intValue()))
+            .jsonPath("$.[*].departmentName")
+            .value(hasItem(DEFAULT_DEPARTMENT_NAME));
+
+        // Check, that the count call also returns 1
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(1));
+    }
+
+    /**
+     * Executes the search, and checks that the default entity is not returned.
+     */
+    private void defaultDepartmentShouldNotBeFound(String filter) {
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .isArray()
+            .jsonPath("$")
+            .isEmpty();
+
+        // Check, that the count call also returns 0
+        webTestClient
+            .get()
+            .uri(ENTITY_API_URL + "/count?sort=id,desc&" + filter)
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectHeader()
+            .contentType(MediaType.APPLICATION_JSON)
+            .expectBody()
+            .jsonPath("$")
+            .value(is(0));
+    }
+
+    @Test
     void getNonExistingDepartment() {
         // Get the department
         webTestClient
@@ -288,12 +427,13 @@ class DepartmentResourceIT {
         // Update the department
         Department updatedDepartment = departmentRepository.findById(department.getId()).block();
         updatedDepartment.departmentName(UPDATED_DEPARTMENT_NAME);
+        DepartmentDTO departmentDTO = departmentMapper.toDto(updatedDepartment);
 
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, updatedDepartment.getId())
+            .uri(ENTITY_API_URL_ID, departmentDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(updatedDepartment))
+            .bodyValue(om.writeValueAsBytes(departmentDTO))
             .exchange()
             .expectStatus()
             .isOk();
@@ -322,12 +462,15 @@ class DepartmentResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(departmentSearchRepository.findAll().collectList().block());
         department.setId(longCount.incrementAndGet());
 
+        // Create the Department
+        DepartmentDTO departmentDTO = departmentMapper.toDto(department);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .put()
-            .uri(ENTITY_API_URL_ID, department.getId())
+            .uri(ENTITY_API_URL_ID, departmentDTO.getId())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(department))
+            .bodyValue(om.writeValueAsBytes(departmentDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -344,12 +487,15 @@ class DepartmentResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(departmentSearchRepository.findAll().collectList().block());
         department.setId(longCount.incrementAndGet());
 
+        // Create the Department
+        DepartmentDTO departmentDTO = departmentMapper.toDto(department);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(department))
+            .bodyValue(om.writeValueAsBytes(departmentDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -366,12 +512,15 @@ class DepartmentResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(departmentSearchRepository.findAll().collectList().block());
         department.setId(longCount.incrementAndGet());
 
+        // Create the Department
+        DepartmentDTO departmentDTO = departmentMapper.toDto(department);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .put()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(om.writeValueAsBytes(department))
+            .bodyValue(om.writeValueAsBytes(departmentDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);
@@ -445,12 +594,15 @@ class DepartmentResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(departmentSearchRepository.findAll().collectList().block());
         department.setId(longCount.incrementAndGet());
 
+        // Create the Department
+        DepartmentDTO departmentDTO = departmentMapper.toDto(department);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
-            .uri(ENTITY_API_URL_ID, department.getId())
+            .uri(ENTITY_API_URL_ID, departmentDTO.getId())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(department))
+            .bodyValue(om.writeValueAsBytes(departmentDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -467,12 +619,15 @@ class DepartmentResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(departmentSearchRepository.findAll().collectList().block());
         department.setId(longCount.incrementAndGet());
 
+        // Create the Department
+        DepartmentDTO departmentDTO = departmentMapper.toDto(department);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, longCount.incrementAndGet())
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(department))
+            .bodyValue(om.writeValueAsBytes(departmentDTO))
             .exchange()
             .expectStatus()
             .isBadRequest();
@@ -489,12 +644,15 @@ class DepartmentResourceIT {
         int searchDatabaseSizeBefore = IterableUtil.sizeOf(departmentSearchRepository.findAll().collectList().block());
         department.setId(longCount.incrementAndGet());
 
+        // Create the Department
+        DepartmentDTO departmentDTO = departmentMapper.toDto(department);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         webTestClient
             .patch()
             .uri(ENTITY_API_URL)
             .contentType(MediaType.valueOf("application/merge-patch+json"))
-            .bodyValue(om.writeValueAsBytes(department))
+            .bodyValue(om.writeValueAsBytes(departmentDTO))
             .exchange()
             .expectStatus()
             .isEqualTo(405);

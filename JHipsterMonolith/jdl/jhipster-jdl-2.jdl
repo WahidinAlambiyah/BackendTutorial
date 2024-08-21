@@ -1,43 +1,13 @@
-entity SubDistrict {
-	subDistrictName String
-}
-
-entity District {
-	districtName String
-}
-
-entity City {
-	cityName String
-}
-
-entity Province {
-	provinceName String
-}
-
-entity Country {
-	countryName String
-}
-
 entity Region {
-	regionName String
+	name String required
+	unm49Code String unique
+	isoAlpha2Code String unique
 }
 
-// defining multiple OneToMany relationships with comments
-relationship OneToMany {
-	District to SubDistrict{district}
-    City to District{city}
-    Province to City{province}
-    Country to Province{country}
-    Region to Country{region}
-}
+paginate Region with pagination
 
-// Set pagination options
-paginate Region, Country, Province, City, District, SubDistrict with pagination
+dto * with mapstruct
 
-// Use Data Transfer Objects (DTO)
-// dto * with mapstruct
-
-// Set service options to all except few
 service all with serviceImpl
 
-filter Region
+filter Region 

@@ -20,7 +20,8 @@
       },
       "id": "ID",
       "name": "Name",
-      "code": "Code",
+      "unm49Code": "Unm 49 Code",
+      "isoAlpha2Code": "Iso Alpha 2 Code",
       "postalCode": "Postal Code",
       "district": "District"
     }

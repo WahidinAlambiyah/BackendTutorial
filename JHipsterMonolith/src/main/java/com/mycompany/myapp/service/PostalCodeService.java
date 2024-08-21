@@ -1,6 +1,7 @@
 package com.mycompany.myapp.service;
 
-import com.mycompany.myapp.domain.PostalCode;
+import com.mycompany.myapp.domain.criteria.PostalCodeCriteria;
+import com.mycompany.myapp.service.dto.PostalCodeDTO;
 import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -12,34 +13,40 @@ public interface PostalCodeService {
     /**
      * Save a postalCode.
      *
-     * @param postalCode the entity to save.
+     * @param postalCodeDTO the entity to save.
      * @return the persisted entity.
      */
-    Mono<PostalCode> save(PostalCode postalCode);
+    Mono<PostalCodeDTO> save(PostalCodeDTO postalCodeDTO);
 
     /**
      * Updates a postalCode.
      *
-     * @param postalCode the entity to update.
+     * @param postalCodeDTO the entity to update.
      * @return the persisted entity.
      */
-    Mono<PostalCode> update(PostalCode postalCode);
+    Mono<PostalCodeDTO> update(PostalCodeDTO postalCodeDTO);
 
     /**
      * Partially updates a postalCode.
      *
-     * @param postalCode the entity to update partially.
+     * @param postalCodeDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Mono<PostalCode> partialUpdate(PostalCode postalCode);
-
+    Mono<PostalCodeDTO> partialUpdate(PostalCodeDTO postalCodeDTO);
     /**
-     * Get all the postalCodes.
+     * Find postalCodes by criteria.
      *
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<PostalCode> findAll(Pageable pageable);
+    Flux<PostalCodeDTO> findByCriteria(PostalCodeCriteria criteria, Pageable pageable);
+
+    /**
+     * Find the count of postalCodes by criteria.
+     * @param criteria filtering criteria
+     * @return the count of postalCodes
+     */
+    public Mono<Long> countByCriteria(PostalCodeCriteria criteria);
 
     /**
      * Get all the postalCodes with eager load of many-to-many relationships.
@@ -47,7 +54,7 @@ public interface PostalCodeService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<PostalCode> findAllWithEagerRelationships(Pageable pageable);
+    Flux<PostalCodeDTO> findAllWithEagerRelationships(Pageable pageable);
 
     /**
      * Returns the number of postalCodes available.
@@ -68,7 +75,7 @@ public interface PostalCodeService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Mono<PostalCode> findOne(Long id);
+    Mono<PostalCodeDTO> findOne(Long id);
 
     /**
      * Delete the "id" postalCode.
@@ -86,5 +93,5 @@ public interface PostalCodeService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<PostalCode> search(String query, Pageable pageable);
+    Flux<PostalCodeDTO> search(String query, Pageable pageable);
 }
