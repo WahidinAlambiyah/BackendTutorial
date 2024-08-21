@@ -1,0 +1,26 @@
+{
+  "jHipsterMonolithApp": {
+    "postalCode": {
+      "home": {
+        "title": "Postal Codes",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Postal Code baru",
+        "createOrEditLabel": "Buat atau edit Postal Code",
+        "search": "Cari Postal Code",
+        "notFound": "No Postal Codes found"
+      },
+      "created": "Postal Code dengan id { param } telah dibuat",
+      "updated": "Postal Code dengan id { param } telah diperbaharui",
+      "deleted": "Postal Code dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Postal Code { id }?"
+      },
+      "detail": {
+        "title": "Postal Code"
+      },
+      "id": "ID",
+      "code": "Code",
+      "subDistrict": "Sub District"
+    }
+  }
+}

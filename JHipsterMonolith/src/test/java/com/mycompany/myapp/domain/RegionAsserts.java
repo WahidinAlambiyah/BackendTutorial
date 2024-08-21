@@ -47,7 +47,8 @@ public class RegionAsserts {
     public static void assertRegionUpdatableFieldsEquals(Region expected, Region actual) {
         assertThat(expected)
             .as("Verify Region relevant properties")
-            .satisfies(e -> assertThat(e.getRegionName()).as("check regionName").isEqualTo(actual.getRegionName()));
+            .satisfies(e -> assertThat(e.getName()).as("check name").isEqualTo(actual.getName()))
+            .satisfies(e -> assertThat(e.getCode()).as("check code").isEqualTo(actual.getCode()));
     }
 
     /**

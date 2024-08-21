@@ -1,11 +1,13 @@
 package com.mycompany.myapp.domain;
 
 import static com.mycompany.myapp.domain.CountryTestSamples.*;
-import static com.mycompany.myapp.domain.LocationTestSamples.*;
+import static com.mycompany.myapp.domain.ProvinceTestSamples.*;
 import static com.mycompany.myapp.domain.RegionTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mycompany.myapp.web.rest.TestUtil;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 class CountryTest {
@@ -25,6 +27,28 @@ class CountryTest {
     }
 
     @Test
+    void provinceTest() {
+        Country country = getCountryRandomSampleGenerator();
+        Province provinceBack = getProvinceRandomSampleGenerator();
+
+        country.addProvince(provinceBack);
+        assertThat(country.getProvinces()).containsOnly(provinceBack);
+        assertThat(provinceBack.getCountry()).isEqualTo(country);
+
+        country.removeProvince(provinceBack);
+        assertThat(country.getProvinces()).doesNotContain(provinceBack);
+        assertThat(provinceBack.getCountry()).isNull();
+
+        country.provinces(new HashSet<>(Set.of(provinceBack)));
+        assertThat(country.getProvinces()).containsOnly(provinceBack);
+        assertThat(provinceBack.getCountry()).isEqualTo(country);
+
+        country.setProvinces(new HashSet<>());
+        assertThat(country.getProvinces()).doesNotContain(provinceBack);
+        assertThat(provinceBack.getCountry()).isNull();
+    }
+
+    @Test
     void regionTest() {
         Country country = getCountryRandomSampleGenerator();
         Region regionBack = getRegionRandomSampleGenerator();
@@ -34,19 +58,5 @@ class CountryTest {
 
         country.region(null);
         assertThat(country.getRegion()).isNull();
-    }
-
-    @Test
-    void locationTest() {
-        Country country = getCountryRandomSampleGenerator();
-        Location locationBack = getLocationRandomSampleGenerator();
-
-        country.setLocation(locationBack);
-        assertThat(country.getLocation()).isEqualTo(locationBack);
-        assertThat(locationBack.getCountry()).isEqualTo(country);
-
-        country.location(null);
-        assertThat(country.getLocation()).isNull();
-        assertThat(locationBack.getCountry()).isNull();
     }
 }

@@ -15,7 +15,7 @@ describe('Country e2e test', () => {
   const countryPageUrlPattern = new RegExp('/country(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const countrySample = { countryName: 'about' };
+  const countrySample = { name: 'avalanche promptly', code: 'well tar' };
 
   let country;
 
@@ -91,6 +91,9 @@ describe('Country e2e test', () => {
             },
             {
               statusCode: 200,
+              headers: {
+                link: '<http://localhost/api/countries?page=0&size=20>; rel="last",<http://localhost/api/countries?page=0&size=20>; rel="first"',
+              },
               body: [country],
             },
           ).as('entitiesRequestInternal');
@@ -157,8 +160,11 @@ describe('Country e2e test', () => {
     });
 
     it('should create an instance of Country', () => {
-      cy.get(`[data-cy="countryName"]`).type('currant washcloth yuck');
-      cy.get(`[data-cy="countryName"]`).should('have.value', 'currant washcloth yuck');
+      cy.get(`[data-cy="name"]`).type('rightfully comptroller');
+      cy.get(`[data-cy="name"]`).should('have.value', 'rightfully comptroller');
+
+      cy.get(`[data-cy="code"]`).type('and');
+      cy.get(`[data-cy="code"]`).should('have.value', 'and');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

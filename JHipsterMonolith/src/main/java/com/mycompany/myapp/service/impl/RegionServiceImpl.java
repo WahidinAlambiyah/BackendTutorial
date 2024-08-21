@@ -6,6 +6,7 @@ import com.mycompany.myapp.repository.search.RegionSearchRepository;
 import com.mycompany.myapp.service.RegionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -48,8 +49,11 @@ public class RegionServiceImpl implements RegionService {
         return regionRepository
             .findById(region.getId())
             .map(existingRegion -> {
-                if (region.getRegionName() != null) {
-                    existingRegion.setRegionName(region.getRegionName());
+                if (region.getName() != null) {
+                    existingRegion.setName(region.getName());
+                }
+                if (region.getCode() != null) {
+                    existingRegion.setCode(region.getCode());
                 }
 
                 return existingRegion;
@@ -63,19 +67,9 @@ public class RegionServiceImpl implements RegionService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<Region> findAll() {
+    public Flux<Region> findAll(Pageable pageable) {
         log.debug("Request to get all Regions");
-        return regionRepository.findAll();
-    }
-
-    /**
-     *  Get all the regions where Country is {@code null}.
-     *  @return the list of entities.
-     */
-    @Transactional(readOnly = true)
-    public Flux<Region> findAllWhereCountryIsNull() {
-        log.debug("Request to get all regions where Country is null");
-        return regionRepository.findAllWhereCountryIsNull();
+        return regionRepository.findAllBy(pageable);
     }
 
     public Mono<Long> countAll() {
@@ -101,12 +95,8 @@ public class RegionServiceImpl implements RegionService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<Region> search(String query) {
-        log.debug("Request to search Regions for query {}", query);
-        try {
-            return regionSearchRepository.search(query);
-        } catch (RuntimeException e) {
-            throw e;
-        }
+    public Flux<Region> search(String query, Pageable pageable) {
+        log.debug("Request to search for a page of Regions for query {}", query);
+        return regionSearchRepository.search(query, pageable);
     }
 }

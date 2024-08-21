@@ -19,9 +19,10 @@
         "title": "Country"
       },
       "id": "ID",
-      "countryName": "Country Name",
-      "region": "Region",
-      "location": "Location"
+      "name": "Name",
+      "code": "Code",
+      "province": "Province",
+      "region": "Region"
     }
   }
 }

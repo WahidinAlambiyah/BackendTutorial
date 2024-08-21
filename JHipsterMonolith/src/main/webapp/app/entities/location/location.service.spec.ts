@@ -112,7 +112,7 @@ describe('Service Tests', () => {
         const patchObject = Object.assign(
           {
             streetAddress: 'BBBBBB',
-            city: 'BBBBBB',
+            postalCode: 'BBBBBB',
             stateProvince: 'BBBBBB',
           },
           new Location(),

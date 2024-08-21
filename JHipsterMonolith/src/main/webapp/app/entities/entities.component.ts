@@ -8,6 +8,11 @@ import TaskService from './task/task.service';
 import EmployeeService from './employee/employee.service';
 import JobService from './job/job.service';
 import JobHistoryService from './job-history/job-history.service';
+import ProvinceService from './province/province.service';
+import CityService from './city/city.service';
+import DistrictService from './district/district.service';
+import SubDistrictService from './sub-district/sub-district.service';
+import PostalCodeService from './postal-code/postal-code.service';
 import UserService from '@/entities/user/user.service';
 // jhipster-needle-add-entity-service-to-entities-component-import - JHipster will import entities services here
 
@@ -24,6 +29,11 @@ export default defineComponent({
     provide('employeeService', () => new EmployeeService());
     provide('jobService', () => new JobService());
     provide('jobHistoryService', () => new JobHistoryService());
+    provide('provinceService', () => new ProvinceService());
+    provide('cityService', () => new CityService());
+    provide('districtService', () => new DistrictService());
+    provide('subDistrictService', () => new SubDistrictService());
+    provide('postalCodeService', () => new PostalCodeService());
     // jhipster-needle-add-entity-service-to-entities-component - JHipster will import entities services here
   },
 });

@@ -91,6 +91,21 @@ class CountryRepositoryInternalImpl extends SimpleR2dbcRepository<Country, Long>
         return createQuery(null, whereClause).one();
     }
 
+    @Override
+    public Mono<Country> findOneWithEagerRelationships(Long id) {
+        return findById(id);
+    }
+
+    @Override
+    public Flux<Country> findAllWithEagerRelationships() {
+        return findAll();
+    }
+
+    @Override
+    public Flux<Country> findAllWithEagerRelationships(Pageable page) {
+        return findAllBy(page);
+    }
+
     private Country process(Row row, RowMetadata metadata) {
         Country entity = countryMapper.apply(row, "e");
         entity.setRegion(regionMapper.apply(row, "region"));

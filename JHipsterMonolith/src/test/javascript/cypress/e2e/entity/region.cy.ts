@@ -15,7 +15,7 @@ describe('Region e2e test', () => {
   const regionPageUrlPattern = new RegExp('/region(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const regionSample = { regionName: 'quizzical' };
+  const regionSample = { name: 'wait', code: 'coin loincloth' };
 
   let region;
 
@@ -91,6 +91,9 @@ describe('Region e2e test', () => {
             },
             {
               statusCode: 200,
+              headers: {
+                link: '<http://localhost/api/regions?page=0&size=20>; rel="last",<http://localhost/api/regions?page=0&size=20>; rel="first"',
+              },
               body: [region],
             },
           ).as('entitiesRequestInternal');
@@ -157,8 +160,11 @@ describe('Region e2e test', () => {
     });
 
     it('should create an instance of Region', () => {
-      cy.get(`[data-cy="regionName"]`).type('priest hopelessly');
-      cy.get(`[data-cy="regionName"]`).should('have.value', 'priest hopelessly');
+      cy.get(`[data-cy="name"]`).type('although');
+      cy.get(`[data-cy="name"]`).should('have.value', 'although');
+
+      cy.get(`[data-cy="code"]`).type('gosh fake ick');
+      cy.get(`[data-cy="code"]`).should('have.value', 'gosh fake ick');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

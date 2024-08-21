@@ -1,17 +1,19 @@
 import axios from 'axios';
 
+import buildPaginationQueryOpts from '@/shared/sort/sorts';
+
 import { type ICountry } from '@/shared/model/country.model';
 
 const baseApiUrl = 'api/countries';
 const baseSearchApiUrl = 'api/countries/_search?query=';
 
 export default class CountryService {
-  public search(query): Promise<any> {
+  public search(query, paginationQuery): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       axios
-        .get(`${baseSearchApiUrl}${query}`)
+        .get(`${baseSearchApiUrl}${query}&${buildPaginationQueryOpts(paginationQuery)}`)
         .then(res => {
-          resolve(res.data);
+          resolve(res);
         })
         .catch(err => {
           reject(err);
@@ -32,10 +34,10 @@ export default class CountryService {
     });
   }
 
-  public retrieve(): Promise<any> {
+  public retrieve(paginationQuery?: any): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       axios
-        .get(baseApiUrl)
+        .get(baseApiUrl + `?${buildPaginationQueryOpts(paginationQuery)}`)
         .then(res => {
           resolve(res);
         })

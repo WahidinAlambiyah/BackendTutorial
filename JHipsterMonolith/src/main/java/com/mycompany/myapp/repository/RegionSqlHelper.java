@@ -11,7 +11,8 @@ public class RegionSqlHelper {
     public static List<Expression> getColumns(Table table, String columnPrefix) {
         List<Expression> columns = new ArrayList<>();
         columns.add(Column.aliased("id", table, columnPrefix + "_id"));
-        columns.add(Column.aliased("region_name", table, columnPrefix + "_region_name"));
+        columns.add(Column.aliased("name", table, columnPrefix + "_name"));
+        columns.add(Column.aliased("code", table, columnPrefix + "_code"));
 
         return columns;
     }

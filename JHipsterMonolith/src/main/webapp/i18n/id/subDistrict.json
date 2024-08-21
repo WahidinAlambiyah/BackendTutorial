@@ -1,0 +1,28 @@
+{
+  "jHipsterMonolithApp": {
+    "subDistrict": {
+      "home": {
+        "title": "Sub Districts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Sub District baru",
+        "createOrEditLabel": "Buat atau edit Sub District",
+        "search": "Cari Sub District",
+        "notFound": "No Sub Districts found"
+      },
+      "created": "Sub District dengan id { param } telah dibuat",
+      "updated": "Sub District dengan id { param } telah diperbaharui",
+      "deleted": "Sub District dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Sub District { id }?"
+      },
+      "detail": {
+        "title": "Sub District"
+      },
+      "id": "ID",
+      "name": "Name",
+      "code": "Code",
+      "postalCode": "Postal Code",
+      "district": "District"
+    }
+  }
+}

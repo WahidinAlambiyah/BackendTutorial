@@ -5,11 +5,26 @@
   "applications": "*",
   "fields": [
     {
-      "fieldName": "regionName",
-      "fieldType": "String"
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "code",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique"]
     }
   ],
   "name": "Region",
-  "relationships": [],
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "country",
+      "otherEntityRelationshipName": "region",
+      "relationshipName": "country",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    }
+  ],
   "service": "serviceImpl"
 }

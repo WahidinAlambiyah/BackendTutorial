@@ -15,7 +15,7 @@ describe('JobHistory e2e test', () => {
   const jobHistoryPageUrlPattern = new RegExp('/job-history(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const jobHistorySample = { startDate: '2024-08-15T16:59:47.417Z' };
+  const jobHistorySample = { startDate: '2024-08-16T09:25:26.836Z' };
 
   let jobHistory;
 
@@ -160,15 +160,15 @@ describe('JobHistory e2e test', () => {
     });
 
     it('should create an instance of JobHistory', () => {
-      cy.get(`[data-cy="startDate"]`).type('2024-08-15T11:09');
+      cy.get(`[data-cy="startDate"]`).type('2024-08-15T10:17');
       cy.get(`[data-cy="startDate"]`).blur();
-      cy.get(`[data-cy="startDate"]`).should('have.value', '2024-08-15T11:09');
+      cy.get(`[data-cy="startDate"]`).should('have.value', '2024-08-15T10:17');
 
-      cy.get(`[data-cy="endDate"]`).type('2024-08-15T18:13');
+      cy.get(`[data-cy="endDate"]`).type('2024-08-15T22:21');
       cy.get(`[data-cy="endDate"]`).blur();
-      cy.get(`[data-cy="endDate"]`).should('have.value', '2024-08-15T18:13');
+      cy.get(`[data-cy="endDate"]`).should('have.value', '2024-08-15T22:21');
 
-      cy.get(`[data-cy="language"]`).select('FRENCH');
+      cy.get(`[data-cy="language"]`).select('SPANISH');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

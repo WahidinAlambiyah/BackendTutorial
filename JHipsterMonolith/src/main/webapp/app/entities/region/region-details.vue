@@ -7,10 +7,16 @@
         </h2>
         <dl class="row jh-entity-details">
           <dt>
-            <span v-text="t$('jHipsterMonolithApp.region.regionName')"></span>
+            <span v-text="t$('jHipsterMonolithApp.region.name')"></span>
           </dt>
           <dd>
-            <span>{{ region.regionName }}</span>
+            <span>{{ region.name }}</span>
+          </dd>
+          <dt>
+            <span v-text="t$('jHipsterMonolithApp.region.code')"></span>
+          </dt>
+          <dd>
+            <span>{{ region.code }}</span>
           </dd>
         </dl>
         <button type="submit" v-on:click.prevent="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">

@@ -8,8 +8,6 @@ import LocationUpdate from './location-update.vue';
 import LocationService from './location.service';
 import AlertService from '@/shared/alert/alert.service';
 
-import CountryService from '@/entities/country/country.service';
-
 type LocationUpdateComponentType = InstanceType<typeof LocationUpdate>;
 
 let route: Partial<RouteLocation>;
@@ -53,10 +51,6 @@ describe('Component Tests', () => {
         provide: {
           alertService,
           locationService: () => locationServiceStub,
-          countryService: () =>
-            sinon.createStubInstance<CountryService>(CountryService, {
-              retrieve: sinon.stub().resolves({}),
-            } as any),
         },
       };
     });

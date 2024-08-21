@@ -13,16 +13,36 @@
             <input type="text" class="form-control" id="id" name="id" v-model="region.id" readonly />
           </div>
           <div class="form-group">
-            <label class="form-control-label" v-text="t$('jHipsterMonolithApp.region.regionName')" for="region-regionName"></label>
+            <label class="form-control-label" v-text="t$('jHipsterMonolithApp.region.name')" for="region-name"></label>
             <input
               type="text"
               class="form-control"
-              name="regionName"
-              id="region-regionName"
-              data-cy="regionName"
-              :class="{ valid: !v$.regionName.$invalid, invalid: v$.regionName.$invalid }"
-              v-model="v$.regionName.$model"
+              name="name"
+              id="region-name"
+              data-cy="name"
+              :class="{ valid: !v$.name.$invalid, invalid: v$.name.$invalid }"
+              v-model="v$.name.$model"
+              required
             />
+            <div v-if="v$.name.$anyDirty && v$.name.$invalid">
+              <small class="form-text text-danger" v-for="error of v$.name.$errors" :key="error.$uid">{{ error.$message }}</small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-control-label" v-text="t$('jHipsterMonolithApp.region.code')" for="region-code"></label>
+            <input
+              type="text"
+              class="form-control"
+              name="code"
+              id="region-code"
+              data-cy="code"
+              :class="{ valid: !v$.code.$invalid, invalid: v$.code.$invalid }"
+              v-model="v$.code.$model"
+              required
+            />
+            <div v-if="v$.code.$anyDirty && v$.code.$invalid">
+              <small class="form-text text-danger" v-for="error of v$.code.$errors" :key="error.$uid">{{ error.$message }}</small>
+            </div>
           </div>
         </div>
         <div>

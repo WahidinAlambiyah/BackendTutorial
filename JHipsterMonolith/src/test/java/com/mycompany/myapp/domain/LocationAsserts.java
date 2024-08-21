@@ -59,9 +59,5 @@ public class LocationAsserts {
      * @param expected the expected entity
      * @param actual the actual entity
      */
-    public static void assertLocationUpdatableRelationshipsEquals(Location expected, Location actual) {
-        assertThat(expected)
-            .as("Verify Location relationships")
-            .satisfies(e -> assertThat(e.getCountry()).as("check country").isEqualTo(actual.getCountry()));
-    }
+    public static void assertLocationUpdatableRelationshipsEquals(Location expected, Location actual) {}
 }

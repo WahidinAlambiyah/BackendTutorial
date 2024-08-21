@@ -376,6 +376,8 @@ class TaskResourceIT {
         Task partialUpdatedTask = new Task();
         partialUpdatedTask.setId(task.getId());
 
+        partialUpdatedTask.description(UPDATED_DESCRIPTION);
+
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, partialUpdatedTask.getId())

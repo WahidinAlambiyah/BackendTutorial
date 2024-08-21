@@ -5,6 +5,8 @@ import static com.mycompany.myapp.domain.RegionTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mycompany.myapp.web.rest.TestUtil;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 class RegionTest {
@@ -28,12 +30,20 @@ class RegionTest {
         Region region = getRegionRandomSampleGenerator();
         Country countryBack = getCountryRandomSampleGenerator();
 
-        region.setCountry(countryBack);
-        assertThat(region.getCountry()).isEqualTo(countryBack);
+        region.addCountry(countryBack);
+        assertThat(region.getCountries()).containsOnly(countryBack);
         assertThat(countryBack.getRegion()).isEqualTo(region);
 
-        region.country(null);
-        assertThat(region.getCountry()).isNull();
+        region.removeCountry(countryBack);
+        assertThat(region.getCountries()).doesNotContain(countryBack);
+        assertThat(countryBack.getRegion()).isNull();
+
+        region.countries(new HashSet<>(Set.of(countryBack)));
+        assertThat(region.getCountries()).containsOnly(countryBack);
+        assertThat(countryBack.getRegion()).isEqualTo(region);
+
+        region.setCountries(new HashSet<>());
+        assertThat(region.getCountries()).doesNotContain(countryBack);
         assertThat(countryBack.getRegion()).isNull();
     }
 }

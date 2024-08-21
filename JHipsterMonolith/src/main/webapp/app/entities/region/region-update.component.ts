@@ -41,7 +41,12 @@ export default defineComponent({
     const { t: t$ } = useI18n();
     const validations = useValidation();
     const validationRules = {
-      regionName: {},
+      name: {
+        required: validations.required(t$('entity.validation.required').toString()),
+      },
+      code: {
+        required: validations.required(t$('entity.validation.required').toString()),
+      },
     };
     const v$ = useVuelidate(validationRules, region as any);
     v$.value.$validate();

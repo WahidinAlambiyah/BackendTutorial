@@ -1,0 +1,26 @@
+{
+  "annotations": {
+    "changelogDate": "20240821021644"
+  },
+  "applications": "*",
+  "fields": [
+    {
+      "fieldName": "code",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique"]
+    }
+  ],
+  "name": "PostalCode",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "subDistrict",
+      "otherEntityRelationshipName": "postalCode",
+      "relationshipName": "subDistrict",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceImpl"
+}

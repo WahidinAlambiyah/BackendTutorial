@@ -7,17 +7,23 @@
         </h2>
         <dl class="row jh-entity-details">
           <dt>
-            <span v-text="t$('jHipsterMonolithApp.country.countryName')"></span>
+            <span v-text="t$('jHipsterMonolithApp.country.name')"></span>
           </dt>
           <dd>
-            <span>{{ country.countryName }}</span>
+            <span>{{ country.name }}</span>
+          </dd>
+          <dt>
+            <span v-text="t$('jHipsterMonolithApp.country.code')"></span>
+          </dt>
+          <dd>
+            <span>{{ country.code }}</span>
           </dd>
           <dt>
             <span v-text="t$('jHipsterMonolithApp.country.region')"></span>
           </dt>
           <dd>
             <div v-if="country.region">
-              <router-link :to="{ name: 'RegionView', params: { regionId: country.region.id } }">{{ country.region.id }}</router-link>
+              <router-link :to="{ name: 'RegionView', params: { regionId: country.region.id } }">{{ country.region.name }}</router-link>
             </div>
           </dd>
         </dl>

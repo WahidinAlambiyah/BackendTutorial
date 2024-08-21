@@ -39,13 +39,7 @@ public class Location implements Serializable {
     private String stateProvince;
 
     @Transient
-    private Country country;
-
-    @Transient
     private Department department;
-
-    @Column("country_id")
-    private Long countryId;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -114,20 +108,6 @@ public class Location implements Serializable {
         this.stateProvince = stateProvince;
     }
 
-    public Country getCountry() {
-        return this.country;
-    }
-
-    public void setCountry(Country country) {
-        this.country = country;
-        this.countryId = country != null ? country.getId() : null;
-    }
-
-    public Location country(Country country) {
-        this.setCountry(country);
-        return this;
-    }
-
     public Department getDepartment() {
         return this.department;
     }
@@ -145,14 +125,6 @@ public class Location implements Serializable {
     public Location department(Department department) {
         this.setDepartment(department);
         return this;
-    }
-
-    public Long getCountryId() {
-        return this.countryId;
-    }
-
-    public void setCountryId(Long country) {
-        this.countryId = country;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

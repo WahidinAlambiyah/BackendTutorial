@@ -5,17 +5,33 @@
   "applications": "*",
   "fields": [
     {
-      "fieldName": "countryName",
-      "fieldType": "String"
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "code",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique"]
     }
   ],
   "name": "Country",
+  "pagination": "pagination",
   "relationships": [
     {
-      "otherEntityName": "region",
-      "relationshipName": "region",
+      "otherEntityName": "province",
+      "otherEntityRelationshipName": "country",
+      "relationshipName": "province",
       "relationshipSide": "left",
-      "relationshipType": "one-to-one"
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "region",
+      "otherEntityRelationshipName": "country",
+      "relationshipName": "region",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
     }
   ],
   "service": "serviceImpl"

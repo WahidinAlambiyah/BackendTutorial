@@ -25,7 +25,8 @@ public class RegionRowMapper implements BiFunction<Row, String, Region> {
     public Region apply(Row row, String prefix) {
         Region entity = new Region();
         entity.setId(converter.fromRow(row, prefix + "_id", Long.class));
-        entity.setRegionName(converter.fromRow(row, prefix + "_region_name", String.class));
+        entity.setName(converter.fromRow(row, prefix + "_name", String.class));
+        entity.setCode(converter.fromRow(row, prefix + "_code", String.class));
         return entity;
     }
 }

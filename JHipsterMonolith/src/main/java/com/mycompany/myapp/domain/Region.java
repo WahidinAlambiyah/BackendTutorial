@@ -1,6 +1,10 @@
 package com.mycompany.myapp.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
@@ -20,12 +24,19 @@ public class Region implements Serializable {
     @Column("id")
     private Long id;
 
-    @Column("region_name")
+    @NotNull(message = "must not be null")
+    @Column("name")
     @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
-    private String regionName;
+    private String name;
+
+    @NotNull(message = "must not be null")
+    @Column("code")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String code;
 
     @Transient
-    private Country country;
+    @JsonIgnoreProperties(value = { "provinces", "region" }, allowSetters = true)
+    private Set<Country> countries = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -42,35 +53,60 @@ public class Region implements Serializable {
         this.id = id;
     }
 
-    public String getRegionName() {
-        return this.regionName;
+    public String getName() {
+        return this.name;
     }
 
-    public Region regionName(String regionName) {
-        this.setRegionName(regionName);
+    public Region name(String name) {
+        this.setName(name);
         return this;
     }
 
-    public void setRegionName(String regionName) {
-        this.regionName = regionName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Country getCountry() {
-        return this.country;
+    public String getCode() {
+        return this.code;
     }
 
-    public void setCountry(Country country) {
-        if (this.country != null) {
-            this.country.setRegion(null);
+    public Region code(String code) {
+        this.setCode(code);
+        return this;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Set<Country> getCountries() {
+        return this.countries;
+    }
+
+    public void setCountries(Set<Country> countries) {
+        if (this.countries != null) {
+            this.countries.forEach(i -> i.setRegion(null));
         }
-        if (country != null) {
-            country.setRegion(this);
+        if (countries != null) {
+            countries.forEach(i -> i.setRegion(this));
         }
-        this.country = country;
+        this.countries = countries;
     }
 
-    public Region country(Country country) {
-        this.setCountry(country);
+    public Region countries(Set<Country> countries) {
+        this.setCountries(countries);
+        return this;
+    }
+
+    public Region addCountry(Country country) {
+        this.countries.add(country);
+        country.setRegion(this);
+        return this;
+    }
+
+    public Region removeCountry(Country country) {
+        this.countries.remove(country);
+        country.setRegion(null);
         return this;
     }
 
@@ -98,7 +134,8 @@ public class Region implements Serializable {
     public String toString() {
         return "Region{" +
             "id=" + getId() +
-            ", regionName='" + getRegionName() + "'" +
+            ", name='" + getName() + "'" +
+            ", code='" + getCode() + "'" +
             "}";
     }
 }

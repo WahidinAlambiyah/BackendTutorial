@@ -14,12 +14,6 @@ import reactor.core.publisher.Mono;
 @SuppressWarnings("unused")
 @Repository
 public interface LocationRepository extends ReactiveCrudRepository<Location, Long>, LocationRepositoryInternal {
-    @Query("SELECT * FROM location entity WHERE entity.country_id = :id")
-    Flux<Location> findByCountry(Long id);
-
-    @Query("SELECT * FROM location entity WHERE entity.country_id IS NULL")
-    Flux<Location> findAllWhereCountryIsNull();
-
     @Query("SELECT * FROM location entity WHERE entity.id not in (select department_id from department)")
     Flux<Location> findAllWhereDepartmentIsNull();
 

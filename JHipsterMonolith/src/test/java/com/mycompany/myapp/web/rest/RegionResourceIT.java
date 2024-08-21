@@ -14,7 +14,6 @@ import com.mycompany.myapp.domain.Region;
 import com.mycompany.myapp.repository.EntityManager;
 import com.mycompany.myapp.repository.RegionRepository;
 import com.mycompany.myapp.repository.search.RegionSearchRepository;
-import java.time.Duration;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -38,8 +37,11 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @WithMockUser
 class RegionResourceIT {
 
-    private static final String DEFAULT_REGION_NAME = "AAAAAAAAAA";
-    private static final String UPDATED_REGION_NAME = "BBBBBBBBBB";
+    private static final String DEFAULT_NAME = "AAAAAAAAAA";
+    private static final String UPDATED_NAME = "BBBBBBBBBB";
+
+    private static final String DEFAULT_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_CODE = "BBBBBBBBBB";
 
     private static final String ENTITY_API_URL = "/api/regions";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -74,7 +76,7 @@ class RegionResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Region createEntity(EntityManager em) {
-        Region region = new Region().regionName(DEFAULT_REGION_NAME);
+        Region region = new Region().name(DEFAULT_NAME).code(DEFAULT_CODE);
         return region;
     }
 
@@ -85,7 +87,7 @@ class RegionResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Region createUpdatedEntity(EntityManager em) {
-        Region region = new Region().regionName(UPDATED_REGION_NAME);
+        Region region = new Region().name(UPDATED_NAME).code(UPDATED_CODE);
         return region;
     }
 
@@ -168,32 +170,51 @@ class RegionResourceIT {
     }
 
     @Test
-    void getAllRegionsAsStream() {
-        // Initialize the database
-        regionRepository.save(region).block();
+    void checkNameIsRequired() throws Exception {
+        long databaseSizeBeforeTest = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(regionSearchRepository.findAll().collectList().block());
+        // set the field null
+        region.setName(null);
 
-        List<Region> regionList = webTestClient
-            .get()
+        // Create the Region, which fails.
+
+        webTestClient
+            .post()
             .uri(ENTITY_API_URL)
-            .accept(MediaType.APPLICATION_NDJSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(om.writeValueAsBytes(region))
             .exchange()
             .expectStatus()
-            .isOk()
-            .expectHeader()
-            .contentTypeCompatibleWith(MediaType.APPLICATION_NDJSON)
-            .returnResult(Region.class)
-            .getResponseBody()
-            .filter(region::equals)
-            .collectList()
-            .block(Duration.ofSeconds(5));
+            .isBadRequest();
 
-        assertThat(regionList).isNotNull();
-        assertThat(regionList).hasSize(1);
-        Region testRegion = regionList.get(0);
+        assertSameRepositoryCount(databaseSizeBeforeTest);
 
-        // Test fails because reactive api returns an empty object instead of null
-        // assertRegionAllPropertiesEquals(region, testRegion);
-        assertRegionUpdatableFieldsEquals(region, testRegion);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(regionSearchRepository.findAll().collectList().block());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
+    }
+
+    @Test
+    void checkCodeIsRequired() throws Exception {
+        long databaseSizeBeforeTest = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(regionSearchRepository.findAll().collectList().block());
+        // set the field null
+        region.setCode(null);
+
+        // Create the Region, which fails.
+
+        webTestClient
+            .post()
+            .uri(ENTITY_API_URL)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(om.writeValueAsBytes(region))
+            .exchange()
+            .expectStatus()
+            .isBadRequest();
+
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(regionSearchRepository.findAll().collectList().block());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -214,8 +235,10 @@ class RegionResourceIT {
             .expectBody()
             .jsonPath("$.[*].id")
             .value(hasItem(region.getId().intValue()))
-            .jsonPath("$.[*].regionName")
-            .value(hasItem(DEFAULT_REGION_NAME));
+            .jsonPath("$.[*].name")
+            .value(hasItem(DEFAULT_NAME))
+            .jsonPath("$.[*].code")
+            .value(hasItem(DEFAULT_CODE));
     }
 
     @Test
@@ -236,8 +259,10 @@ class RegionResourceIT {
             .expectBody()
             .jsonPath("$.id")
             .value(is(region.getId().intValue()))
-            .jsonPath("$.regionName")
-            .value(is(DEFAULT_REGION_NAME));
+            .jsonPath("$.name")
+            .value(is(DEFAULT_NAME))
+            .jsonPath("$.code")
+            .value(is(DEFAULT_CODE));
     }
 
     @Test
@@ -263,7 +288,7 @@ class RegionResourceIT {
 
         // Update the region
         Region updatedRegion = regionRepository.findById(region.getId()).block();
-        updatedRegion.regionName(UPDATED_REGION_NAME);
+        updatedRegion.name(UPDATED_NAME).code(UPDATED_CODE);
 
         webTestClient
             .put()
@@ -369,7 +394,7 @@ class RegionResourceIT {
         Region partialUpdatedRegion = new Region();
         partialUpdatedRegion.setId(region.getId());
 
-        partialUpdatedRegion.regionName(UPDATED_REGION_NAME);
+        partialUpdatedRegion.name(UPDATED_NAME).code(UPDATED_CODE);
 
         webTestClient
             .patch()
@@ -397,7 +422,7 @@ class RegionResourceIT {
         Region partialUpdatedRegion = new Region();
         partialUpdatedRegion.setId(region.getId());
 
-        partialUpdatedRegion.regionName(UPDATED_REGION_NAME);
+        partialUpdatedRegion.name(UPDATED_NAME).code(UPDATED_CODE);
 
         webTestClient
             .patch()
@@ -524,8 +549,10 @@ class RegionResourceIT {
             .expectBody()
             .jsonPath("$.[*].id")
             .value(hasItem(region.getId().intValue()))
-            .jsonPath("$.[*].regionName")
-            .value(hasItem(DEFAULT_REGION_NAME));
+            .jsonPath("$.[*].name")
+            .value(hasItem(DEFAULT_NAME))
+            .jsonPath("$.[*].code")
+            .value(hasItem(DEFAULT_CODE));
     }
 
     protected long getRepositoryCount() {

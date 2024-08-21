@@ -68,19 +68,6 @@
               v-model="v$.stateProvince.$model"
             />
           </div>
-          <div class="form-group">
-            <label class="form-control-label" v-text="t$('jHipsterMonolithApp.location.country')" for="location-country"></label>
-            <select class="form-control" id="location-country" data-cy="country" name="country" v-model="location.country">
-              <option v-bind:value="null"></option>
-              <option
-                v-bind:value="location.country && countryOption.id === location.country.id ? location.country : countryOption"
-                v-for="countryOption in countries"
-                :key="countryOption.id"
-              >
-                {{ countryOption.id }}
-              </option>
-            </select>
-          </div>
         </div>
         <div>
           <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" v-on:click="previousState()">

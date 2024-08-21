@@ -29,7 +29,7 @@ describe('Service Tests', () => {
 
     beforeEach(() => {
       service = new RegionService();
-      elemDefault = new Region(123, 'AAAAAAA');
+      elemDefault = new Region(123, 'AAAAAAA', 'AAAAAAA');
     });
 
     describe('Service methods', () => {
@@ -81,7 +81,8 @@ describe('Service Tests', () => {
       it('should update a Region', async () => {
         const returnedFromService = Object.assign(
           {
-            regionName: 'BBBBBB',
+            name: 'BBBBBB',
+            code: 'BBBBBB',
           },
           elemDefault,
         );
@@ -108,7 +109,7 @@ describe('Service Tests', () => {
       it('should partial update a Region', async () => {
         const patchObject = Object.assign(
           {
-            regionName: 'BBBBBB',
+            code: 'BBBBBB',
           },
           new Region(),
         );
@@ -136,13 +137,14 @@ describe('Service Tests', () => {
       it('should return a list of Region', async () => {
         const returnedFromService = Object.assign(
           {
-            regionName: 'BBBBBB',
+            name: 'BBBBBB',
+            code: 'BBBBBB',
           },
           elemDefault,
         );
         const expected = Object.assign({}, returnedFromService);
         axiosStub.get.resolves([returnedFromService]);
-        return service.retrieve().then(res => {
+        return service.retrieve({ sort: {}, page: 0, size: 10 }).then(res => {
           expect(res).toContainEqual(expected);
         });
       });

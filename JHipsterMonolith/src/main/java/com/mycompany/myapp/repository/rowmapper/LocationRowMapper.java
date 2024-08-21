@@ -29,7 +29,6 @@ public class LocationRowMapper implements BiFunction<Row, String, Location> {
         entity.setPostalCode(converter.fromRow(row, prefix + "_postal_code", String.class));
         entity.setCity(converter.fromRow(row, prefix + "_city", String.class));
         entity.setStateProvince(converter.fromRow(row, prefix + "_state_province", String.class));
-        entity.setCountryId(converter.fromRow(row, prefix + "_country_id", Long.class));
         return entity;
     }
 }

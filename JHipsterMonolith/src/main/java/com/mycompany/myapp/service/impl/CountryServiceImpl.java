@@ -6,6 +6,7 @@ import com.mycompany.myapp.repository.search.CountrySearchRepository;
 import com.mycompany.myapp.service.CountryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -48,8 +49,11 @@ public class CountryServiceImpl implements CountryService {
         return countryRepository
             .findById(country.getId())
             .map(existingCountry -> {
-                if (country.getCountryName() != null) {
-                    existingCountry.setCountryName(country.getCountryName());
+                if (country.getName() != null) {
+                    existingCountry.setName(country.getName());
+                }
+                if (country.getCode() != null) {
+                    existingCountry.setCode(country.getCode());
                 }
 
                 return existingCountry;
@@ -63,19 +67,13 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<Country> findAll() {
+    public Flux<Country> findAll(Pageable pageable) {
         log.debug("Request to get all Countries");
-        return countryRepository.findAll();
+        return countryRepository.findAllBy(pageable);
     }
 
-    /**
-     *  Get all the countries where Location is {@code null}.
-     *  @return the list of entities.
-     */
-    @Transactional(readOnly = true)
-    public Flux<Country> findAllWhereLocationIsNull() {
-        log.debug("Request to get all countries where Location is null");
-        return countryRepository.findAllWhereLocationIsNull();
+    public Flux<Country> findAllWithEagerRelationships(Pageable pageable) {
+        return countryRepository.findAllWithEagerRelationships(pageable);
     }
 
     public Mono<Long> countAll() {
@@ -90,7 +88,7 @@ public class CountryServiceImpl implements CountryService {
     @Transactional(readOnly = true)
     public Mono<Country> findOne(Long id) {
         log.debug("Request to get Country : {}", id);
-        return countryRepository.findById(id);
+        return countryRepository.findOneWithEagerRelationships(id);
     }
 
     @Override
@@ -101,12 +99,8 @@ public class CountryServiceImpl implements CountryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<Country> search(String query) {
-        log.debug("Request to search Countries for query {}", query);
-        try {
-            return countrySearchRepository.search(query);
-        } catch (RuntimeException e) {
-            throw e;
-        }
+    public Flux<Country> search(String query, Pageable pageable) {
+        log.debug("Request to search for a page of Countries for query {}", query);
+        return countrySearchRepository.search(query, pageable);
     }
 }

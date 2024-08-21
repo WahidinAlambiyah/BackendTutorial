@@ -55,7 +55,6 @@
             <th scope="row"><span v-text="t$('jHipsterMonolithApp.location.postalCode')"></span></th>
             <th scope="row"><span v-text="t$('jHipsterMonolithApp.location.city')"></span></th>
             <th scope="row"><span v-text="t$('jHipsterMonolithApp.location.stateProvince')"></span></th>
-            <th scope="row"><span v-text="t$('jHipsterMonolithApp.location.country')"></span></th>
             <th scope="row"></th>
           </tr>
         </thead>
@@ -68,13 +67,6 @@
             <td>{{ location.postalCode }}</td>
             <td>{{ location.city }}</td>
             <td>{{ location.stateProvince }}</td>
-            <td>
-              <div v-if="location.country">
-                <router-link :to="{ name: 'CountryView', params: { countryId: location.country.id } }">{{
-                  location.country.id
-                }}</router-link>
-              </div>
-            </td>
             <td class="text-right">
               <div class="btn-group">
                 <router-link :to="{ name: 'LocationView', params: { locationId: location.id } }" custom v-slot="{ navigate }">

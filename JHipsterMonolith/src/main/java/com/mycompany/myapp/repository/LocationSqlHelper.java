@@ -16,7 +16,6 @@ public class LocationSqlHelper {
         columns.add(Column.aliased("city", table, columnPrefix + "_city"));
         columns.add(Column.aliased("state_province", table, columnPrefix + "_state_province"));
 
-        columns.add(Column.aliased("country_id", table, columnPrefix + "_country_id"));
         return columns;
     }
 }

@@ -26,9 +26,6 @@
             <column name="state_province" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-            <column name="country_id" type="bigint">
-                <constraints nullable="true" unique="true" uniqueConstraintName="ux_location__country_id" />
-            </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
     </changeSet>

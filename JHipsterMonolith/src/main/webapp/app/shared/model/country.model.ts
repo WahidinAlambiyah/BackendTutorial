@@ -2,14 +2,16 @@ import { type IRegion } from '@/shared/model/region.model';
 
 export interface ICountry {
   id?: number;
-  countryName?: string | null;
+  name?: string;
+  code?: string;
   region?: IRegion | null;
 }
 
 export class Country implements ICountry {
   constructor(
     public id?: number,
-    public countryName?: string | null,
+    public name?: string,
+    public code?: string,
     public region?: IRegion | null,
   ) {}
 }

@@ -29,7 +29,7 @@ describe('Service Tests', () => {
 
     beforeEach(() => {
       service = new CountryService();
-      elemDefault = new Country(123, 'AAAAAAA');
+      elemDefault = new Country(123, 'AAAAAAA', 'AAAAAAA');
     });
 
     describe('Service methods', () => {
@@ -81,7 +81,8 @@ describe('Service Tests', () => {
       it('should update a Country', async () => {
         const returnedFromService = Object.assign(
           {
-            countryName: 'BBBBBB',
+            name: 'BBBBBB',
+            code: 'BBBBBB',
           },
           elemDefault,
         );
@@ -106,7 +107,13 @@ describe('Service Tests', () => {
       });
 
       it('should partial update a Country', async () => {
-        const patchObject = Object.assign({}, new Country());
+        const patchObject = Object.assign(
+          {
+            name: 'BBBBBB',
+            code: 'BBBBBB',
+          },
+          new Country(),
+        );
         const returnedFromService = Object.assign(patchObject, elemDefault);
 
         const expected = Object.assign({}, returnedFromService);
@@ -131,13 +138,14 @@ describe('Service Tests', () => {
       it('should return a list of Country', async () => {
         const returnedFromService = Object.assign(
           {
-            countryName: 'BBBBBB',
+            name: 'BBBBBB',
+            code: 'BBBBBB',
           },
           elemDefault,
         );
         const expected = Object.assign({}, returnedFromService);
         axiosStub.get.resolves([returnedFromService]);
-        return service.retrieve().then(res => {
+        return service.retrieve({ sort: {}, page: 0, size: 10 }).then(res => {
           expect(res).toContainEqual(expected);
         });
       });

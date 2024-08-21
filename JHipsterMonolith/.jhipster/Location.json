@@ -23,13 +23,6 @@
     }
   ],
   "name": "Location",
-  "relationships": [
-    {
-      "otherEntityName": "country",
-      "relationshipName": "country",
-      "relationshipSide": "left",
-      "relationshipType": "one-to-one"
-    }
-  ],
+  "relationships": [],
   "service": "serviceImpl"
 }

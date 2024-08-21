@@ -35,6 +35,26 @@ const JobHistory = () => import('@/entities/job-history/job-history.vue');
 const JobHistoryUpdate = () => import('@/entities/job-history/job-history-update.vue');
 const JobHistoryDetails = () => import('@/entities/job-history/job-history-details.vue');
 
+const Province = () => import('@/entities/province/province.vue');
+const ProvinceUpdate = () => import('@/entities/province/province-update.vue');
+const ProvinceDetails = () => import('@/entities/province/province-details.vue');
+
+const City = () => import('@/entities/city/city.vue');
+const CityUpdate = () => import('@/entities/city/city-update.vue');
+const CityDetails = () => import('@/entities/city/city-details.vue');
+
+const District = () => import('@/entities/district/district.vue');
+const DistrictUpdate = () => import('@/entities/district/district-update.vue');
+const DistrictDetails = () => import('@/entities/district/district-details.vue');
+
+const SubDistrict = () => import('@/entities/sub-district/sub-district.vue');
+const SubDistrictUpdate = () => import('@/entities/sub-district/sub-district-update.vue');
+const SubDistrictDetails = () => import('@/entities/sub-district/sub-district-details.vue');
+
+const PostalCode = () => import('@/entities/postal-code/postal-code.vue');
+const PostalCodeUpdate = () => import('@/entities/postal-code/postal-code-update.vue');
+const PostalCodeDetails = () => import('@/entities/postal-code/postal-code-details.vue');
+
 // jhipster-needle-add-entity-to-router-import - JHipster will import entities to the router here
 
 export default {
@@ -231,6 +251,126 @@ export default {
       path: 'job-history/:jobHistoryId/view',
       name: 'JobHistoryView',
       component: JobHistoryDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'province',
+      name: 'Province',
+      component: Province,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'province/new',
+      name: 'ProvinceCreate',
+      component: ProvinceUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'province/:provinceId/edit',
+      name: 'ProvinceEdit',
+      component: ProvinceUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'province/:provinceId/view',
+      name: 'ProvinceView',
+      component: ProvinceDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'city',
+      name: 'City',
+      component: City,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'city/new',
+      name: 'CityCreate',
+      component: CityUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'city/:cityId/edit',
+      name: 'CityEdit',
+      component: CityUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'city/:cityId/view',
+      name: 'CityView',
+      component: CityDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'district',
+      name: 'District',
+      component: District,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'district/new',
+      name: 'DistrictCreate',
+      component: DistrictUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'district/:districtId/edit',
+      name: 'DistrictEdit',
+      component: DistrictUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'district/:districtId/view',
+      name: 'DistrictView',
+      component: DistrictDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'sub-district',
+      name: 'SubDistrict',
+      component: SubDistrict,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'sub-district/new',
+      name: 'SubDistrictCreate',
+      component: SubDistrictUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'sub-district/:subDistrictId/edit',
+      name: 'SubDistrictEdit',
+      component: SubDistrictUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'sub-district/:subDistrictId/view',
+      name: 'SubDistrictView',
+      component: SubDistrictDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'postal-code',
+      name: 'PostalCode',
+      component: PostalCode,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'postal-code/new',
+      name: 'PostalCodeCreate',
+      component: PostalCodeUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'postal-code/:postalCodeId/edit',
+      name: 'PostalCodeEdit',
+      component: PostalCodeUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'postal-code/:postalCodeId/view',
+      name: 'PostalCodeView',
+      component: PostalCodeDetails,
       meta: { authorities: [Authority.USER] },
     },
     // jhipster-needle-add-entity-to-router - JHipster will add entities to the router here

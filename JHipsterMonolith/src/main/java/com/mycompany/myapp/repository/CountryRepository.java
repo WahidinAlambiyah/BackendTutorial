@@ -14,14 +14,22 @@ import reactor.core.publisher.Mono;
 @SuppressWarnings("unused")
 @Repository
 public interface CountryRepository extends ReactiveCrudRepository<Country, Long>, CountryRepositoryInternal {
+    Flux<Country> findAllBy(Pageable pageable);
+
+    @Override
+    Mono<Country> findOneWithEagerRelationships(Long id);
+
+    @Override
+    Flux<Country> findAllWithEagerRelationships();
+
+    @Override
+    Flux<Country> findAllWithEagerRelationships(Pageable page);
+
     @Query("SELECT * FROM country entity WHERE entity.region_id = :id")
     Flux<Country> findByRegion(Long id);
 
     @Query("SELECT * FROM country entity WHERE entity.region_id IS NULL")
     Flux<Country> findAllWhereRegionIsNull();
-
-    @Query("SELECT * FROM country entity WHERE entity.id not in (select location_id from location)")
-    Flux<Country> findAllWhereLocationIsNull();
 
     @Override
     <S extends Country> Mono<S> save(S entity);
@@ -46,4 +54,12 @@ interface CountryRepositoryInternal {
     Mono<Country> findById(Long id);
     // this is not supported at the moment because of https://github.com/jhipster/generator-jhipster/issues/18269
     // Flux<Country> findAllBy(Pageable pageable, Criteria criteria);
+
+    Mono<Country> findOneWithEagerRelationships(Long id);
+
+    Flux<Country> findAllWithEagerRelationships();
+
+    Flux<Country> findAllWithEagerRelationships(Pageable page);
+
+    Mono<Void> deleteById(Long id);
 }

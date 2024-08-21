@@ -13,16 +13,36 @@
             <input type="text" class="form-control" id="id" name="id" v-model="country.id" readonly />
           </div>
           <div class="form-group">
-            <label class="form-control-label" v-text="t$('jHipsterMonolithApp.country.countryName')" for="country-countryName"></label>
+            <label class="form-control-label" v-text="t$('jHipsterMonolithApp.country.name')" for="country-name"></label>
             <input
               type="text"
               class="form-control"
-              name="countryName"
-              id="country-countryName"
-              data-cy="countryName"
-              :class="{ valid: !v$.countryName.$invalid, invalid: v$.countryName.$invalid }"
-              v-model="v$.countryName.$model"
+              name="name"
+              id="country-name"
+              data-cy="name"
+              :class="{ valid: !v$.name.$invalid, invalid: v$.name.$invalid }"
+              v-model="v$.name.$model"
+              required
             />
+            <div v-if="v$.name.$anyDirty && v$.name.$invalid">
+              <small class="form-text text-danger" v-for="error of v$.name.$errors" :key="error.$uid">{{ error.$message }}</small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-control-label" v-text="t$('jHipsterMonolithApp.country.code')" for="country-code"></label>
+            <input
+              type="text"
+              class="form-control"
+              name="code"
+              id="country-code"
+              data-cy="code"
+              :class="{ valid: !v$.code.$invalid, invalid: v$.code.$invalid }"
+              v-model="v$.code.$model"
+              required
+            />
+            <div v-if="v$.code.$anyDirty && v$.code.$invalid">
+              <small class="form-text text-danger" v-for="error of v$.code.$errors" :key="error.$uid">{{ error.$message }}</small>
+            </div>
           </div>
           <div class="form-group">
             <label class="form-control-label" v-text="t$('jHipsterMonolithApp.country.region')" for="country-region"></label>
@@ -33,7 +53,7 @@
                 v-for="regionOption in regions"
                 :key="regionOption.id"
               >
-                {{ regionOption.id }}
+                {{ regionOption.name }}
               </option>
             </select>
           </div>

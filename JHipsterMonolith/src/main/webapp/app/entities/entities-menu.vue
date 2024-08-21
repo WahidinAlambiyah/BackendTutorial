@@ -32,6 +32,26 @@
       <font-awesome-icon icon="asterisk" />
       <span v-text="t$('global.menu.entities.jobHistory')"></span>
     </b-dropdown-item>
+    <b-dropdown-item to="/province">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.province')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/city">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.city')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/district">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.district')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/sub-district">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.subDistrict')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/postal-code">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.postalCode')"></span>
+    </b-dropdown-item>
     <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->
   </div>
 </template>

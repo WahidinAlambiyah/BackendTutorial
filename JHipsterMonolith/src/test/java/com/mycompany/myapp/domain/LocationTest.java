@@ -1,6 +1,5 @@
 package com.mycompany.myapp.domain;
 
-import static com.mycompany.myapp.domain.CountryTestSamples.*;
 import static com.mycompany.myapp.domain.DepartmentTestSamples.*;
 import static com.mycompany.myapp.domain.LocationTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,18 +21,6 @@ class LocationTest {
 
         location2 = getLocationSample2();
         assertThat(location1).isNotEqualTo(location2);
-    }
-
-    @Test
-    void countryTest() {
-        Location location = getLocationRandomSampleGenerator();
-        Country countryBack = getCountryRandomSampleGenerator();
-
-        location.setCountry(countryBack);
-        assertThat(location.getCountry()).isEqualTo(countryBack);
-
-        location.country(null);
-        assertThat(location.getCountry()).isNull();
     }
 
     @Test

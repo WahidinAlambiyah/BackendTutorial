@@ -404,8 +404,6 @@ class EmployeeResourceIT {
         Employee partialUpdatedEmployee = new Employee();
         partialUpdatedEmployee.setId(employee.getId());
 
-        partialUpdatedEmployee.commissionPct(UPDATED_COMMISSION_PCT);
-
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, partialUpdatedEmployee.getId())

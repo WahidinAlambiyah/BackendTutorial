@@ -15,7 +15,7 @@ describe('Department e2e test', () => {
   const departmentPageUrlPattern = new RegExp('/department(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const departmentSample = { departmentName: 'uh-huh rope' };
+  const departmentSample = { departmentName: 'under meh vainly' };
 
   let department;
 
@@ -157,8 +157,8 @@ describe('Department e2e test', () => {
     });
 
     it('should create an instance of Department', () => {
-      cy.get(`[data-cy="departmentName"]`).type('jot velodrome less');
-      cy.get(`[data-cy="departmentName"]`).should('have.value', 'jot velodrome less');
+      cy.get(`[data-cy="departmentName"]`).type('switch');
+      cy.get(`[data-cy="departmentName"]`).should('have.value', 'switch');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

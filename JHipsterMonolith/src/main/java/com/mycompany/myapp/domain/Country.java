@@ -1,6 +1,10 @@
 package com.mycompany.myapp.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
@@ -20,15 +24,23 @@ public class Country implements Serializable {
     @Column("id")
     private Long id;
 
-    @Column("country_name")
+    @NotNull(message = "must not be null")
+    @Column("name")
     @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
-    private String countryName;
+    private String name;
+
+    @NotNull(message = "must not be null")
+    @Column("code")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String code;
 
     @Transient
+    @JsonIgnoreProperties(value = { "cities", "country" }, allowSetters = true)
+    private Set<Province> provinces = new HashSet<>();
+
+    @Transient
+    @JsonIgnoreProperties(value = { "countries" }, allowSetters = true)
     private Region region;
-
-    @Transient
-    private Location location;
 
     @Column("region_id")
     private Long regionId;
@@ -48,17 +60,61 @@ public class Country implements Serializable {
         this.id = id;
     }
 
-    public String getCountryName() {
-        return this.countryName;
+    public String getName() {
+        return this.name;
     }
 
-    public Country countryName(String countryName) {
-        this.setCountryName(countryName);
+    public Country name(String name) {
+        this.setName(name);
         return this;
     }
 
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCode() {
+        return this.code;
+    }
+
+    public Country code(String code) {
+        this.setCode(code);
+        return this;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Set<Province> getProvinces() {
+        return this.provinces;
+    }
+
+    public void setProvinces(Set<Province> provinces) {
+        if (this.provinces != null) {
+            this.provinces.forEach(i -> i.setCountry(null));
+        }
+        if (provinces != null) {
+            provinces.forEach(i -> i.setCountry(this));
+        }
+        this.provinces = provinces;
+    }
+
+    public Country provinces(Set<Province> provinces) {
+        this.setProvinces(provinces);
+        return this;
+    }
+
+    public Country addProvince(Province province) {
+        this.provinces.add(province);
+        province.setCountry(this);
+        return this;
+    }
+
+    public Country removeProvince(Province province) {
+        this.provinces.remove(province);
+        province.setCountry(null);
+        return this;
     }
 
     public Region getRegion() {
@@ -72,25 +128,6 @@ public class Country implements Serializable {
 
     public Country region(Region region) {
         this.setRegion(region);
-        return this;
-    }
-
-    public Location getLocation() {
-        return this.location;
-    }
-
-    public void setLocation(Location location) {
-        if (this.location != null) {
-            this.location.setCountry(null);
-        }
-        if (location != null) {
-            location.setCountry(this);
-        }
-        this.location = location;
-    }
-
-    public Country location(Location location) {
-        this.setLocation(location);
         return this;
     }
 
@@ -126,7 +163,8 @@ public class Country implements Serializable {
     public String toString() {
         return "Country{" +
             "id=" + getId() +
-            ", countryName='" + getCountryName() + "'" +
+            ", name='" + getName() + "'" +
+            ", code='" + getCode() + "'" +
             "}";
     }
 }

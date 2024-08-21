@@ -50,9 +50,22 @@
       <table class="table table-striped" aria-describedby="countries">
         <thead>
           <tr>
-            <th scope="row"><span v-text="t$('global.field.id')"></span></th>
-            <th scope="row"><span v-text="t$('jHipsterMonolithApp.country.countryName')"></span></th>
-            <th scope="row"><span v-text="t$('jHipsterMonolithApp.country.region')"></span></th>
+            <th scope="row" v-on:click="changeOrder('id')">
+              <span v-text="t$('global.field.id')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'id'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('name')">
+              <span v-text="t$('jHipsterMonolithApp.country.name')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'name'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('code')">
+              <span v-text="t$('jHipsterMonolithApp.country.code')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'code'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('region.name')">
+              <span v-text="t$('jHipsterMonolithApp.country.region')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'region.name'"></jhi-sort-indicator>
+            </th>
             <th scope="row"></th>
           </tr>
         </thead>
@@ -61,10 +74,11 @@
             <td>
               <router-link :to="{ name: 'CountryView', params: { countryId: country.id } }">{{ country.id }}</router-link>
             </td>
-            <td>{{ country.countryName }}</td>
+            <td>{{ country.name }}</td>
+            <td>{{ country.code }}</td>
             <td>
               <div v-if="country.region">
-                <router-link :to="{ name: 'RegionView', params: { regionId: country.region.id } }">{{ country.region.id }}</router-link>
+                <router-link :to="{ name: 'RegionView', params: { regionId: country.region.id } }">{{ country.region.name }}</router-link>
               </div>
             </td>
             <td class="text-right">
@@ -122,6 +136,14 @@
         </div>
       </template>
     </b-modal>
+    <div v-show="countries && countries.length > 0">
+      <div class="row justify-content-center">
+        <jhi-item-count :page="page" :total="queryCount" :itemsPerPage="itemsPerPage"></jhi-item-count>
+      </div>
+      <div class="row justify-content-center">
+        <b-pagination size="md" :total-rows="totalItems" v-model="page" :per-page="itemsPerPage"></b-pagination>
+      </div>
+    </div>
   </div>
 </template>
 

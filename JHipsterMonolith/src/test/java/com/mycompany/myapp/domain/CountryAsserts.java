@@ -47,7 +47,8 @@ public class CountryAsserts {
     public static void assertCountryUpdatableFieldsEquals(Country expected, Country actual) {
         assertThat(expected)
             .as("Verify Country relevant properties")
-            .satisfies(e -> assertThat(e.getCountryName()).as("check countryName").isEqualTo(actual.getCountryName()));
+            .satisfies(e -> assertThat(e.getName()).as("check name").isEqualTo(actual.getName()))
+            .satisfies(e -> assertThat(e.getCode()).as("check code").isEqualTo(actual.getCode()));
     }
 
     /**

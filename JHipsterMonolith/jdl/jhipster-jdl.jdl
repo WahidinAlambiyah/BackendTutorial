@@ -1,9 +1,45 @@
+// Audit Entity will be Manually add from java Code
+
+// entity AbstractAuditingEntity {
+//    createdDate Instant required
+//    lastModifiedDate Instant
+//}
+
+// Mark the entity as abstract so that it won't be treated as a regular entity.
+// abstract AbstractAuditingEntity
+
 entity Region {
-	regionName String
+	name String required
+	code String required unique
 }
 
 entity Country {
-	countryName String
+	name String required
+	code String required unique
+}
+
+entity Province {
+	name String required
+	code String required unique
+}
+
+entity City {
+	name String required
+	code String required unique
+}
+
+entity District {
+	name String required
+	code String required unique
+}
+
+entity SubDistrict {
+	name String required
+	code String required unique
+}
+
+entity PostalCode {
+	code String required unique
 }
 
 // an ignored comment
@@ -60,13 +96,22 @@ enum Language {
     FRENCH, ENGLISH, SPANISH
 }
 
-relationship OneToOne {
-	Country{region} to Region
+// relationship OneToOne {
+//	Country{region} to Region
+// }
+
+relationship OneToMany {
+    Region{country} to Country{region(name)},
+    Country{province} to Province{country(name)},
+    Province{city} to City{province(name)},
+    City{district} to District{city(name)},
+    District{subDistrict} to SubDistrict{district(name)},
+    SubDistrict{postalCode} to PostalCode{SubDistrict(name)}
 }
 
-relationship OneToOne {
-	Location{country} to Country
-}
+// relationship OneToOne {
+//	Location{country} to Country
+// }
 
 relationship OneToOne {
 	Department{location} to Location
@@ -102,7 +147,7 @@ relationship OneToOne {
 
 // Set pagination options
 paginate JobHistory, Employee with infinite-scroll
-paginate Job with pagination
+paginate Job, Region, Country, Province, City, District, SubDistrict, PostalCode with pagination
 
 // Use Data Transfer Objects (DTO)
 // dto * with mapstruct

@@ -7,8 +7,6 @@ import LocationService from './location.service';
 import { useValidation } from '@/shared/composables';
 import { useAlertService } from '@/shared/alert/alert.service';
 
-import CountryService from '@/entities/country/country.service';
-import { type ICountry } from '@/shared/model/country.model';
 import { type ILocation, Location } from '@/shared/model/location.model';
 
 export default defineComponent({
@@ -19,10 +17,6 @@ export default defineComponent({
     const alertService = inject('alertService', () => useAlertService(), true);
 
     const location: Ref<ILocation> = ref(new Location());
-
-    const countryService = inject('countryService', () => new CountryService());
-
-    const countries: Ref<ICountry[]> = ref([]);
     const isSaving = ref(false);
     const currentLanguage = inject('currentLanguage', () => computed(() => navigator.language ?? 'en'), true);
 
@@ -44,16 +38,6 @@ export default defineComponent({
       retrieveLocation(route.params.locationId);
     }
 
-    const initRelationships = () => {
-      countryService()
-        .retrieve()
-        .then(res => {
-          countries.value = res.data;
-        });
-    };
-
-    initRelationships();
-
     const { t: t$ } = useI18n();
     const validations = useValidation();
     const validationRules = {
@@ -61,7 +45,6 @@ export default defineComponent({
       postalCode: {},
       city: {},
       stateProvince: {},
-      country: {},
     };
     const v$ = useVuelidate(validationRules, location as any);
     v$.value.$validate();
@@ -73,7 +56,6 @@ export default defineComponent({
       previousState,
       isSaving,
       currentLanguage,
-      countries,
       v$,
       t$,
     };

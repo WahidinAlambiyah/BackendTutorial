@@ -14,7 +14,7 @@ import com.mycompany.myapp.domain.Country;
 import com.mycompany.myapp.repository.CountryRepository;
 import com.mycompany.myapp.repository.EntityManager;
 import com.mycompany.myapp.repository.search.CountrySearchRepository;
-import java.time.Duration;
+import com.mycompany.myapp.service.CountryService;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -23,23 +23,31 @@ import org.assertj.core.util.IterableUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.data.util.Streamable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
 
 /**
  * Integration tests for the {@link CountryResource} REST controller.
  */
 @IntegrationTest
+@ExtendWith(MockitoExtension.class)
 @AutoConfigureWebTestClient(timeout = IntegrationTest.DEFAULT_ENTITY_TIMEOUT)
 @WithMockUser
 class CountryResourceIT {
 
-    private static final String DEFAULT_COUNTRY_NAME = "AAAAAAAAAA";
-    private static final String UPDATED_COUNTRY_NAME = "BBBBBBBBBB";
+    private static final String DEFAULT_NAME = "AAAAAAAAAA";
+    private static final String UPDATED_NAME = "BBBBBBBBBB";
+
+    private static final String DEFAULT_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_CODE = "BBBBBBBBBB";
 
     private static final String ENTITY_API_URL = "/api/countries";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -53,6 +61,12 @@ class CountryResourceIT {
 
     @Autowired
     private CountryRepository countryRepository;
+
+    @Mock
+    private CountryRepository countryRepositoryMock;
+
+    @Mock
+    private CountryService countryServiceMock;
 
     @Autowired
     private CountrySearchRepository countrySearchRepository;
@@ -74,7 +88,7 @@ class CountryResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Country createEntity(EntityManager em) {
-        Country country = new Country().countryName(DEFAULT_COUNTRY_NAME);
+        Country country = new Country().name(DEFAULT_NAME).code(DEFAULT_CODE);
         return country;
     }
 
@@ -85,7 +99,7 @@ class CountryResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Country createUpdatedEntity(EntityManager em) {
-        Country country = new Country().countryName(UPDATED_COUNTRY_NAME);
+        Country country = new Country().name(UPDATED_NAME).code(UPDATED_CODE);
         return country;
     }
 
@@ -168,32 +182,51 @@ class CountryResourceIT {
     }
 
     @Test
-    void getAllCountriesAsStream() {
-        // Initialize the database
-        countryRepository.save(country).block();
+    void checkNameIsRequired() throws Exception {
+        long databaseSizeBeforeTest = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(countrySearchRepository.findAll().collectList().block());
+        // set the field null
+        country.setName(null);
 
-        List<Country> countryList = webTestClient
-            .get()
+        // Create the Country, which fails.
+
+        webTestClient
+            .post()
             .uri(ENTITY_API_URL)
-            .accept(MediaType.APPLICATION_NDJSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(om.writeValueAsBytes(country))
             .exchange()
             .expectStatus()
-            .isOk()
-            .expectHeader()
-            .contentTypeCompatibleWith(MediaType.APPLICATION_NDJSON)
-            .returnResult(Country.class)
-            .getResponseBody()
-            .filter(country::equals)
-            .collectList()
-            .block(Duration.ofSeconds(5));
+            .isBadRequest();
 
-        assertThat(countryList).isNotNull();
-        assertThat(countryList).hasSize(1);
-        Country testCountry = countryList.get(0);
+        assertSameRepositoryCount(databaseSizeBeforeTest);
 
-        // Test fails because reactive api returns an empty object instead of null
-        // assertCountryAllPropertiesEquals(country, testCountry);
-        assertCountryUpdatableFieldsEquals(country, testCountry);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(countrySearchRepository.findAll().collectList().block());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
+    }
+
+    @Test
+    void checkCodeIsRequired() throws Exception {
+        long databaseSizeBeforeTest = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(countrySearchRepository.findAll().collectList().block());
+        // set the field null
+        country.setCode(null);
+
+        // Create the Country, which fails.
+
+        webTestClient
+            .post()
+            .uri(ENTITY_API_URL)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(om.writeValueAsBytes(country))
+            .exchange()
+            .expectStatus()
+            .isBadRequest();
+
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(countrySearchRepository.findAll().collectList().block());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -214,8 +247,27 @@ class CountryResourceIT {
             .expectBody()
             .jsonPath("$.[*].id")
             .value(hasItem(country.getId().intValue()))
-            .jsonPath("$.[*].countryName")
-            .value(hasItem(DEFAULT_COUNTRY_NAME));
+            .jsonPath("$.[*].name")
+            .value(hasItem(DEFAULT_NAME))
+            .jsonPath("$.[*].code")
+            .value(hasItem(DEFAULT_CODE));
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllCountriesWithEagerRelationshipsIsEnabled() {
+        when(countryServiceMock.findAllWithEagerRelationships(any())).thenReturn(Flux.empty());
+
+        webTestClient.get().uri(ENTITY_API_URL + "?eagerload=true").exchange().expectStatus().isOk();
+
+        verify(countryServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllCountriesWithEagerRelationshipsIsNotEnabled() {
+        when(countryServiceMock.findAllWithEagerRelationships(any())).thenReturn(Flux.empty());
+
+        webTestClient.get().uri(ENTITY_API_URL + "?eagerload=false").exchange().expectStatus().isOk();
+        verify(countryRepositoryMock, times(1)).findAllWithEagerRelationships(any());
     }
 
     @Test
@@ -236,8 +288,10 @@ class CountryResourceIT {
             .expectBody()
             .jsonPath("$.id")
             .value(is(country.getId().intValue()))
-            .jsonPath("$.countryName")
-            .value(is(DEFAULT_COUNTRY_NAME));
+            .jsonPath("$.name")
+            .value(is(DEFAULT_NAME))
+            .jsonPath("$.code")
+            .value(is(DEFAULT_CODE));
     }
 
     @Test
@@ -263,7 +317,7 @@ class CountryResourceIT {
 
         // Update the country
         Country updatedCountry = countryRepository.findById(country.getId()).block();
-        updatedCountry.countryName(UPDATED_COUNTRY_NAME);
+        updatedCountry.name(UPDATED_NAME).code(UPDATED_CODE);
 
         webTestClient
             .put()
@@ -369,7 +423,7 @@ class CountryResourceIT {
         Country partialUpdatedCountry = new Country();
         partialUpdatedCountry.setId(country.getId());
 
-        partialUpdatedCountry.countryName(UPDATED_COUNTRY_NAME);
+        partialUpdatedCountry.code(UPDATED_CODE);
 
         webTestClient
             .patch()
@@ -397,7 +451,7 @@ class CountryResourceIT {
         Country partialUpdatedCountry = new Country();
         partialUpdatedCountry.setId(country.getId());
 
-        partialUpdatedCountry.countryName(UPDATED_COUNTRY_NAME);
+        partialUpdatedCountry.name(UPDATED_NAME).code(UPDATED_CODE);
 
         webTestClient
             .patch()
@@ -524,8 +578,10 @@ class CountryResourceIT {
             .expectBody()
             .jsonPath("$.[*].id")
             .value(hasItem(country.getId().intValue()))
-            .jsonPath("$.[*].countryName")
-            .value(hasItem(DEFAULT_COUNTRY_NAME));
+            .jsonPath("$.[*].name")
+            .value(hasItem(DEFAULT_NAME))
+            .jsonPath("$.[*].code")
+            .value(hasItem(DEFAULT_CODE));
     }
 
     protected long getRepositoryCount() {

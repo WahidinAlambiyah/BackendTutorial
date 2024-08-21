@@ -356,7 +356,7 @@ class JobHistoryResourceIT {
         JobHistory partialUpdatedJobHistory = new JobHistory();
         partialUpdatedJobHistory.setId(jobHistory.getId());
 
-        partialUpdatedJobHistory.language(UPDATED_LANGUAGE);
+        partialUpdatedJobHistory.startDate(UPDATED_START_DATE).language(UPDATED_LANGUAGE);
 
         webTestClient
             .patch()

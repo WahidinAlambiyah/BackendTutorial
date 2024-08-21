@@ -1,0 +1,28 @@
+{
+  "jHipsterMonolithApp": {
+    "subDistrict": {
+      "home": {
+        "title": "Sub Districts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Sub District",
+        "createOrEditLabel": "Create or edit a Sub District",
+        "search": "Search for Sub District",
+        "notFound": "No Sub Districts found"
+      },
+      "created": "A new Sub District is created with identifier { param }",
+      "updated": "A Sub District is updated with identifier { param }",
+      "deleted": "A Sub District is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Sub District { id }?"
+      },
+      "detail": {
+        "title": "Sub District"
+      },
+      "id": "ID",
+      "name": "Name",
+      "code": "Code",
+      "postalCode": "Postal Code",
+      "district": "District"
+    }
+  }
+}

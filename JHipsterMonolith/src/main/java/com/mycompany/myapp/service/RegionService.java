@@ -1,6 +1,7 @@
 package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.domain.Region;
+import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -35,16 +36,10 @@ public interface RegionService {
     /**
      * Get all the regions.
      *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<Region> findAll();
-
-    /**
-     * Get all the Region where Country is {@code null}.
-     *
-     * @return the {@link Flux} of entities.
-     */
-    Flux<Region> findAllWhereCountryIsNull();
+    Flux<Region> findAll(Pageable pageable);
 
     /**
      * Returns the number of regions available.
@@ -79,7 +74,9 @@ public interface RegionService {
      * Search for the region corresponding to the query.
      *
      * @param query the query of the search.
+     *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<Region> search(String query);
+    Flux<Region> search(String query, Pageable pageable);
 }

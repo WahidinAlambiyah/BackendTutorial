@@ -4,22 +4,29 @@ import com.mycompany.myapp.domain.Country;
 import com.mycompany.myapp.repository.CountryRepository;
 import com.mycompany.myapp.service.CountryService;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
-import com.mycompany.myapp.web.rest.errors.ElasticsearchExceptionMapper;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.ForwardedHeaderUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.reactive.ResponseUtil;
 
 /**
@@ -53,7 +60,7 @@ public class CountryResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public Mono<ResponseEntity<Country>> createCountry(@RequestBody Country country) throws URISyntaxException {
+    public Mono<ResponseEntity<Country>> createCountry(@Valid @RequestBody Country country) throws URISyntaxException {
         log.debug("REST request to save Country : {}", country);
         if (country.getId() != null) {
             throw new BadRequestAlertException("A new country cannot already have an ID", ENTITY_NAME, "idexists");
@@ -84,7 +91,7 @@ public class CountryResource {
     @PutMapping("/{id}")
     public Mono<ResponseEntity<Country>> updateCountry(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody Country country
+        @Valid @RequestBody Country country
     ) throws URISyntaxException {
         log.debug("REST request to update Country : {}, {}", id, country);
         if (country.getId() == null) {
@@ -127,7 +134,7 @@ public class CountryResource {
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public Mono<ResponseEntity<Country>> partialUpdateCountry(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody Country country
+        @NotNull @RequestBody Country country
     ) throws URISyntaxException {
         log.debug("REST request to partial update Country partially : {}, {}", id, country);
         if (country.getId() == null) {
@@ -160,27 +167,32 @@ public class CountryResource {
     /**
      * {@code GET  /countries} : get all the countries.
      *
-     * @param filter the filter of the request.
+     * @param pageable the pagination information.
+     * @param request a {@link ServerHttpRequest} request.
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of countries in body.
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<List<Country>> getAllCountries(@RequestParam(name = "filter", required = false) String filter) {
-        if ("location-is-null".equals(filter)) {
-            log.debug("REST request to get all Countrys where location is null");
-            return countryService.findAllWhereLocationIsNull().collectList();
-        }
-        log.debug("REST request to get all Countries");
-        return countryService.findAll().collectList();
-    }
-
-    /**
-     * {@code GET  /countries} : get all the countries as a stream.
-     * @return the {@link Flux} of countries.
-     */
-    @GetMapping(value = "", produces = MediaType.APPLICATION_NDJSON_VALUE)
-    public Flux<Country> getAllCountriesAsStream() {
-        log.debug("REST request to get all Countries as a stream");
-        return countryService.findAll();
+    public Mono<ResponseEntity<List<Country>>> getAllCountries(
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        ServerHttpRequest request,
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+    ) {
+        log.debug("REST request to get a page of Countries");
+        return countryService
+            .countAll()
+            .zipWith(countryService.findAll(pageable).collectList())
+            .map(
+                countWithEntities ->
+                    ResponseEntity.ok()
+                        .headers(
+                            PaginationUtil.generatePaginationHttpHeaders(
+                                ForwardedHeaderUtils.adaptFromForwardedHeaders(request.getURI(), request.getHeaders()),
+                                new PageImpl<>(countWithEntities.getT2(), pageable, countWithEntities.getT1())
+                            )
+                        )
+                        .body(countWithEntities.getT2())
+            );
     }
 
     /**
@@ -221,15 +233,27 @@ public class CountryResource {
      * to the query.
      *
      * @param query the query of the country search.
+     * @param pageable the pagination information.
+     * @param request a {@link ServerHttpRequest} request.
      * @return the result of the search.
      */
     @GetMapping("/_search")
-    public Mono<List<Country>> searchCountries(@RequestParam("query") String query) {
-        log.debug("REST request to search Countries for query {}", query);
-        try {
-            return countryService.search(query).collectList();
-        } catch (RuntimeException e) {
-            throw ElasticsearchExceptionMapper.mapException(e);
-        }
+    public Mono<ResponseEntity<Flux<Country>>> searchCountries(
+        @RequestParam("query") String query,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        ServerHttpRequest request
+    ) {
+        log.debug("REST request to search for a page of Countries for query {}", query);
+        return countryService
+            .searchCount()
+            .map(total -> new PageImpl<>(new ArrayList<>(), pageable, total))
+            .map(
+                page ->
+                    PaginationUtil.generatePaginationHttpHeaders(
+                        ForwardedHeaderUtils.adaptFromForwardedHeaders(request.getURI(), request.getHeaders()),
+                        page
+                    )
+            )
+            .map(headers -> ResponseEntity.ok().headers(headers).body(countryService.search(query, pageable)));
     }
 }

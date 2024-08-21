@@ -1,6 +1,7 @@
 package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.domain.Country;
+import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -35,16 +36,18 @@ public interface CountryService {
     /**
      * Get all the countries.
      *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<Country> findAll();
+    Flux<Country> findAll(Pageable pageable);
 
     /**
-     * Get all the Country where Location is {@code null}.
+     * Get all the countries with eager load of many-to-many relationships.
      *
-     * @return the {@link Flux} of entities.
+     * @param pageable the pagination information.
+     * @return the list of entities.
      */
-    Flux<Country> findAllWhereLocationIsNull();
+    Flux<Country> findAllWithEagerRelationships(Pageable pageable);
 
     /**
      * Returns the number of countries available.
@@ -79,7 +82,9 @@ public interface CountryService {
      * Search for the country corresponding to the query.
      *
      * @param query the query of the search.
+     *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<Country> search(String query);
+    Flux<Country> search(String query, Pageable pageable);
 }

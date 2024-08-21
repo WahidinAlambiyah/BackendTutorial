@@ -1,0 +1,28 @@
+{
+  "jHipsterMonolithApp": {
+    "district": {
+      "home": {
+        "title": "Districts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat District baru",
+        "createOrEditLabel": "Buat atau edit District",
+        "search": "Cari District",
+        "notFound": "No Districts found"
+      },
+      "created": "District dengan id { param } telah dibuat",
+      "updated": "District dengan id { param } telah diperbaharui",
+      "deleted": "District dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus District { id }?"
+      },
+      "detail": {
+        "title": "District"
+      },
+      "id": "ID",
+      "name": "Name",
+      "code": "Code",
+      "subDistrict": "Sub District",
+      "city": "City"
+    }
+  }
+}

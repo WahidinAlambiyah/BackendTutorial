@@ -111,6 +111,7 @@ describe('Service Tests', () => {
         const patchObject = Object.assign(
           {
             jobTitle: 'BBBBBB',
+            maxSalary: 1,
           },
           new Job(),
         );

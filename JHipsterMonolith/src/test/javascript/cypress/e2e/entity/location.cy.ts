@@ -15,7 +15,7 @@ describe('Location e2e test', () => {
   const locationPageUrlPattern = new RegExp('/location(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const locationSample = { streetAddress: 'phooey since' };
+  const locationSample = { streetAddress: 'next first oddly' };
 
   let location;
 
@@ -157,17 +157,17 @@ describe('Location e2e test', () => {
     });
 
     it('should create an instance of Location', () => {
-      cy.get(`[data-cy="streetAddress"]`).type('black-and-white');
-      cy.get(`[data-cy="streetAddress"]`).should('have.value', 'black-and-white');
+      cy.get(`[data-cy="streetAddress"]`).type('if interconnect anyone');
+      cy.get(`[data-cy="streetAddress"]`).should('have.value', 'if interconnect anyone');
 
-      cy.get(`[data-cy="postalCode"]`).type('decriminalize');
-      cy.get(`[data-cy="postalCode"]`).should('have.value', 'decriminalize');
+      cy.get(`[data-cy="postalCode"]`).type('ew');
+      cy.get(`[data-cy="postalCode"]`).should('have.value', 'ew');
 
-      cy.get(`[data-cy="city"]`).type('Fort Reanna');
-      cy.get(`[data-cy="city"]`).should('have.value', 'Fort Reanna');
+      cy.get(`[data-cy="city"]`).type('Eleazarview');
+      cy.get(`[data-cy="city"]`).should('have.value', 'Eleazarview');
 
-      cy.get(`[data-cy="stateProvince"]`).type('than extremely um');
-      cy.get(`[data-cy="stateProvince"]`).should('have.value', 'than extremely um');
+      cy.get(`[data-cy="stateProvince"]`).type('dirty and dramatize');
+      cy.get(`[data-cy="stateProvince"]`).should('have.value', 'dirty and dramatize');
 
       cy.get(entityCreateSaveButtonSelector).click();
 
