@@ -676,6 +676,8 @@ class CityResourceIT {
         City partialUpdatedCity = new City();
         partialUpdatedCity.setId(city.getId());
 
+        partialUpdatedCity.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE);
+
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, partialUpdatedCity.getId())

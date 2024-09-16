@@ -562,6 +562,8 @@ class PostalCodeResourceIT {
         PostalCode partialUpdatedPostalCode = new PostalCode();
         partialUpdatedPostalCode.setId(postalCode.getId());
 
+        partialUpdatedPostalCode.code(UPDATED_CODE);
+
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, partialUpdatedPostalCode.getId())

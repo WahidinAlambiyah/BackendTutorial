@@ -134,7 +134,7 @@ describe('Service Tests', () => {
       it('should partial update a Employee', async () => {
         const patchObject = Object.assign(
           {
-            lastName: 'BBBBBB',
+            firstName: 'BBBBBB',
           },
           new Employee(),
         );

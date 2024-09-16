@@ -679,7 +679,7 @@ class DistrictResourceIT {
         District partialUpdatedDistrict = new District();
         partialUpdatedDistrict.setId(district.getId());
 
-        partialUpdatedDistrict.name(UPDATED_NAME);
+        partialUpdatedDistrict.name(UPDATED_NAME).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
 
         webTestClient
             .patch()

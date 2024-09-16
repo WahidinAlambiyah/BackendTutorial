@@ -20,7 +20,11 @@
         "city": "City",
         "district": "District",
         "subDistrict": "Sub District",
-        "postalCode": "Postal Code"
+        "postalCode": "Postal Code",
+        "event": "Event",
+        "tournament": "Tournament",
+        "service": "Service",
+        "testimonial": "Testimonial"
       },
       "account": {
         "main": "Account",

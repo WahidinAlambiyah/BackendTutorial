@@ -110,9 +110,7 @@ describe('Service Tests', () => {
       it('should partial update a Country', async () => {
         const patchObject = Object.assign(
           {
-            name: 'BBBBBB',
             unm49Code: 'BBBBBB',
-            isoAlpha2Code: 'BBBBBB',
           },
           new Country(),
         );

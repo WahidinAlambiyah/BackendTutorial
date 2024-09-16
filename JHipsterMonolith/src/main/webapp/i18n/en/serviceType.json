@@ -1,0 +1,11 @@
+{
+  "jHipsterMonolithApp": {
+    "ServiceType": {
+      "null": "",
+      "EVENT_MANAGEMENT": "EVENT_MANAGEMENT",
+      "TICKETING": "TICKETING",
+      "SPONSORSHIP": "SPONSORSHIP",
+      "MARKETING": "MARKETING"
+    }
+  }
+}

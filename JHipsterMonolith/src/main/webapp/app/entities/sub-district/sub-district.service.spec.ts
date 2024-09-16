@@ -110,7 +110,6 @@ describe('Service Tests', () => {
       it('should partial update a SubDistrict', async () => {
         const patchObject = Object.assign(
           {
-            name: 'BBBBBB',
             isoAlpha2Code: 'BBBBBB',
           },
           new SubDistrict(),

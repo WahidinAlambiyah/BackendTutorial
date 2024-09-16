@@ -15,7 +15,7 @@ describe('PostalCode e2e test', () => {
   const postalCodePageUrlPattern = new RegExp('/postal-code(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const postalCodeSample = { code: 'nut crooked' };
+  const postalCodeSample = { code: 'mortally rough aboard' };
 
   let postalCode;
 
@@ -160,8 +160,8 @@ describe('PostalCode e2e test', () => {
     });
 
     it('should create an instance of PostalCode', () => {
-      cy.get(`[data-cy="code"]`).type('glaring spot known');
-      cy.get(`[data-cy="code"]`).should('have.value', 'glaring spot known');
+      cy.get(`[data-cy="code"]`).type('concrete inwardly');
+      cy.get(`[data-cy="code"]`).should('have.value', 'concrete inwardly');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

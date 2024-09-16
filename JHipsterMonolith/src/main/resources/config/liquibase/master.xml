@@ -24,6 +24,10 @@
     <include file="config/liquibase/changelog/20240821021642_added_entity_District.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240821021643_added_entity_SubDistrict.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240821021644_added_entity_PostalCode.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240914174428_added_entity_Event.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240914174429_added_entity_Tournament.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240914174430_added_entity_Service.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240914174431_added_entity_Testimonial.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20240816094137_added_entity_constraints_Country.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240816094139_added_entity_constraints_Department.xml" relativeToChangelogFile="false"/>
@@ -35,10 +39,9 @@
     <include file="config/liquibase/changelog/20240821021642_added_entity_constraints_District.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240821021643_added_entity_constraints_SubDistrict.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240821021644_added_entity_constraints_PostalCode.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240914174428_added_entity_constraints_Event.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240914174430_added_entity_constraints_Service.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240914174429_added_entity_constraints_Tournament.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
-
-    <include file="config/liquibase/changelog/20240821190500_added_data_Region.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20240821194400_added_data_Country.xml" relativeToChangelogFile="false"/>
-
 </databaseChangeLog>

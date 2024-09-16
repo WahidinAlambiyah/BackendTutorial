@@ -136,7 +136,6 @@ describe('Service Tests', () => {
           {
             startDate: dayjs(currentDate).format(DATE_TIME_FORMAT),
             endDate: dayjs(currentDate).format(DATE_TIME_FORMAT),
-            language: 'BBBBBB',
           },
           new JobHistory(),
         );

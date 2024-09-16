@@ -679,7 +679,7 @@ class ProvinceResourceIT {
         Province partialUpdatedProvince = new Province();
         partialUpdatedProvince.setId(province.getId());
 
-        partialUpdatedProvince.isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
+        partialUpdatedProvince.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
 
         webTestClient
             .patch()

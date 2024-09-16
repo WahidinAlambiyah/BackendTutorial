@@ -15,7 +15,7 @@ describe('District e2e test', () => {
   const districtPageUrlPattern = new RegExp('/district(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const districtSample = { name: 'uh-huh' };
+  const districtSample = { name: 'legitimate gorgeous lightly' };
 
   let district;
 
@@ -160,14 +160,14 @@ describe('District e2e test', () => {
     });
 
     it('should create an instance of District', () => {
-      cy.get(`[data-cy="name"]`).type('before quest ruck');
-      cy.get(`[data-cy="name"]`).should('have.value', 'before quest ruck');
+      cy.get(`[data-cy="name"]`).type('accidentally gosh');
+      cy.get(`[data-cy="name"]`).should('have.value', 'accidentally gosh');
 
-      cy.get(`[data-cy="unm49Code"]`).type('ha');
-      cy.get(`[data-cy="unm49Code"]`).should('have.value', 'ha');
+      cy.get(`[data-cy="unm49Code"]`).type('or');
+      cy.get(`[data-cy="unm49Code"]`).should('have.value', 'or');
 
-      cy.get(`[data-cy="isoAlpha2Code"]`).type('repeatedly though introduction');
-      cy.get(`[data-cy="isoAlpha2Code"]`).should('have.value', 'repeatedly though introduction');
+      cy.get(`[data-cy="isoAlpha2Code"]`).type('ample fanlight');
+      cy.get(`[data-cy="isoAlpha2Code"]`).should('have.value', 'ample fanlight');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

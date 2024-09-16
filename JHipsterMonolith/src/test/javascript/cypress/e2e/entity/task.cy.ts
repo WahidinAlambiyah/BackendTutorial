@@ -15,7 +15,7 @@ describe('Task e2e test', () => {
   const taskPageUrlPattern = new RegExp('/task(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const taskSample = { title: 'amidst' };
+  const taskSample = { title: 'disclosure' };
 
   let task;
 
@@ -157,11 +157,11 @@ describe('Task e2e test', () => {
     });
 
     it('should create an instance of Task', () => {
-      cy.get(`[data-cy="title"]`).type('vainly oh fete');
-      cy.get(`[data-cy="title"]`).should('have.value', 'vainly oh fete');
+      cy.get(`[data-cy="title"]`).type('psst');
+      cy.get(`[data-cy="title"]`).should('have.value', 'psst');
 
-      cy.get(`[data-cy="description"]`).type('hound duh yum');
-      cy.get(`[data-cy="description"]`).should('have.value', 'hound duh yum');
+      cy.get(`[data-cy="description"]`).type('successfully generously since');
+      cy.get(`[data-cy="description"]`).should('have.value', 'successfully generously since');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

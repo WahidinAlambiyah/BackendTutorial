@@ -113,7 +113,7 @@ describe('Service Tests', () => {
           {
             streetAddress: 'BBBBBB',
             postalCode: 'BBBBBB',
-            stateProvince: 'BBBBBB',
+            city: 'BBBBBB',
           },
           new Location(),
         );

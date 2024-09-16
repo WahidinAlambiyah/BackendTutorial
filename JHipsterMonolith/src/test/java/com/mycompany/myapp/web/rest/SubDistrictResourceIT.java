@@ -690,7 +690,7 @@ class SubDistrictResourceIT {
         SubDistrict partialUpdatedSubDistrict = new SubDistrict();
         partialUpdatedSubDistrict.setId(subDistrict.getId());
 
-        partialUpdatedSubDistrict.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE);
+        partialUpdatedSubDistrict.name(UPDATED_NAME);
 
         webTestClient
             .patch()

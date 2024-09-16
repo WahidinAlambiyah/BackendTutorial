@@ -543,7 +543,7 @@ class TaskResourceIT {
         Task partialUpdatedTask = new Task();
         partialUpdatedTask.setId(task.getId());
 
-        partialUpdatedTask.description(UPDATED_DESCRIPTION);
+        partialUpdatedTask.title(UPDATED_TITLE).description(UPDATED_DESCRIPTION);
 
         webTestClient
             .patch()

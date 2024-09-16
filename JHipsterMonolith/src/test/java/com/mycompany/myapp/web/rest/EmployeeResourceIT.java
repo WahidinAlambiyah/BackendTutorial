@@ -77,9 +77,6 @@ class EmployeeResourceIT {
     private ObjectMapper om;
 
     @Autowired
-    private EmployeeRepository employeeRepository;
-
-    @Autowired
     private EmployeeMapper employeeMapper;
 
     @Autowired
@@ -94,6 +91,9 @@ class EmployeeResourceIT {
     private Employee employee;
 
     private Employee insertedEmployee;
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
     @Autowired
     private DepartmentRepository departmentRepository;
@@ -906,6 +906,8 @@ class EmployeeResourceIT {
         // Update the employee using partial update
         Employee partialUpdatedEmployee = new Employee();
         partialUpdatedEmployee.setId(employee.getId());
+
+        partialUpdatedEmployee.email(UPDATED_EMAIL);
 
         webTestClient
             .patch()

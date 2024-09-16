@@ -15,7 +15,7 @@ describe('City e2e test', () => {
   const cityPageUrlPattern = new RegExp('/city(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const citySample = { name: 'rejoin yawningly spandex' };
+  const citySample = { name: 'outgoing' };
 
   let city;
 
@@ -160,14 +160,14 @@ describe('City e2e test', () => {
     });
 
     it('should create an instance of City', () => {
-      cy.get(`[data-cy="name"]`).type('how fell shirtdress');
-      cy.get(`[data-cy="name"]`).should('have.value', 'how fell shirtdress');
+      cy.get(`[data-cy="name"]`).type('or liability grandpa');
+      cy.get(`[data-cy="name"]`).should('have.value', 'or liability grandpa');
 
-      cy.get(`[data-cy="unm49Code"]`).type('supposing');
-      cy.get(`[data-cy="unm49Code"]`).should('have.value', 'supposing');
+      cy.get(`[data-cy="unm49Code"]`).type('now disloyal');
+      cy.get(`[data-cy="unm49Code"]`).should('have.value', 'now disloyal');
 
-      cy.get(`[data-cy="isoAlpha2Code"]`).type('geez among through');
-      cy.get(`[data-cy="isoAlpha2Code"]`).should('have.value', 'geez among through');
+      cy.get(`[data-cy="isoAlpha2Code"]`).type('weep');
+      cy.get(`[data-cy="isoAlpha2Code"]`).should('have.value', 'weep');
 
       cy.get(entityCreateSaveButtonSelector).click();
 
