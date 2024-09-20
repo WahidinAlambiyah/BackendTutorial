@@ -1,0 +1,48 @@
+{
+  "annotations": {},
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "price",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "durationInHours",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "serviceTsype",
+      "fieldType": "ServicesType"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "Services",
+  "relationships": [
+    {
+      "otherEntityName": "testimonial",
+      "otherEntityRelationshipName": "services",
+      "relationshipName": "testimonial",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "event",
+      "otherEntityRelationshipName": "services",
+      "relationshipName": "event",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "service": "serviceImpl"
+}

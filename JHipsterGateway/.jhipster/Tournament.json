@@ -1,0 +1,57 @@
+{
+  "annotations": {},
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "type",
+      "fieldType": "TournamentType",
+      "fieldValues": "TEAM,SOLO"
+    },
+    {
+      "fieldName": "prizeAmount",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "startDate",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "endDate",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "location",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "maxParticipants",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "TournamentStatus",
+      "fieldValues": "UPCOMING,IN_PROGRESS,FINISHED,CANCELLED"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "Tournament",
+  "relationships": [
+    {
+      "otherEntityField": "title",
+      "otherEntityName": "event",
+      "otherEntityRelationshipName": "tournament",
+      "relationshipName": "event",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceImpl"
+}
