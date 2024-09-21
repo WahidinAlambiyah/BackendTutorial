@@ -8,7 +8,7 @@
     "clientFramework": "vue",
     "clientTestFrameworks": ["cypress"],
     "clientTheme": "none",
-    "creationTimestamp": 1726870594376,
+    "creationTimestamp": 1726960649285,
     "cypressAudit": true,
     "cypressCoverage": null,
     "databaseType": "sql",
@@ -20,13 +20,19 @@
     "entities": [],
     "feignClient": null,
     "jhipsterVersion": "8.7.0",
-    "jwtSecretKey": "MWUwYmQ0OGQwMDlkNTE4ODQ3ZjQ1YmViZDFkMTczM2NkNTFhZjIxZjU3NDgzODRlZWM2ZThmNDAwZDQ2OWQ5MmNhNWMwY2I1ZWExYzg4OTk5NmIxZmE0ZjY5YWI2ZTMwZmM4ZWNhNGFiMTdkZjE2ZDZjNzZkMmI4ZmEwZjhjMzY=",
+    "jwtSecretKey": "NzQzOGQwYmFkY2Y5NWI0YWY1NmFjMjIxZDQzMzdkYTVkODUwMDJlODUxZTUzZmJmM2QwM2Q4NjRkODM1ZTlkMGNkZDZkZmZlOTAzM2FiZWU4NGEwY2VhYmQ3MWQzMGZmYzM3NGQxMDkyN2UwZjhlN2E4OWIyY2U3YzE0YmIzYWE=",
     "languages": ["en", "id"],
     "messageBroker": "kafka",
     "microfrontend": true,
     "microfrontends": [
       {
-        "baseName": "Admin"
+        "baseName": "client"
+      },
+      {
+        "baseName": "admin"
+      },
+      {
+        "baseName": "landing"
       }
     ],
     "monorepository": true,

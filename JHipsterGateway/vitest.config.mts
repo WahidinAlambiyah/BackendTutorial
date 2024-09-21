@@ -15,7 +15,9 @@ export default mergeConfig(
       environment: 'happy-dom', // happy-dom provides a better performance but doesn't have a default url.
       setupFiles: [fileURLToPath(new URL('./src/main/webapp/app/test-setup.ts', import.meta.url))],
       alias: {
+        '@client': fileURLToPath(new URL('./src/test/javascript/spec/app/microfrontends/', import.meta.url)),
         '@admin': fileURLToPath(new URL('./src/test/javascript/spec/app/microfrontends/', import.meta.url)),
+        '@landing': fileURLToPath(new URL('./src/test/javascript/spec/app/microfrontends/', import.meta.url)),
       },
       reporters: ['default', 'vitest-sonar-reporter'],
       outputFile: {

@@ -14,10 +14,24 @@ export default defineComponent({
   name: 'JhiNavbar',
   components: {
     'entities-menu': EntitiesMenu,
+    'client-menu': defineAsyncComponent(() => {
+      return importRemote<any>({
+        url: `./services/client`,
+        scope: 'client',
+        module: './entities-menu',
+      }).catch(() => import('@/core/error/error-loading.vue'));
+    }),
     'admin-menu': defineAsyncComponent(() => {
       return importRemote<any>({
         url: `./services/admin`,
         scope: 'admin',
+        module: './entities-menu',
+      }).catch(() => import('@/core/error/error-loading.vue'));
+    }),
+    'landing-menu': defineAsyncComponent(() => {
+      return importRemote<any>({
+        url: `./services/landing`,
+        scope: 'landing',
         module: './entities-menu',
       }).catch(() => import('@/core/error/error-loading.vue'));
     }),

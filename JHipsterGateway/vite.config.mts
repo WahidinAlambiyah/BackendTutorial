@@ -81,7 +81,9 @@ config = mergeConfig(config, {
     federation({
       name: 'jhipstergateway',
       remotes: {
+        '@client': `/services/client/assets/remoteEntry.js`,
         '@admin': `/services/admin/assets/remoteEntry.js`,
+        '@landing': `/services/landing/assets/remoteEntry.js`,
       },
       shared: {
         '@vuelidate/core': {},

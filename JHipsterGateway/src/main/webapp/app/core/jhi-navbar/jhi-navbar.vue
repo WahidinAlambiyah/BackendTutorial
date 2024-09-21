@@ -32,7 +32,9 @@
             </span>
           </template>
           <entities-menu></entities-menu>
+          <client-menu></client-menu>
           <admin-menu></admin-menu>
+          <landing-menu></landing-menu>
           <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->
         </b-nav-item-dropdown>
         <b-nav-item-dropdown

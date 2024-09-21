@@ -40,6 +40,18 @@ const router = createRouter();
 
 export const lazyRoutes = Promise.all([
   importRemote<any>({
+    url: `./services/client`,
+    scope: 'client',
+    module: './entities-router',
+  })
+    .then(clientRouter => {
+      router.addRoute(clientRouter.default as RouteRecordRaw);
+      return clientRouter.default;
+    })
+    .catch(error => {
+      console.log(`Error loading client menus. Make sure it's up. ${error}`);
+    }),
+  importRemote<any>({
     url: `./services/admin`,
     scope: 'admin',
     module: './entities-router',
@@ -50,6 +62,18 @@ export const lazyRoutes = Promise.all([
     })
     .catch(error => {
       console.log(`Error loading admin menus. Make sure it's up. ${error}`);
+    }),
+  importRemote<any>({
+    url: `./services/landing`,
+    scope: 'landing',
+    module: './entities-router',
+  })
+    .then(landingRouter => {
+      router.addRoute(landingRouter.default as RouteRecordRaw);
+      return landingRouter.default;
+    })
+    .catch(error => {
+      console.log(`Error loading landing menus. Make sure it's up. ${error}`);
     }),
 ]);
 

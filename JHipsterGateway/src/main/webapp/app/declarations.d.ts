@@ -6,12 +6,32 @@ declare const SERVER_API_URL: string;
 declare const APP_VERSION: string;
 declare const I18N_HASH: string;
 
+declare module '@client/entities-router' {
+  const _default: unknown;
+  export default _default;
+}
+
+declare module '@client/entities-menu' {
+  const _default: unknown;
+  export default _default;
+}
+
 declare module '@admin/entities-router' {
   const _default: unknown;
   export default _default;
 }
 
 declare module '@admin/entities-menu' {
+  const _default: unknown;
+  export default _default;
+}
+
+declare module '@landing/entities-router' {
+  const _default: unknown;
+  export default _default;
+}
+
+declare module '@landing/entities-menu' {
   const _default: unknown;
   export default _default;
 }
