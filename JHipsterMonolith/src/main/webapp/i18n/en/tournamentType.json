@@ -1,9 +1,0 @@
-{
-  "jHipsterMonolithApp": {
-    "TournamentType": {
-      "null": "",
-      "TEAM": "TEAM",
-      "SOLO": "SOLO"
-    }
-  }
-}
