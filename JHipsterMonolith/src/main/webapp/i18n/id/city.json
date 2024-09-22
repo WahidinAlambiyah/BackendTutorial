@@ -1,0 +1,29 @@
+{
+  "jHipsterMonolithApp": {
+    "city": {
+      "home": {
+        "title": "Cities",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat City baru",
+        "createOrEditLabel": "Buat atau edit City",
+        "search": "Cari City",
+        "notFound": "No Cities found"
+      },
+      "created": "City dengan id { param } telah dibuat",
+      "updated": "City dengan id { param } telah diperbaharui",
+      "deleted": "City dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus City { id }?"
+      },
+      "detail": {
+        "title": "City"
+      },
+      "id": "ID",
+      "name": "Name",
+      "unm49Code": "Unm 49 Code",
+      "isoAlpha2Code": "Iso Alpha 2 Code",
+      "district": "District",
+      "province": "Province"
+    }
+  }
+}

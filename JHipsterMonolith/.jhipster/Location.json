@@ -1,0 +1,30 @@
+{
+  "annotations": {
+    "changelogDate": "20240816094138"
+  },
+  "applications": "*",
+  "documentation": "not an ignored comment",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "streetAddress",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "postalCode",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "city",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "stateProvince",
+      "fieldType": "String"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "Location",
+  "relationships": [],
+  "service": "serviceImpl"
+}

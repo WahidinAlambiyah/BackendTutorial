@@ -1,0 +1,29 @@
+{
+  "jHipsterMonolithApp": {
+    "province": {
+      "home": {
+        "title": "Provinces",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Province",
+        "createOrEditLabel": "Create or edit a Province",
+        "search": "Search for Province",
+        "notFound": "No Provinces found"
+      },
+      "created": "A new Province is created with identifier { param }",
+      "updated": "A Province is updated with identifier { param }",
+      "deleted": "A Province is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Province { id }?"
+      },
+      "detail": {
+        "title": "Province"
+      },
+      "id": "ID",
+      "name": "Name",
+      "unm49Code": "Unm 49 Code",
+      "isoAlpha2Code": "Iso Alpha 2 Code",
+      "city": "City",
+      "country": "Country"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "jHipsterMonolithApp": {
+    "EventStatus": {
+      "null": "",
+      "UPCOMING": "UPCOMING",
+      "ONGOING": "ONGOING",
+      "COMPLETED": "COMPLETED",
+      "CANCELLED": "CANCELLED"
+    }
+  }
+}

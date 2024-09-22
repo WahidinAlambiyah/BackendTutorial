@@ -1,0 +1,31 @@
+id;name;unm_49_code
+1;World;001
+2;Africa;002
+3;Northern Africa;015
+4;Sub-Saharan Africa;202
+5;Eastern Africa;014
+6;Middle Africa;017
+7;Southern Africa;018
+8;Western Africa;011
+9;Americas;019
+10;Latin America and the Caribbean;419
+11;Caribbean;029
+12;Central America;013
+13;South America;005
+14;Northern America;021
+15;Asia;142
+16;Central Asia;143
+17;Eastern Asia;030
+18;South-Eastern Asia;035
+19;Southern Asia;034
+20;Western Asia;145
+21;Europe;150
+22;Eastern Europe;151
+23;Northern Europe;154
+24;Southern Europe;039
+25;Western Europe;155
+26;Oceania;009
+27;Australia and New Zealand;053
+28;Melanesia;054
+29;Micronesia;057
+30;Polynesia;061

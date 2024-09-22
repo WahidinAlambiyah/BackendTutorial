@@ -1,0 +1,26 @@
+{
+  "jHipsterMonolithApp": {
+    "postalCode": {
+      "home": {
+        "title": "Postal Codes",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Postal Code",
+        "createOrEditLabel": "Create or edit a Postal Code",
+        "search": "Search for Postal Code",
+        "notFound": "No Postal Codes found"
+      },
+      "created": "A new Postal Code is created with identifier { param }",
+      "updated": "A Postal Code is updated with identifier { param }",
+      "deleted": "A Postal Code is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Postal Code { id }?"
+      },
+      "detail": {
+        "title": "Postal Code"
+      },
+      "id": "ID",
+      "code": "Code",
+      "subDistrict": "Sub District"
+    }
+  }
+}
