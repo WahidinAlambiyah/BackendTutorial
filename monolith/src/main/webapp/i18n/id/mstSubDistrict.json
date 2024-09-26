@@ -1,0 +1,29 @@
+{
+  "monolithApp": {
+    "mstSubDistrict": {
+      "home": {
+        "title": "Mst Sub Districts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Mst Sub District baru",
+        "createOrEditLabel": "Buat atau edit Mst Sub District",
+        "search": "Cari Mst Sub District",
+        "notFound": "No Mst Sub Districts found"
+      },
+      "created": "Mst Sub District dengan id { param } telah dibuat",
+      "updated": "Mst Sub District dengan id { param } telah diperbaharui",
+      "deleted": "Mst Sub District dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Mst Sub District { id }?"
+      },
+      "detail": {
+        "title": "Mst Sub District"
+      },
+      "id": "ID",
+      "name": "Name",
+      "unm49Code": "Unm 49 Code",
+      "isoAlpha2Code": "Iso Alpha 2 Code",
+      "postalCode": "Postal Code",
+      "district": "District"
+    }
+  }
+}

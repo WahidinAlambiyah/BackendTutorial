@@ -11,7 +11,37 @@
     <property name="datetimeType" value="datetime" dbms="postgresql"/>
 
     <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093317_added_entity_TrxEvent.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093318_added_entity_TrxTournament.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093319_added_entity_MstService.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093320_added_entity_TrxTestimonial.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093321_added_entity_MstRegion.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093322_added_entity_MstCountry.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093323_added_entity_MstProvince.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093324_added_entity_MstCity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093325_added_entity_MstDistrict.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093326_added_entity_MstSubDistrict.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093327_added_entity_MstPostalCode.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093328_added_entity_Location.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093329_added_entity_MstDepartment.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093330_added_entity_MstTask.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093331_added_entity_MstEmployee.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093332_added_entity_MstJob.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093333_added_entity_JobHistory.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
+    <include file="config/liquibase/changelog/20240924093317_added_entity_constraints_TrxEvent.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093318_added_entity_constraints_TrxTournament.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093319_added_entity_constraints_MstService.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093322_added_entity_constraints_MstCountry.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093323_added_entity_constraints_MstProvince.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093324_added_entity_constraints_MstCity.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093325_added_entity_constraints_MstDistrict.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093326_added_entity_constraints_MstSubDistrict.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093327_added_entity_constraints_MstPostalCode.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093329_added_entity_constraints_MstDepartment.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093331_added_entity_constraints_MstEmployee.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093332_added_entity_constraints_MstJob.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20240924093333_added_entity_constraints_JobHistory.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

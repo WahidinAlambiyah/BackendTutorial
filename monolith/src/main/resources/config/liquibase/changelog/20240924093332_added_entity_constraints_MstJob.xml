@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity MstJob.
+    -->
+    <changeSet id="20240924093332-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="mst_job_id"
+                                 baseTableName="rel_mst_job__task"
+                                 constraintName="fk_rel_mst_job__task__mst_job_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="mst_job"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="task_id"
+                                 baseTableName="rel_mst_job__task"
+                                 constraintName="fk_rel_mst_job__task__task_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="mst_task"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="employee_id"
+                                 baseTableName="mst_job"
+                                 constraintName="fk_mst_job__employee_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="mst_employee"
+                                 />
+    </changeSet>
+</databaseChangeLog>

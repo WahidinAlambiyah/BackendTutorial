@@ -1,0 +1,29 @@
+{
+  "monolithApp": {
+    "mstProvince": {
+      "home": {
+        "title": "Mst Provinces",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Mst Province",
+        "createOrEditLabel": "Create or edit a Mst Province",
+        "search": "Search for Mst Province",
+        "notFound": "No Mst Provinces found"
+      },
+      "created": "A new Mst Province is created with identifier { param }",
+      "updated": "A Mst Province is updated with identifier { param }",
+      "deleted": "A Mst Province is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Mst Province { id }?"
+      },
+      "detail": {
+        "title": "Mst Province"
+      },
+      "id": "ID",
+      "name": "Name",
+      "unm49Code": "Unm 49 Code",
+      "isoAlpha2Code": "Iso Alpha 2 Code",
+      "city": "City",
+      "country": "Country"
+    }
+  }
+}

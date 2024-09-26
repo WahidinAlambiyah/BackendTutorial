@@ -1,0 +1,30 @@
+{
+  "monolithApp": {
+    "trxTestimonial": {
+      "home": {
+        "title": "Trx Testimonials",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Trx Testimonial baru",
+        "createOrEditLabel": "Buat atau edit Trx Testimonial",
+        "search": "Cari Trx Testimonial",
+        "notFound": "No Trx Testimonials found"
+      },
+      "created": "Trx Testimonial dengan id { param } telah dibuat",
+      "updated": "Trx Testimonial dengan id { param } telah diperbaharui",
+      "deleted": "Trx Testimonial dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Trx Testimonial { id }?"
+      },
+      "detail": {
+        "title": "Trx Testimonial"
+      },
+      "id": "ID",
+      "name": "Name",
+      "feedback": "Feedback",
+      "rating": "Rating",
+      "date": "Date",
+      "event": "Event",
+      "service": "Service"
+    }
+  }
+}

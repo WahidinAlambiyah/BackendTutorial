@@ -1,0 +1,30 @@
+{
+  "monolithApp": {
+    "mstJob": {
+      "home": {
+        "title": "Mst Jobs",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Mst Job baru",
+        "createOrEditLabel": "Buat atau edit Mst Job",
+        "search": "Cari Mst Job",
+        "notFound": "No Mst Jobs found"
+      },
+      "created": "Mst Job dengan id { param } telah dibuat",
+      "updated": "Mst Job dengan id { param } telah diperbaharui",
+      "deleted": "Mst Job dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Mst Job { id }?"
+      },
+      "detail": {
+        "title": "Mst Job"
+      },
+      "id": "ID",
+      "jobTitle": "Job Title",
+      "minSalary": "Min Salary",
+      "maxSalary": "Max Salary",
+      "task": "Task",
+      "employee": "Employee",
+      "jobHistory": "Job History"
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "annotations": {
+    "changelogDate": "20240924093319"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "price",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "durationInHours",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "serviceType",
+      "fieldType": "ServiceType",
+      "fieldValues": "EVENT_MANAGEMENT,TICKETING,SPONSORSHIP,MARKETING"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "MstService",
+  "relationships": [
+    {
+      "otherEntityName": "trxTestimonial",
+      "otherEntityRelationshipName": "service",
+      "relationshipName": "testimonial",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "trxEvent",
+      "otherEntityRelationshipName": "service",
+      "relationshipName": "event",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "service": "serviceImpl"
+}

@@ -1,0 +1,27 @@
+{
+  "monolithApp": {
+    "mstTask": {
+      "home": {
+        "title": "Mst Tasks",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Mst Task baru",
+        "createOrEditLabel": "Buat atau edit Mst Task",
+        "search": "Cari Mst Task",
+        "notFound": "No Mst Tasks found"
+      },
+      "created": "Mst Task dengan id { param } telah dibuat",
+      "updated": "Mst Task dengan id { param } telah diperbaharui",
+      "deleted": "Mst Task dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Mst Task { id }?"
+      },
+      "detail": {
+        "title": "Mst Task"
+      },
+      "id": "ID",
+      "title": "Title",
+      "description": "Description",
+      "job": "Job"
+    }
+  }
+}

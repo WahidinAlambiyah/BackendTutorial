@@ -1,0 +1,34 @@
+{
+  "monolithApp": {
+    "trxEvent": {
+      "home": {
+        "title": "Trx Events",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Trx Event",
+        "createOrEditLabel": "Create or edit a Trx Event",
+        "search": "Search for Trx Event",
+        "notFound": "No Trx Events found"
+      },
+      "created": "A new Trx Event is created with identifier { param }",
+      "updated": "A Trx Event is updated with identifier { param }",
+      "deleted": "A Trx Event is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Trx Event { id }?"
+      },
+      "detail": {
+        "title": "Trx Event"
+      },
+      "id": "ID",
+      "title": "Title",
+      "description": "Description",
+      "date": "Date",
+      "location": "Location",
+      "capacity": "Capacity",
+      "price": "Price",
+      "status": "Status",
+      "tournament": "Tournament",
+      "service": "Service",
+      "testimonial": "Testimonial"
+    }
+  }
+}

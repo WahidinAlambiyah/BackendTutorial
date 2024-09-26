@@ -1,0 +1,33 @@
+{
+  "monolithApp": {
+    "trxTournament": {
+      "home": {
+        "title": "Trx Tournaments",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Trx Tournament baru",
+        "createOrEditLabel": "Buat atau edit Trx Tournament",
+        "search": "Cari Trx Tournament",
+        "notFound": "No Trx Tournaments found"
+      },
+      "created": "Trx Tournament dengan id { param } telah dibuat",
+      "updated": "Trx Tournament dengan id { param } telah diperbaharui",
+      "deleted": "Trx Tournament dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Trx Tournament { id }?"
+      },
+      "detail": {
+        "title": "Trx Tournament"
+      },
+      "id": "ID",
+      "name": "Name",
+      "type": "Type",
+      "prizeAmount": "Prize Amount",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "location": "Location",
+      "maxParticipants": "Max Participants",
+      "status": "Status",
+      "event": "Event"
+    }
+  }
+}

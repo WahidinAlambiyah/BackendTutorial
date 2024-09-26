@@ -1,0 +1,35 @@
+{
+  "monolithApp": {
+    "mstEmployee": {
+      "home": {
+        "title": "Mst Employees",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Mst Employee",
+        "createOrEditLabel": "Create or edit a Mst Employee",
+        "search": "Search for Mst Employee",
+        "notFound": "No Mst Employees found"
+      },
+      "created": "A new Mst Employee is created with identifier { param }",
+      "updated": "A Mst Employee is updated with identifier { param }",
+      "deleted": "A Mst Employee is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Mst Employee { id }?"
+      },
+      "detail": {
+        "title": "Mst Employee"
+      },
+      "id": "ID",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phoneNumber": "Phone Number",
+      "hireDate": "Hire Date",
+      "salary": "Salary",
+      "commissionPct": "Commission Pct",
+      "mstJob": "Mst Job",
+      "manager": "Manager",
+      "department": "Department",
+      "jobHistory": "Job History"
+    }
+  }
+}

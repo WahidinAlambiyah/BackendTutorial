@@ -1,0 +1,11 @@
+id;name;description;price;duration_in_hours;service_type
+1;in gentle;../fake-data/blob/hipster.txt;1222.13;32048;TICKETING
+2;frugal shortwave;../fake-data/blob/hipster.txt;1955.73;16093;TICKETING
+3;ugh;../fake-data/blob/hipster.txt;3024.84;4710;TICKETING
+4;standard briskly meh;../fake-data/blob/hipster.txt;28428.26;16956;EVENT_MANAGEMENT
+5;apparatus blossom businessman;../fake-data/blob/hipster.txt;18161.32;30179;MARKETING
+6;woot readily;../fake-data/blob/hipster.txt;24916.76;12722;TICKETING
+7;yippee;../fake-data/blob/hipster.txt;26956.81;15524;SPONSORSHIP
+8;quietly so;../fake-data/blob/hipster.txt;4563.25;9956;SPONSORSHIP
+9;phew;../fake-data/blob/hipster.txt;2785.69;26317;TICKETING
+10;capability per;../fake-data/blob/hipster.txt;625.55;17361;MARKETING

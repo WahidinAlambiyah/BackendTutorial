@@ -1,0 +1,28 @@
+{
+  "monolithApp": {
+    "mstRegion": {
+      "home": {
+        "title": "Mst Regions",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Mst Region",
+        "createOrEditLabel": "Create or edit a Mst Region",
+        "search": "Search for Mst Region",
+        "notFound": "No Mst Regions found"
+      },
+      "created": "A new Mst Region is created with identifier { param }",
+      "updated": "A Mst Region is updated with identifier { param }",
+      "deleted": "A Mst Region is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Mst Region { id }?"
+      },
+      "detail": {
+        "title": "Mst Region"
+      },
+      "id": "ID",
+      "name": "Name",
+      "unm49Code": "Unm 49 Code",
+      "isoAlpha2Code": "Iso Alpha 2 Code",
+      "country": "Country"
+    }
+  }
+}

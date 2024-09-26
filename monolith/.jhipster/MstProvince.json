@@ -1,0 +1,45 @@
+{
+  "annotations": {
+    "changelogDate": "20240924093323"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "unm49Code",
+      "fieldType": "String",
+      "fieldValidateRules": ["unique"]
+    },
+    {
+      "fieldName": "isoAlpha2Code",
+      "fieldType": "String",
+      "fieldValidateRules": ["unique"]
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "MstProvince",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "mstCity",
+      "otherEntityRelationshipName": "province",
+      "relationshipName": "city",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "mstCountry",
+      "otherEntityRelationshipName": "province",
+      "relationshipName": "country",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceImpl"
+}

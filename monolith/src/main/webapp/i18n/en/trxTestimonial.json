@@ -1,0 +1,30 @@
+{
+  "monolithApp": {
+    "trxTestimonial": {
+      "home": {
+        "title": "Trx Testimonials",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Trx Testimonial",
+        "createOrEditLabel": "Create or edit a Trx Testimonial",
+        "search": "Search for Trx Testimonial",
+        "notFound": "No Trx Testimonials found"
+      },
+      "created": "A new Trx Testimonial is created with identifier { param }",
+      "updated": "A Trx Testimonial is updated with identifier { param }",
+      "deleted": "A Trx Testimonial is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Trx Testimonial { id }?"
+      },
+      "detail": {
+        "title": "Trx Testimonial"
+      },
+      "id": "ID",
+      "name": "Name",
+      "feedback": "Feedback",
+      "rating": "Rating",
+      "date": "Date",
+      "event": "Event",
+      "service": "Service"
+    }
+  }
+}

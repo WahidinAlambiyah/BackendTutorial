@@ -1,0 +1,29 @@
+{
+  "monolithApp": {
+    "mstSubDistrict": {
+      "home": {
+        "title": "Mst Sub Districts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Mst Sub District",
+        "createOrEditLabel": "Create or edit a Mst Sub District",
+        "search": "Search for Mst Sub District",
+        "notFound": "No Mst Sub Districts found"
+      },
+      "created": "A new Mst Sub District is created with identifier { param }",
+      "updated": "A Mst Sub District is updated with identifier { param }",
+      "deleted": "A Mst Sub District is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Mst Sub District { id }?"
+      },
+      "detail": {
+        "title": "Mst Sub District"
+      },
+      "id": "ID",
+      "name": "Name",
+      "unm49Code": "Unm 49 Code",
+      "isoAlpha2Code": "Iso Alpha 2 Code",
+      "postalCode": "Postal Code",
+      "district": "District"
+    }
+  }
+}

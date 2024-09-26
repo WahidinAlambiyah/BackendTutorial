@@ -1,0 +1,51 @@
+{
+  "annotations": {
+    "changelogDate": "20240924093320"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "feedback",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "rating",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required", "min", "max"],
+      "fieldValidateRulesMax": "5",
+      "fieldValidateRulesMin": "1"
+    },
+    {
+      "fieldName": "date",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "TrxTestimonial",
+  "relationships": [
+    {
+      "otherEntityName": "trxEvent",
+      "otherEntityRelationshipName": "testimonial",
+      "relationshipName": "event",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "mstService",
+      "otherEntityRelationshipName": "testimonial",
+      "relationshipName": "service",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "service": "serviceImpl"
+}

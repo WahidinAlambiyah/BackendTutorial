@@ -1,0 +1,26 @@
+{
+  "monolithApp": {
+    "mstPostalCode": {
+      "home": {
+        "title": "Mst Postal Codes",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Mst Postal Code",
+        "createOrEditLabel": "Create or edit a Mst Postal Code",
+        "search": "Search for Mst Postal Code",
+        "notFound": "No Mst Postal Codes found"
+      },
+      "created": "A new Mst Postal Code is created with identifier { param }",
+      "updated": "A Mst Postal Code is updated with identifier { param }",
+      "deleted": "A Mst Postal Code is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Mst Postal Code { id }?"
+      },
+      "detail": {
+        "title": "Mst Postal Code"
+      },
+      "id": "ID",
+      "code": "Code",
+      "subDistrict": "Sub District"
+    }
+  }
+}

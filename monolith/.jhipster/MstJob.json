@@ -1,0 +1,41 @@
+{
+  "annotations": {
+    "changelogDate": "20240924093332"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "jobTitle",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "minSalary",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "maxSalary",
+      "fieldType": "Long"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "MstJob",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "title",
+      "otherEntityName": "mstTask",
+      "otherEntityRelationshipName": "job",
+      "relationshipName": "task",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-many"
+    },
+    {
+      "otherEntityName": "mstEmployee",
+      "relationshipName": "employee",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceImpl"
+}

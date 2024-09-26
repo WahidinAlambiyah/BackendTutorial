@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity MstService.
+    -->
+    <changeSet id="20240924093319-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="testimonial_id"
+                                 baseTableName="mst_service"
+                                 constraintName="fk_mst_service__testimonial_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="trx_testimonial"
+                                 />
+    </changeSet>
+</databaseChangeLog>

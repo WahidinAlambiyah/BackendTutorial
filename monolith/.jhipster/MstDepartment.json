@@ -1,0 +1,32 @@
+{
+  "annotations": {
+    "changelogDate": "20240924093329"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "departmentName",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "MstDepartment",
+  "relationships": [
+    {
+      "otherEntityName": "location",
+      "relationshipName": "location",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-one"
+    },
+    {
+      "otherEntityName": "mstEmployee",
+      "otherEntityRelationshipName": "department",
+      "relationshipName": "mstEmployee",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "service": "serviceImpl"
+}

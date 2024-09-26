@@ -1,0 +1,67 @@
+{
+  "annotations": {
+    "changelogDate": "20240924093317"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "title",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "byte[]",
+      "fieldTypeBlobContent": "text"
+    },
+    {
+      "fieldName": "date",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "location",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "capacity",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "price",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "EventStatus",
+      "fieldValues": "UPCOMING,ONGOING,COMPLETED,CANCELLED"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "TrxEvent",
+  "relationships": [
+    {
+      "otherEntityName": "trxTournament",
+      "otherEntityRelationshipName": "event",
+      "relationshipName": "tournament",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "mstService",
+      "otherEntityRelationshipName": "event",
+      "relationshipName": "service",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "trxTestimonial",
+      "otherEntityRelationshipName": "event",
+      "relationshipName": "testimonial",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceImpl"
+}

@@ -1,0 +1,28 @@
+{
+  "monolithApp": {
+    "mstDepartment": {
+      "home": {
+        "title": "Mst Departments",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Mst Department",
+        "createOrEditLabel": "Create or edit a Mst Department",
+        "search": "Search for Mst Department",
+        "notFound": "No Mst Departments found"
+      },
+      "created": "A new Mst Department is created with identifier { param }",
+      "updated": "A Mst Department is updated with identifier { param }",
+      "deleted": "A Mst Department is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Mst Department { id }?"
+      },
+      "detail": {
+        "title": "Mst Department"
+      },
+      "id": "ID",
+      "departmentName": "Department Name",
+      "location": "Location",
+      "mstEmployee": "Mst Employee",
+      "jobHistory": "Job History"
+    }
+  }
+}

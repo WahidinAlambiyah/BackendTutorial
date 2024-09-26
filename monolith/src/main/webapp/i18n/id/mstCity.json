@@ -1,0 +1,29 @@
+{
+  "monolithApp": {
+    "mstCity": {
+      "home": {
+        "title": "Mst Cities",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Mst City baru",
+        "createOrEditLabel": "Buat atau edit Mst City",
+        "search": "Cari Mst City",
+        "notFound": "No Mst Cities found"
+      },
+      "created": "Mst City dengan id { param } telah dibuat",
+      "updated": "Mst City dengan id { param } telah diperbaharui",
+      "deleted": "Mst City dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Mst City { id }?"
+      },
+      "detail": {
+        "title": "Mst City"
+      },
+      "id": "ID",
+      "name": "Name",
+      "unm49Code": "Unm 49 Code",
+      "isoAlpha2Code": "Iso Alpha 2 Code",
+      "district": "District",
+      "province": "Province"
+    }
+  }
+}

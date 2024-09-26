@@ -1,0 +1,28 @@
+{
+  "monolithApp": {
+    "mstRegion": {
+      "home": {
+        "title": "Mst Regions",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Mst Region baru",
+        "createOrEditLabel": "Buat atau edit Mst Region",
+        "search": "Cari Mst Region",
+        "notFound": "No Mst Regions found"
+      },
+      "created": "Mst Region dengan id { param } telah dibuat",
+      "updated": "Mst Region dengan id { param } telah diperbaharui",
+      "deleted": "Mst Region dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Mst Region { id }?"
+      },
+      "detail": {
+        "title": "Mst Region"
+      },
+      "id": "ID",
+      "name": "Name",
+      "unm49Code": "Unm 49 Code",
+      "isoAlpha2Code": "Iso Alpha 2 Code",
+      "country": "Country"
+    }
+  }
+}

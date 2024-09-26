@@ -1,0 +1,31 @@
+{
+  "monolithApp": {
+    "mstService": {
+      "home": {
+        "title": "Mst Services",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Mst Service",
+        "createOrEditLabel": "Create or edit a Mst Service",
+        "search": "Search for Mst Service",
+        "notFound": "No Mst Services found"
+      },
+      "created": "A new Mst Service is created with identifier { param }",
+      "updated": "A Mst Service is updated with identifier { param }",
+      "deleted": "A Mst Service is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Mst Service { id }?"
+      },
+      "detail": {
+        "title": "Mst Service"
+      },
+      "id": "ID",
+      "name": "Name",
+      "description": "Description",
+      "price": "Price",
+      "durationInHours": "Duration In Hours",
+      "serviceType": "Service Type",
+      "testimonial": "Testimonial",
+      "event": "Event"
+    }
+  }
+}

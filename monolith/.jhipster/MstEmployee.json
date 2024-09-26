@@ -1,0 +1,62 @@
+{
+  "annotations": {
+    "changelogDate": "20240924093331"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "firstName",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "lastName",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "email",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "phoneNumber",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "hireDate",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "salary",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "commissionPct",
+      "fieldType": "Long"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "MstEmployee",
+  "pagination": "infinite-scroll",
+  "relationships": [
+    {
+      "otherEntityName": "mstJob",
+      "otherEntityRelationshipName": "employee",
+      "relationshipName": "mstJob",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "mstEmployee",
+      "relationshipName": "manager",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "mstDepartment",
+      "relationshipName": "department",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceImpl"
+}

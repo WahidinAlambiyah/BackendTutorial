@@ -1,0 +1,28 @@
+{
+  "monolithApp": {
+    "mstDepartment": {
+      "home": {
+        "title": "Mst Departments",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Mst Department baru",
+        "createOrEditLabel": "Buat atau edit Mst Department",
+        "search": "Cari Mst Department",
+        "notFound": "No Mst Departments found"
+      },
+      "created": "Mst Department dengan id { param } telah dibuat",
+      "updated": "Mst Department dengan id { param } telah diperbaharui",
+      "deleted": "Mst Department dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Mst Department { id }?"
+      },
+      "detail": {
+        "title": "Mst Department"
+      },
+      "id": "ID",
+      "departmentName": "Department Name",
+      "location": "Location",
+      "mstEmployee": "Mst Employee",
+      "jobHistory": "Job History"
+    }
+  }
+}

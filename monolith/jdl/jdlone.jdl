@@ -1,0 +1,197 @@
+entity TrxEvent {
+    title String required,
+    description TextBlob,
+    date Instant required,
+    location String,
+    capacity Integer,
+    price BigDecimal,
+    status EventStatus
+}
+
+enum EventStatus {
+    UPCOMING,
+    ONGOING,
+    COMPLETED,
+    CANCELLED
+}
+
+entity TrxTournament {
+    name String required,
+    type TournamentType,
+    prizeAmount BigDecimal,
+    startDate Instant required,
+    endDate Instant required,
+    location String,
+    maxParticipants Integer,
+    status TournamentStatus
+}
+
+enum TournamentType {
+    TEAM,
+    SOLO
+}
+
+enum TournamentStatus {
+    UPCOMING,
+    IN_PROGRESS,
+    FINISHED,
+    CANCELLED
+}
+
+relationship OneToMany {
+    TrxEvent{tournament} to TrxTournament{event(title)}
+}
+
+entity MstService {
+    name String required,
+    description TextBlob,
+    price BigDecimal,
+    durationInHours Integer,
+    serviceType ServiceType
+}
+
+enum ServiceType {
+    EVENT_MANAGEMENT,
+    TICKETING,
+    SPONSORSHIP,
+    MARKETING
+}
+
+relationship ManyToOne {
+    TrxEvent{service} to MstService{event}
+}
+
+entity TrxTestimonial {
+    name String required,
+    feedback TextBlob required,
+    rating Integer required min(1) max(5),
+    date Instant required
+}
+
+relationship ManyToOne {
+    TrxEvent{testimonial} to TrxTestimonial{event},
+    MstService{testimonial} to TrxTestimonial{service}
+}
+
+entity MstRegion {
+    name String required,
+    unm49Code String unique,
+    isoAlpha2Code String unique
+}
+
+entity MstCountry {
+    name String required,
+    unm49Code String unique,
+    isoAlpha2Code String unique
+}
+
+entity MstProvince {
+    name String required,
+    unm49Code String unique,
+    isoAlpha2Code String unique
+}
+
+entity MstCity {
+    name String required,
+    unm49Code String unique,
+    isoAlpha2Code String unique
+}
+
+entity MstDistrict {
+    name String required,
+    unm49Code String unique,
+    isoAlpha2Code String unique
+}
+
+entity MstSubDistrict {
+    name String required,
+    unm49Code String unique,
+    isoAlpha2Code String unique
+}
+
+entity MstPostalCode {
+    code String required unique
+}
+
+entity Location {
+    streetAddress String,
+    postalCode String,
+    city String,
+    stateProvince String
+}
+
+entity MstDepartment {
+    departmentName String required
+}
+
+entity MstTask {
+    title String,
+    description String
+}
+
+entity MstEmployee {
+    firstName String,
+    lastName String,
+    email String,
+    phoneNumber String,
+    hireDate Instant,
+    salary Long,
+    commissionPct Long
+}
+
+entity MstJob {
+    jobTitle String,
+    minSalary Long,
+    maxSalary Long
+}
+
+entity JobHistory {
+    startDate Instant,
+    endDate Instant,
+    language Language
+}
+
+enum Language {
+    FRENCH, ENGLISH, SPANISH
+}
+
+relationship OneToMany {
+    MstRegion{country} to MstCountry{region(name)},
+    MstCountry{province} to MstProvince{country(name)},
+    MstProvince{city} to MstCity{province(name)},
+    MstCity{district} to MstDistrict{city(name)},
+    MstDistrict{subDistrict} to MstSubDistrict{district(name)},
+    MstSubDistrict{postalCode} to MstPostalCode{SubDistrict(name)}
+}
+
+relationship OneToOne {
+    MstDepartment{location} to Location
+}
+
+relationship ManyToMany {
+    MstJob{task(title)} to MstTask{job}
+}
+
+relationship OneToMany {
+    MstEmployee to MstJob{employee},
+    MstDepartment to MstEmployee{department}
+}
+
+relationship ManyToOne {
+    MstEmployee{manager} to MstEmployee
+}
+
+relationship OneToOne {
+    JobHistory{job} to MstJob,
+    JobHistory{department} to MstDepartment,
+    JobHistory{employee} to MstEmployee
+}
+
+paginate JobHistory, MstEmployee with infinite-scroll
+paginate MstJob, MstRegion, MstCountry, MstProvince, MstCity, MstDistrict, MstSubDistrict, MstPostalCode with pagination
+
+dto * with mapstruct
+
+service all with serviceImpl
+
+filter *

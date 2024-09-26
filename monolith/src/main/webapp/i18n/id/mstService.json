@@ -1,0 +1,31 @@
+{
+  "monolithApp": {
+    "mstService": {
+      "home": {
+        "title": "Mst Services",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Mst Service baru",
+        "createOrEditLabel": "Buat atau edit Mst Service",
+        "search": "Cari Mst Service",
+        "notFound": "No Mst Services found"
+      },
+      "created": "Mst Service dengan id { param } telah dibuat",
+      "updated": "Mst Service dengan id { param } telah diperbaharui",
+      "deleted": "Mst Service dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Mst Service { id }?"
+      },
+      "detail": {
+        "title": "Mst Service"
+      },
+      "id": "ID",
+      "name": "Name",
+      "description": "Description",
+      "price": "Price",
+      "durationInHours": "Duration In Hours",
+      "serviceType": "Service Type",
+      "testimonial": "Testimonial",
+      "event": "Event"
+    }
+  }
+}

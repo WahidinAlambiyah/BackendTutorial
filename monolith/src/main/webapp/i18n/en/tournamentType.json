@@ -1,0 +1,9 @@
+{
+  "monolithApp": {
+    "TournamentType": {
+      "null": "",
+      "TEAM": "TEAM",
+      "SOLO": "SOLO"
+    }
+  }
+}

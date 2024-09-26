@@ -7,7 +7,24 @@
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Entitas",
-        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
+        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
+        "trxEvent": "Trx Event",
+        "trxTournament": "Trx Tournament",
+        "mstService": "Mst Service",
+        "trxTestimonial": "Trx Testimonial",
+        "mstRegion": "Mst Region",
+        "mstCountry": "Mst Country",
+        "mstProvince": "Mst Province",
+        "mstCity": "Mst City",
+        "mstDistrict": "Mst District",
+        "mstSubDistrict": "Mst Sub District",
+        "mstPostalCode": "Mst Postal Code",
+        "location": "Location",
+        "mstDepartment": "Mst Department",
+        "mstTask": "Mst Task",
+        "mstEmployee": "Mst Employee",
+        "mstJob": "Mst Job",
+        "jobHistory": "Job History"
       },
       "account": {
         "main": "Akun",

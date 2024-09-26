@@ -1,0 +1,29 @@
+{
+  "monolithApp": {
+    "mstCity": {
+      "home": {
+        "title": "Mst Cities",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Mst City",
+        "createOrEditLabel": "Create or edit a Mst City",
+        "search": "Search for Mst City",
+        "notFound": "No Mst Cities found"
+      },
+      "created": "A new Mst City is created with identifier { param }",
+      "updated": "A Mst City is updated with identifier { param }",
+      "deleted": "A Mst City is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Mst City { id }?"
+      },
+      "detail": {
+        "title": "Mst City"
+      },
+      "id": "ID",
+      "name": "Name",
+      "unm49Code": "Unm 49 Code",
+      "isoAlpha2Code": "Iso Alpha 2 Code",
+      "district": "District",
+      "province": "Province"
+    }
+  }
+}

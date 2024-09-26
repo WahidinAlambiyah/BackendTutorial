@@ -1,0 +1,45 @@
+{
+  "annotations": {
+    "changelogDate": "20240924093325"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "unm49Code",
+      "fieldType": "String",
+      "fieldValidateRules": ["unique"]
+    },
+    {
+      "fieldName": "isoAlpha2Code",
+      "fieldType": "String",
+      "fieldValidateRules": ["unique"]
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "MstDistrict",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "mstSubDistrict",
+      "otherEntityRelationshipName": "district",
+      "relationshipName": "subDistrict",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "mstCity",
+      "otherEntityRelationshipName": "district",
+      "relationshipName": "city",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceImpl"
+}

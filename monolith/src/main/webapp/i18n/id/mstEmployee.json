@@ -1,0 +1,35 @@
+{
+  "monolithApp": {
+    "mstEmployee": {
+      "home": {
+        "title": "Mst Employees",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Mst Employee baru",
+        "createOrEditLabel": "Buat atau edit Mst Employee",
+        "search": "Cari Mst Employee",
+        "notFound": "No Mst Employees found"
+      },
+      "created": "Mst Employee dengan id { param } telah dibuat",
+      "updated": "Mst Employee dengan id { param } telah diperbaharui",
+      "deleted": "Mst Employee dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Mst Employee { id }?"
+      },
+      "detail": {
+        "title": "Mst Employee"
+      },
+      "id": "ID",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phoneNumber": "Phone Number",
+      "hireDate": "Hire Date",
+      "salary": "Salary",
+      "commissionPct": "Commission Pct",
+      "mstJob": "Mst Job",
+      "manager": "Manager",
+      "department": "Department",
+      "jobHistory": "Job History"
+    }
+  }
+}

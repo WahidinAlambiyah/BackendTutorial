@@ -1,0 +1,46 @@
+{
+  "annotations": {
+    "changelogDate": "20240924093333"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "startDate",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "endDate",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "language",
+      "fieldType": "Language",
+      "fieldValues": "FRENCH,ENGLISH,SPANISH"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "JobHistory",
+  "pagination": "infinite-scroll",
+  "relationships": [
+    {
+      "otherEntityName": "mstJob",
+      "relationshipName": "job",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-one"
+    },
+    {
+      "otherEntityName": "mstDepartment",
+      "relationshipName": "department",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-one"
+    },
+    {
+      "otherEntityName": "mstEmployee",
+      "relationshipName": "employee",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-one"
+    }
+  ],
+  "service": "serviceImpl"
+}

@@ -1,0 +1,26 @@
+{
+  "monolithApp": {
+    "mstPostalCode": {
+      "home": {
+        "title": "Mst Postal Codes",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Mst Postal Code baru",
+        "createOrEditLabel": "Buat atau edit Mst Postal Code",
+        "search": "Cari Mst Postal Code",
+        "notFound": "No Mst Postal Codes found"
+      },
+      "created": "Mst Postal Code dengan id { param } telah dibuat",
+      "updated": "Mst Postal Code dengan id { param } telah diperbaharui",
+      "deleted": "Mst Postal Code dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Mst Postal Code { id }?"
+      },
+      "detail": {
+        "title": "Mst Postal Code"
+      },
+      "id": "ID",
+      "code": "Code",
+      "subDistrict": "Sub District"
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "monolithApp": {
+    "mstProvince": {
+      "home": {
+        "title": "Mst Provinces",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Mst Province baru",
+        "createOrEditLabel": "Buat atau edit Mst Province",
+        "search": "Cari Mst Province",
+        "notFound": "No Mst Provinces found"
+      },
+      "created": "Mst Province dengan id { param } telah dibuat",
+      "updated": "Mst Province dengan id { param } telah diperbaharui",
+      "deleted": "Mst Province dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Mst Province { id }?"
+      },
+      "detail": {
+        "title": "Mst Province"
+      },
+      "id": "ID",
+      "name": "Name",
+      "unm49Code": "Unm 49 Code",
+      "isoAlpha2Code": "Iso Alpha 2 Code",
+      "city": "City",
+      "country": "Country"
+    }
+  }
+}

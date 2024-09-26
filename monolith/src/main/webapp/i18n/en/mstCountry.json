@@ -1,0 +1,29 @@
+{
+  "monolithApp": {
+    "mstCountry": {
+      "home": {
+        "title": "Mst Countries",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Mst Country",
+        "createOrEditLabel": "Create or edit a Mst Country",
+        "search": "Search for Mst Country",
+        "notFound": "No Mst Countries found"
+      },
+      "created": "A new Mst Country is created with identifier { param }",
+      "updated": "A Mst Country is updated with identifier { param }",
+      "deleted": "A Mst Country is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Mst Country { id }?"
+      },
+      "detail": {
+        "title": "Mst Country"
+      },
+      "id": "ID",
+      "name": "Name",
+      "unm49Code": "Unm 49 Code",
+      "isoAlpha2Code": "Iso Alpha 2 Code",
+      "province": "Province",
+      "region": "Region"
+    }
+  }
+}
