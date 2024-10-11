@@ -90,6 +90,7 @@ public class SecurityConfiguration {
                     .pathMatchers("/management/health/**").permitAll()
                     .pathMatchers("/management/info").permitAll()
                     .pathMatchers("/management/prometheus").permitAll()
+                    .pathMatchers("/testapi/**").permitAll()
                     .pathMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
             )
             .httpBasic(basic -> basic.disable())

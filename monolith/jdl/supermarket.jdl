@@ -1,0 +1,222 @@
+// ===============================
+// Product Management Models
+// ===============================
+
+entity Product {
+    name String required,
+    description String,
+    price BigDecimal required,
+    quantity Integer required,
+    barcode String unique,
+    unitSize String
+}
+
+entity Category {
+    name String required,
+    description String
+}
+
+entity Brand {
+    name String required,
+    logo String,
+    description String
+}
+
+entity Supplier {
+    name String required,
+    contactInfo String,
+    address String,
+    rating Integer min(1) max(5)
+}
+
+// ===============================
+// Inventory Management Models
+// ===============================
+
+entity Stock {
+    quantityAvailable Integer required,
+    reorderLevel Integer,
+    expiryDate Instant
+}
+
+entity OrderStock {
+    supplier Supplier,
+    product Product,
+    quantityOrdered Integer required,
+    orderDate Instant required,
+    expectedArrivalDate Instant
+}
+
+// ===============================
+// Sales and Order Models
+// ===============================
+
+entity Cart {
+    totalPrice BigDecimal required
+}
+
+entity Order {
+    orderDate Instant required,
+    deliveryDate Instant,
+    orderStatus OrderStatus required,
+    paymentMethod PaymentMethod required,
+    totalAmount BigDecimal required
+}
+
+entity OrderItem {
+    quantity Integer required,
+    price BigDecimal required
+}
+
+enum OrderStatus {
+    PENDING,
+    COMPLETED,
+    CANCELLED
+}
+
+enum PaymentMethod {
+    CASH,
+    CARD,
+    ONLINE
+}
+
+// ===============================
+// Customer Management Models
+// ===============================
+
+entity Customer {
+    firstName String required,
+    lastName String required,
+    email String required,
+    phoneNumber String,
+    address String,
+    loyaltyPoints Integer
+}
+
+entity LoyaltyProgram {
+    pointsEarned Integer,
+    membershipTier String
+}
+
+// ===============================
+// Staff and Management Models
+// ===============================
+
+entity Employee {
+    firstName String required,
+    lastName String required,
+    position String required,
+    salary BigDecimal,
+    hireDate Instant required
+}
+
+entity Department {
+    departmentName String required,
+    manager String,
+    location String
+}
+
+// ===============================
+// Delivery and Logistics Models
+// ===============================
+
+entity Delivery {
+    deliveryAddress String required,
+    deliveryStatus DeliveryStatus required,
+    assignedDriver String,
+    estimatedDeliveryTime Instant
+}
+
+enum DeliveryStatus {
+    PENDING,
+    OUT_FOR_DELIVERY,
+    DELIVERED
+}
+
+entity Driver {
+    name String required,
+    contactNumber String,
+    vehicleDetails String
+}
+
+// ===============================
+// Audit and History Models
+// ===============================
+
+entity OrderHistory {
+    previousStatus OrderStatus required,
+    newStatus OrderStatus required,
+    changeDate Instant required
+}
+
+entity ProductHistory {
+    oldPrice BigDecimal,
+    newPrice BigDecimal,
+    changeDate Instant required
+}
+
+// ===============================
+// Discount and Promotion Models
+// ===============================
+
+entity Discount {
+    discountPercentage Float required,
+    startDate Instant required,
+    endDate Instant required
+}
+
+entity Coupon {
+    code String required unique,
+    discountAmount BigDecimal required,
+    validUntil Instant required,
+    minPurchase BigDecimal
+}
+
+// ===============================
+// Notifications and Alerts Models
+// ===============================
+
+entity Notification {
+    recipient String required,
+    messageType String required,
+    content String required,
+    sentAt Instant required
+}
+
+entity StockAlert {
+    alertThreshold Integer required,
+    currentStock Integer required
+}
+
+// ===============================
+// Relationships
+// ===============================
+
+relationship ManyToOne {
+    Product{category} to Category,
+    Product{brand} to Brand,
+    Stock{product} to Product,
+    OrderItem{order} to Order,
+    OrderItem{product} to Product,
+    Cart{customer} to Customer,
+    LoyaltyProgram{customer} to Customer
+}
+
+relationship OneToMany {
+    Supplier{product} to Product,
+    Customer{order} to Order,
+    Order{orderItem} to OrderItem,
+    Order{delivery} to Delivery,
+    Department{employee} to Employee,
+    Product{stock} to Stock
+}
+
+relationship ManyToOne {
+    Delivery{driver} to Driver,
+    Notification{customer} to Customer
+}
+
+// Set pagination, DTO, and service options
+paginate * with pagination
+dto * with mapstruct
+service all with serviceImpl

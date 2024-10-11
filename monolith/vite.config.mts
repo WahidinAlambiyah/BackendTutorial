@@ -57,9 +57,9 @@ let config = defineConfig({
   },
   server: {
     host: true,
-    port: 9000,
+    port: 8080,
     proxy: Object.fromEntries(
-      ['/api', '/management', '/v3/api-docs'].map(res => [
+      ['/api', '/testapi', '/management', '/v3/api-docs'].map(res => [
         res,
         {
           target: 'http://localhost:8080',

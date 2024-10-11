@@ -38,7 +38,9 @@ export const createRouter = () =>
 const router = createRouter();
 
 router.beforeResolve(async (to, from, next) => {
+  console.log("disini");
   if (!to.matched.length) {
+    console.log("disini nih");
     next({ path: '/not-found' });
     return;
   }
