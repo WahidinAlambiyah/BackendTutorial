@@ -16,10 +16,10 @@ describe('TrxTestimonial e2e test', () => {
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
   const trxTestimonialSample = {
-    name: 'pfft flintlock',
+    name: 'in position',
     feedback: 'Li4vZmFrZS1kYXRhL2Jsb2IvaGlwc3Rlci50eHQ=',
     rating: 3,
-    date: '2024-09-23T17:37:47.907Z',
+    date: '2024-09-24T07:17:41.353Z',
   };
 
   let trxTestimonial;
@@ -96,6 +96,9 @@ describe('TrxTestimonial e2e test', () => {
             },
             {
               statusCode: 200,
+              headers: {
+                link: '<http://localhost/api/trx-testimonials?page=0&size=20>; rel="last",<http://localhost/api/trx-testimonials?page=0&size=20>; rel="first"',
+              },
               body: [trxTestimonial],
             },
           ).as('entitiesRequestInternal');
@@ -162,18 +165,18 @@ describe('TrxTestimonial e2e test', () => {
     });
 
     it('should create an instance of TrxTestimonial', () => {
-      cy.get(`[data-cy="name"]`).type('for nor');
-      cy.get(`[data-cy="name"]`).should('have.value', 'for nor');
+      cy.get(`[data-cy="name"]`).type('mature constitution');
+      cy.get(`[data-cy="name"]`).should('have.value', 'mature constitution');
 
       cy.get(`[data-cy="feedback"]`).type('../fake-data/blob/hipster.txt');
       cy.get(`[data-cy="feedback"]`).invoke('val').should('match', new RegExp('../fake-data/blob/hipster.txt'));
 
-      cy.get(`[data-cy="rating"]`).type('4');
-      cy.get(`[data-cy="rating"]`).should('have.value', '4');
+      cy.get(`[data-cy="rating"]`).type('3');
+      cy.get(`[data-cy="rating"]`).should('have.value', '3');
 
-      cy.get(`[data-cy="date"]`).type('2024-09-23T19:42');
+      cy.get(`[data-cy="date"]`).type('2024-09-24T00:31');
       cy.get(`[data-cy="date"]`).blur();
-      cy.get(`[data-cy="date"]`).should('have.value', '2024-09-23T19:42');
+      cy.get(`[data-cy="date"]`).should('have.value', '2024-09-24T00:31');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

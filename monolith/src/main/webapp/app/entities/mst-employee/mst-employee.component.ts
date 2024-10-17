@@ -1,10 +1,8 @@
-import { defineComponent, inject, onMounted, ref, type Ref, watch, watchEffect } from 'vue';
+import { defineComponent, inject, onMounted, ref, type Ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useIntersectionObserver } from '@vueuse/core';
 
 import MstEmployeeService from './mst-employee.service';
 import { type IMstEmployee } from '@/shared/model/mst-employee.model';
-import useDataUtils from '@/shared/data/data-utils.service';
 import { useDateFormat } from '@/shared/composables';
 import { useAlertService } from '@/shared/alert/alert.service';
 
@@ -14,7 +12,6 @@ export default defineComponent({
   setup() {
     const { t: t$ } = useI18n();
     const dateFormat = useDateFormat();
-    const dataUtils = useDataUtils();
     const mstEmployeeService = inject('mstEmployeeService', () => new MstEmployeeService());
     const alertService = inject('alertService', () => useAlertService(), true);
 
@@ -25,7 +22,6 @@ export default defineComponent({
     const propOrder = ref('id');
     const reverse = ref(false);
     const totalItems = ref(0);
-    const links: Ref<any> = ref({});
 
     const mstEmployees: Ref<IMstEmployee[]> = ref([]);
 
@@ -34,8 +30,6 @@ export default defineComponent({
     const clear = () => {
       currentSearch.value = '';
       page.value = 1;
-      links.value = {};
-      mstEmployees.value = [];
     };
 
     const sort = (): Array<any> => {
@@ -59,8 +53,7 @@ export default defineComponent({
           : await mstEmployeeService().retrieve(paginationQuery);
         totalItems.value = Number(res.headers['x-total-count']);
         queryCount.value = totalItems.value;
-        links.value = dataUtils.parseLinks(res.headers?.['link']);
-        mstEmployees.value.push(...(res.data ?? []));
+        mstEmployees.value = res.data;
       } catch (err) {
         alertService.showHttpError(err.response);
       } finally {
@@ -69,7 +62,7 @@ export default defineComponent({
     };
 
     const handleSyncList = () => {
-      clear();
+      retrieveMstEmployees();
     };
 
     onMounted(async () => {
@@ -99,7 +92,7 @@ export default defineComponent({
         const message = t$('monolithApp.mstEmployee.deleted', { param: removeId.value }).toString();
         alertService.showInfo(message, { variant: 'danger' });
         removeId.value = null;
-        clear();
+        retrieveMstEmployees();
         closeDialog();
       } catch (error) {
         alertService.showHttpError(error.response);
@@ -116,36 +109,19 @@ export default defineComponent({
     };
 
     // Whenever order changes, reset the pagination
-    watch([propOrder, reverse], () => {
-      clear();
-    });
-
-    // Whenever the data resets or page changes, switch to the new page.
-    watch([mstEmployees, page], async ([data, page], [_prevData, prevPage]) => {
-      if (data.length === 0 || page !== prevPage) {
+    watch([propOrder, reverse], async () => {
+      if (page.value === 1) {
+        // first page, retrieve new data
         await retrieveMstEmployees();
+      } else {
+        // reset the pagination
+        clear();
       }
     });
 
-    const infiniteScrollEl = ref<HTMLElement>(null);
-    const intersectionObserver = useIntersectionObserver(
-      infiniteScrollEl,
-      intersection => {
-        if (intersection[0].isIntersecting && !isFetching.value) {
-          page.value++;
-        }
-      },
-      {
-        threshold: 0.5,
-        immediate: false,
-      },
-    );
-    watchEffect(() => {
-      if (links.value.next) {
-        intersectionObserver.resume();
-      } else if (intersectionObserver.isActive) {
-        intersectionObserver.pause();
-      }
+    // Whenever page changes, switch to the new page.
+    watch(page, async () => {
+      await retrieveMstEmployees();
     });
 
     return {
@@ -168,9 +144,7 @@ export default defineComponent({
       reverse,
       totalItems,
       changeOrder,
-      infiniteScrollEl,
       t$,
-      ...dataUtils,
     };
   },
 });

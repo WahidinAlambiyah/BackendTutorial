@@ -15,6 +15,8 @@ import reactor.core.publisher.Mono;
 @SuppressWarnings("unused")
 @Repository
 public interface TrxTournamentRepository extends ReactiveCrudRepository<TrxTournament, Long>, TrxTournamentRepositoryInternal {
+    Flux<TrxTournament> findAllBy(Pageable pageable);
+
     @Override
     Mono<TrxTournament> findOneWithEagerRelationships(Long id);
 

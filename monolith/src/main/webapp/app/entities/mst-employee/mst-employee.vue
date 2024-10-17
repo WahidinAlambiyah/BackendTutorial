@@ -90,6 +90,10 @@
               <span v-text="t$('monolithApp.mstEmployee.department')"></span>
               <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'department.id'"></jhi-sort-indicator>
             </th>
+            <th scope="row" v-on:click="changeOrder('mstDepartment.id')">
+              <span v-text="t$('monolithApp.mstEmployee.mstDepartment')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'mstDepartment.id'"></jhi-sort-indicator>
+            </th>
             <th scope="row"></th>
           </tr>
         </thead>
@@ -116,6 +120,13 @@
               <div v-if="mstEmployee.department">
                 <router-link :to="{ name: 'MstDepartmentView', params: { mstDepartmentId: mstEmployee.department.id } }">{{
                   mstEmployee.department.id
+                }}</router-link>
+              </div>
+            </td>
+            <td>
+              <div v-if="mstEmployee.mstDepartment">
+                <router-link :to="{ name: 'MstDepartmentView', params: { mstDepartmentId: mstEmployee.mstDepartment.id } }">{{
+                  mstEmployee.mstDepartment.id
                 }}</router-link>
               </div>
             </td>
@@ -147,7 +158,6 @@
             </td>
           </tr>
         </tbody>
-        <span ref="infiniteScrollEl"></span>
       </table>
     </div>
     <b-modal ref="removeEntity" id="removeEntity">
@@ -175,6 +185,14 @@
         </div>
       </template>
     </b-modal>
+    <div v-show="mstEmployees && mstEmployees.length > 0">
+      <div class="row justify-content-center">
+        <jhi-item-count :page="page" :total="queryCount" :itemsPerPage="itemsPerPage"></jhi-item-count>
+      </div>
+      <div class="row justify-content-center">
+        <b-pagination size="md" :total-rows="totalItems" v-model="page" :per-page="itemsPerPage"></b-pagination>
+      </div>
+    </div>
   </div>
 </template>
 

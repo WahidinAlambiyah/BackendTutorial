@@ -66,6 +66,7 @@ public class MstEmployeeAsserts {
         assertThat(expected)
             .as("Verify MstEmployee relationships")
             .satisfies(e -> assertThat(e.getManager()).as("check manager").isEqualTo(actual.getManager()))
-            .satisfies(e -> assertThat(e.getDepartment()).as("check department").isEqualTo(actual.getDepartment()));
+            .satisfies(e -> assertThat(e.getDepartment()).as("check department").isEqualTo(actual.getDepartment()))
+            .satisfies(e -> assertThat(e.getMstDepartment()).as("check mstDepartment").isEqualTo(actual.getMstDepartment()));
     }
 }

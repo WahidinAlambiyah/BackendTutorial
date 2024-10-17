@@ -1,0 +1,27 @@
+{
+  "annotations": {
+    "changelogDate": "20241017071447"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "contactNumber",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "vehicleDetails",
+      "fieldType": "String"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "MstDriver",
+  "pagination": "pagination",
+  "relationships": [],
+  "service": "serviceImpl"
+}

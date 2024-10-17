@@ -547,6 +547,8 @@ class MstDepartmentResourceIT {
         MstDepartment partialUpdatedMstDepartment = new MstDepartment();
         partialUpdatedMstDepartment.setId(mstDepartment.getId());
 
+        partialUpdatedMstDepartment.departmentName(UPDATED_DEPARTMENT_NAME);
+
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, partialUpdatedMstDepartment.getId())

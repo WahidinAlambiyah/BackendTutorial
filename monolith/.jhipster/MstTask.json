@@ -16,6 +16,7 @@
   ],
   "jpaMetamodelFiltering": true,
   "name": "MstTask",
+  "pagination": "pagination",
   "relationships": [
     {
       "otherEntityName": "mstJob",

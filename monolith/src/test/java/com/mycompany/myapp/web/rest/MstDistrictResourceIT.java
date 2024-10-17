@@ -690,7 +690,7 @@ class MstDistrictResourceIT {
         MstDistrict partialUpdatedMstDistrict = new MstDistrict();
         partialUpdatedMstDistrict.setId(mstDistrict.getId());
 
-        partialUpdatedMstDistrict.unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
+        partialUpdatedMstDistrict.name(UPDATED_NAME);
 
         webTestClient
             .patch()

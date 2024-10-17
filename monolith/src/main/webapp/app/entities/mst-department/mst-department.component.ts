@@ -1,4 +1,4 @@
-import { defineComponent, inject, onMounted, ref, type Ref } from 'vue';
+import { defineComponent, inject, onMounted, ref, type Ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import MstDepartmentService from './mst-department.service';
@@ -14,6 +14,12 @@ export default defineComponent({
     const alertService = inject('alertService', () => useAlertService(), true);
 
     const currentSearch = ref('');
+    const itemsPerPage = ref(20);
+    const queryCount: Ref<number> = ref(null);
+    const page: Ref<number> = ref(1);
+    const propOrder = ref('id');
+    const reverse = ref(false);
+    const totalItems = ref(0);
 
     const mstDepartments: Ref<IMstDepartment[]> = ref([]);
 
@@ -21,14 +27,30 @@ export default defineComponent({
 
     const clear = () => {
       currentSearch.value = '';
+      page.value = 1;
+    };
+
+    const sort = (): Array<any> => {
+      const result = [propOrder.value + ',' + (reverse.value ? 'desc' : 'asc')];
+      if (propOrder.value !== 'id') {
+        result.push('id');
+      }
+      return result;
     };
 
     const retrieveMstDepartments = async () => {
       isFetching.value = true;
       try {
+        const paginationQuery = {
+          page: page.value - 1,
+          size: itemsPerPage.value,
+          sort: sort(),
+        };
         const res = currentSearch.value
-          ? await mstDepartmentService().search(currentSearch.value)
-          : await mstDepartmentService().retrieve();
+          ? await mstDepartmentService().search(currentSearch.value, paginationQuery)
+          : await mstDepartmentService().retrieve(paginationQuery);
+        totalItems.value = Number(res.headers['x-total-count']);
+        queryCount.value = totalItems.value;
         mstDepartments.value = res.data;
       } catch (err) {
         alertService.showHttpError(err.response);
@@ -75,6 +97,31 @@ export default defineComponent({
       }
     };
 
+    const changeOrder = (newOrder: string) => {
+      if (propOrder.value === newOrder) {
+        reverse.value = !reverse.value;
+      } else {
+        reverse.value = false;
+      }
+      propOrder.value = newOrder;
+    };
+
+    // Whenever order changes, reset the pagination
+    watch([propOrder, reverse], async () => {
+      if (page.value === 1) {
+        // first page, retrieve new data
+        await retrieveMstDepartments();
+      } else {
+        // reset the pagination
+        clear();
+      }
+    });
+
+    // Whenever page changes, switch to the new page.
+    watch(page, async () => {
+      await retrieveMstDepartments();
+    });
+
     return {
       mstDepartments,
       handleSyncList,
@@ -87,6 +134,13 @@ export default defineComponent({
       prepareRemove,
       closeDialog,
       removeMstDepartment,
+      itemsPerPage,
+      queryCount,
+      page,
+      propOrder,
+      reverse,
+      totalItems,
+      changeOrder,
       t$,
     };
   },

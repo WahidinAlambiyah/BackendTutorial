@@ -676,6 +676,20 @@ class MstEmployeeResourceIT {
         defaultMstEmployeeShouldNotBeFound("departmentId.equals=" + (departmentId + 1));
     }
 
+    @Test
+    void getAllMstEmployeesByMstDepartmentIsEqualToSomething() {
+        MstDepartment mstDepartment = MstDepartmentResourceIT.createEntity(em);
+        mstDepartmentRepository.save(mstDepartment).block();
+        Long mstDepartmentId = mstDepartment.getId();
+        mstEmployee.setMstDepartmentId(mstDepartmentId);
+        insertedMstEmployee = mstEmployeeRepository.save(mstEmployee).block();
+        // Get all the mstEmployeeList where mstDepartment equals to mstDepartmentId
+        defaultMstEmployeeShouldBeFound("mstDepartmentId.equals=" + mstDepartmentId);
+
+        // Get all the mstEmployeeList where mstDepartment equals to (mstDepartmentId + 1)
+        defaultMstEmployeeShouldNotBeFound("mstDepartmentId.equals=" + (mstDepartmentId + 1));
+    }
+
     private void defaultMstEmployeeFiltering(String shouldBeFound, String shouldNotBeFound) {
         defaultMstEmployeeShouldBeFound(shouldBeFound);
         defaultMstEmployeeShouldNotBeFound(shouldNotBeFound);
@@ -911,10 +925,10 @@ class MstEmployeeResourceIT {
 
         partialUpdatedMstEmployee
             .firstName(UPDATED_FIRST_NAME)
-            .lastName(UPDATED_LAST_NAME)
-            .email(UPDATED_EMAIL)
             .phoneNumber(UPDATED_PHONE_NUMBER)
-            .hireDate(UPDATED_HIRE_DATE);
+            .hireDate(UPDATED_HIRE_DATE)
+            .salary(UPDATED_SALARY)
+            .commissionPct(UPDATED_COMMISSION_PCT);
 
         webTestClient
             .patch()

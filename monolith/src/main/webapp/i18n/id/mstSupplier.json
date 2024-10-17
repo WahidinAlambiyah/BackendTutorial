@@ -1,0 +1,29 @@
+{
+  "monolithApp": {
+    "mstSupplier": {
+      "home": {
+        "title": "Mst Suppliers",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Mst Supplier baru",
+        "createOrEditLabel": "Buat atau edit Mst Supplier",
+        "search": "Cari Mst Supplier",
+        "notFound": "No Mst Suppliers found"
+      },
+      "created": "Mst Supplier dengan id { param } telah dibuat",
+      "updated": "Mst Supplier dengan id { param } telah diperbaharui",
+      "deleted": "Mst Supplier dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Mst Supplier { id }?"
+      },
+      "detail": {
+        "title": "Mst Supplier"
+      },
+      "id": "ID",
+      "name": "Name",
+      "contactInfo": "Contact Info",
+      "address": "Address",
+      "rating": "Rating",
+      "product": "Product"
+    }
+  }
+}

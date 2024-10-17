@@ -29,6 +29,7 @@
       "mstJob": "Mst Job",
       "manager": "Manager",
       "department": "Department",
+      "mstDepartment": "Mst Department",
       "jobHistory": "Job History"
     }
   }

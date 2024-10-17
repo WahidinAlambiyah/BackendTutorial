@@ -15,7 +15,7 @@ describe('MstJob e2e test', () => {
   const mstJobPageUrlPattern = new RegExp('/mst-job(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const mstJobSample = { jobTitle: 'Lead Response Consultant' };
+  const mstJobSample = { jobTitle: 'Legacy Integration Assistant' };
 
   let mstJob;
 
@@ -160,14 +160,14 @@ describe('MstJob e2e test', () => {
     });
 
     it('should create an instance of MstJob', () => {
-      cy.get(`[data-cy="jobTitle"]`).type('Internal Brand Producer');
-      cy.get(`[data-cy="jobTitle"]`).should('have.value', 'Internal Brand Producer');
+      cy.get(`[data-cy="jobTitle"]`).type('Future Infrastructure Specialist');
+      cy.get(`[data-cy="jobTitle"]`).should('have.value', 'Future Infrastructure Specialist');
 
-      cy.get(`[data-cy="minSalary"]`).type('7567');
-      cy.get(`[data-cy="minSalary"]`).should('have.value', '7567');
+      cy.get(`[data-cy="minSalary"]`).type('27984');
+      cy.get(`[data-cy="minSalary"]`).should('have.value', '27984');
 
-      cy.get(`[data-cy="maxSalary"]`).type('18109');
-      cy.get(`[data-cy="maxSalary"]`).should('have.value', '18109');
+      cy.get(`[data-cy="maxSalary"]`).type('22921');
+      cy.get(`[data-cy="maxSalary"]`).should('have.value', '22921');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

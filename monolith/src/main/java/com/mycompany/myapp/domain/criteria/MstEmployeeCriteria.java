@@ -42,6 +42,8 @@ public class MstEmployeeCriteria implements Serializable, Criteria {
 
     private LongFilter departmentId;
 
+    private LongFilter mstDepartmentId;
+
     private Boolean distinct;
 
     public MstEmployeeCriteria() {}
@@ -57,6 +59,7 @@ public class MstEmployeeCriteria implements Serializable, Criteria {
         this.commissionPct = other.optionalCommissionPct().map(LongFilter::copy).orElse(null);
         this.managerId = other.optionalManagerId().map(LongFilter::copy).orElse(null);
         this.departmentId = other.optionalDepartmentId().map(LongFilter::copy).orElse(null);
+        this.mstDepartmentId = other.optionalMstDepartmentId().map(LongFilter::copy).orElse(null);
         this.distinct = other.distinct;
     }
 
@@ -255,6 +258,25 @@ public class MstEmployeeCriteria implements Serializable, Criteria {
         this.departmentId = departmentId;
     }
 
+    public LongFilter getMstDepartmentId() {
+        return mstDepartmentId;
+    }
+
+    public Optional<LongFilter> optionalMstDepartmentId() {
+        return Optional.ofNullable(mstDepartmentId);
+    }
+
+    public LongFilter mstDepartmentId() {
+        if (mstDepartmentId == null) {
+            setMstDepartmentId(new LongFilter());
+        }
+        return mstDepartmentId;
+    }
+
+    public void setMstDepartmentId(LongFilter mstDepartmentId) {
+        this.mstDepartmentId = mstDepartmentId;
+    }
+
     public Boolean getDistinct() {
         return distinct;
     }
@@ -294,6 +316,7 @@ public class MstEmployeeCriteria implements Serializable, Criteria {
             Objects.equals(commissionPct, that.commissionPct) &&
             Objects.equals(managerId, that.managerId) &&
             Objects.equals(departmentId, that.departmentId) &&
+            Objects.equals(mstDepartmentId, that.mstDepartmentId) &&
             Objects.equals(distinct, that.distinct)
         );
     }
@@ -311,6 +334,7 @@ public class MstEmployeeCriteria implements Serializable, Criteria {
             commissionPct,
             managerId,
             departmentId,
+            mstDepartmentId,
             distinct
         );
     }
@@ -329,6 +353,7 @@ public class MstEmployeeCriteria implements Serializable, Criteria {
             optionalCommissionPct().map(f -> "commissionPct=" + f + ", ").orElse("") +
             optionalManagerId().map(f -> "managerId=" + f + ", ").orElse("") +
             optionalDepartmentId().map(f -> "departmentId=" + f + ", ").orElse("") +
+            optionalMstDepartmentId().map(f -> "mstDepartmentId=" + f + ", ").orElse("") +
             optionalDistinct().map(f -> "distinct=" + f + ", ").orElse("") +
         "}";
     }

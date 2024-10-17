@@ -1,0 +1,29 @@
+{
+  "monolithApp": {
+    "trxNotification": {
+      "home": {
+        "title": "Trx Notifications",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Trx Notification",
+        "createOrEditLabel": "Create or edit a Trx Notification",
+        "search": "Search for Trx Notification",
+        "notFound": "No Trx Notifications found"
+      },
+      "created": "A new Trx Notification is created with identifier { param }",
+      "updated": "A Trx Notification is updated with identifier { param }",
+      "deleted": "A Trx Notification is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Trx Notification { id }?"
+      },
+      "detail": {
+        "title": "Trx Notification"
+      },
+      "id": "ID",
+      "recipient": "Recipient",
+      "messageType": "Message Type",
+      "content": "Content",
+      "sentAt": "Sent At",
+      "customer": "Customer"
+    }
+  }
+}

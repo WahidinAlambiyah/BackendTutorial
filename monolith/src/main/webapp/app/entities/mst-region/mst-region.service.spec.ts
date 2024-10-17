@@ -112,7 +112,6 @@ describe('Service Tests', () => {
           {
             name: 'BBBBBB',
             unm49Code: 'BBBBBB',
-            isoAlpha2Code: 'BBBBBB',
           },
           new MstRegion(),
         );

@@ -1,0 +1,31 @@
+{
+  "annotations": {
+    "changelogDate": "20241017071448"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "previousStatus",
+      "fieldType": "OrderStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "PENDING,COMPLETED,CANCELLED"
+    },
+    {
+      "fieldName": "newStatus",
+      "fieldType": "OrderStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "PENDING,COMPLETED,CANCELLED"
+    },
+    {
+      "fieldName": "changeDate",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "TrxOrderHistory",
+  "pagination": "pagination",
+  "relationships": [],
+  "service": "serviceImpl"
+}

@@ -111,6 +111,7 @@ describe('Service Tests', () => {
         const patchObject = Object.assign(
           {
             name: 'BBBBBB',
+            unm49Code: 'BBBBBB',
           },
           new MstProvince(),
         );

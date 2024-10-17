@@ -763,7 +763,7 @@ class MstServiceResourceIT {
         MstService partialUpdatedMstService = new MstService();
         partialUpdatedMstService.setId(mstService.getId());
 
-        partialUpdatedMstService.description(UPDATED_DESCRIPTION).serviceType(UPDATED_SERVICE_TYPE);
+        partialUpdatedMstService.name(UPDATED_NAME).price(UPDATED_PRICE).durationInHours(UPDATED_DURATION_IN_HOURS);
 
         webTestClient
             .patch()

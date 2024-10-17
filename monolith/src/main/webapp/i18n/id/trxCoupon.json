@@ -1,0 +1,28 @@
+{
+  "monolithApp": {
+    "trxCoupon": {
+      "home": {
+        "title": "Trx Coupons",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Trx Coupon baru",
+        "createOrEditLabel": "Buat atau edit Trx Coupon",
+        "search": "Cari Trx Coupon",
+        "notFound": "No Trx Coupons found"
+      },
+      "created": "Trx Coupon dengan id { param } telah dibuat",
+      "updated": "Trx Coupon dengan id { param } telah diperbaharui",
+      "deleted": "Trx Coupon dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Trx Coupon { id }?"
+      },
+      "detail": {
+        "title": "Trx Coupon"
+      },
+      "id": "ID",
+      "code": "Code",
+      "discountAmount": "Discount Amount",
+      "validUntil": "Valid Until",
+      "minPurchase": "Min Purchase"
+    }
+  }
+}

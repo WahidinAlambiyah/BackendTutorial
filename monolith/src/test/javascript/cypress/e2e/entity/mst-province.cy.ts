@@ -15,7 +15,7 @@ describe('MstProvince e2e test', () => {
   const mstProvincePageUrlPattern = new RegExp('/mst-province(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const mstProvinceSample = { name: 'belfry veterinarian inasmuch' };
+  const mstProvinceSample = { name: 'gah instead' };
 
   let mstProvince;
 
@@ -160,14 +160,14 @@ describe('MstProvince e2e test', () => {
     });
 
     it('should create an instance of MstProvince', () => {
-      cy.get(`[data-cy="name"]`).type('able favorite tidy');
-      cy.get(`[data-cy="name"]`).should('have.value', 'able favorite tidy');
+      cy.get(`[data-cy="name"]`).type('run');
+      cy.get(`[data-cy="name"]`).should('have.value', 'run');
 
-      cy.get(`[data-cy="unm49Code"]`).type('ick below');
-      cy.get(`[data-cy="unm49Code"]`).should('have.value', 'ick below');
+      cy.get(`[data-cy="unm49Code"]`).type('joyously near furiously');
+      cy.get(`[data-cy="unm49Code"]`).should('have.value', 'joyously near furiously');
 
-      cy.get(`[data-cy="isoAlpha2Code"]`).type('catalog hull');
-      cy.get(`[data-cy="isoAlpha2Code"]`).should('have.value', 'catalog hull');
+      cy.get(`[data-cy="isoAlpha2Code"]`).type('tense sane far');
+      cy.get(`[data-cy="isoAlpha2Code"]`).should('have.value', 'tense sane far');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

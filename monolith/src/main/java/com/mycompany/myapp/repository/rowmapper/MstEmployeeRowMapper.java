@@ -35,6 +35,7 @@ public class MstEmployeeRowMapper implements BiFunction<Row, String, MstEmployee
         entity.setCommissionPct(converter.fromRow(row, prefix + "_commission_pct", Long.class));
         entity.setManagerId(converter.fromRow(row, prefix + "_manager_id", Long.class));
         entity.setDepartmentId(converter.fromRow(row, prefix + "_department_id", Long.class));
+        entity.setMstDepartmentId(converter.fromRow(row, prefix + "_mst_department_id", Long.class));
         return entity;
     }
 }

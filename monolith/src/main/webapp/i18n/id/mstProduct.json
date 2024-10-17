@@ -1,0 +1,33 @@
+{
+  "monolithApp": {
+    "mstProduct": {
+      "home": {
+        "title": "Mst Products",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Mst Product baru",
+        "createOrEditLabel": "Buat atau edit Mst Product",
+        "search": "Cari Mst Product",
+        "notFound": "No Mst Products found"
+      },
+      "created": "Mst Product dengan id { param } telah dibuat",
+      "updated": "Mst Product dengan id { param } telah diperbaharui",
+      "deleted": "Mst Product dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Mst Product { id }?"
+      },
+      "detail": {
+        "title": "Mst Product"
+      },
+      "id": "ID",
+      "name": "Name",
+      "description": "Description",
+      "price": "Price",
+      "quantity": "Quantity",
+      "barcode": "Barcode",
+      "unitSize": "Unit Size",
+      "category": "Category",
+      "brand": "Brand",
+      "mstSupplier": "Mst Supplier"
+    }
+  }
+}

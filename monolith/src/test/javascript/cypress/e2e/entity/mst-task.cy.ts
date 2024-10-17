@@ -15,7 +15,7 @@ describe('MstTask e2e test', () => {
   const mstTaskPageUrlPattern = new RegExp('/mst-task(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const mstTaskSample = { title: 'apparel across unaccountably' };
+  const mstTaskSample = { title: 'whose' };
 
   let mstTask;
 
@@ -91,6 +91,9 @@ describe('MstTask e2e test', () => {
             },
             {
               statusCode: 200,
+              headers: {
+                link: '<http://localhost/api/mst-tasks?page=0&size=20>; rel="last",<http://localhost/api/mst-tasks?page=0&size=20>; rel="first"',
+              },
               body: [mstTask],
             },
           ).as('entitiesRequestInternal');
@@ -157,11 +160,11 @@ describe('MstTask e2e test', () => {
     });
 
     it('should create an instance of MstTask', () => {
-      cy.get(`[data-cy="title"]`).type('until');
-      cy.get(`[data-cy="title"]`).should('have.value', 'until');
+      cy.get(`[data-cy="title"]`).type('guess lest');
+      cy.get(`[data-cy="title"]`).should('have.value', 'guess lest');
 
-      cy.get(`[data-cy="description"]`).type('kettledrum pure');
-      cy.get(`[data-cy="description"]`).should('have.value', 'kettledrum pure');
+      cy.get(`[data-cy="description"]`).type('if');
+      cy.get(`[data-cy="description"]`).should('have.value', 'if');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

@@ -2,6 +2,7 @@ package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.domain.criteria.LocationCriteria;
 import com.mycompany.myapp.service.dto.LocationDTO;
+import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -35,9 +36,10 @@ public interface LocationService {
     /**
      * Find locations by criteria.
      *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<LocationDTO> findByCriteria(LocationCriteria criteria);
+    Flux<LocationDTO> findByCriteria(LocationCriteria criteria, Pageable pageable);
 
     /**
      * Find the count of locations by criteria.
@@ -86,7 +88,9 @@ public interface LocationService {
      * Search for the location corresponding to the query.
      *
      * @param query the query of the search.
+     *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<LocationDTO> search(String query);
+    Flux<LocationDTO> search(String query, Pageable pageable);
 }

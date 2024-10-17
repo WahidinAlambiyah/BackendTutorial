@@ -15,7 +15,7 @@ describe('MstEmployee e2e test', () => {
   const mstEmployeePageUrlPattern = new RegExp('/mst-employee(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const mstEmployeeSample = { firstName: 'Aurore' };
+  const mstEmployeeSample = { firstName: 'Elinor' };
 
   let mstEmployee;
 
@@ -160,27 +160,27 @@ describe('MstEmployee e2e test', () => {
     });
 
     it('should create an instance of MstEmployee', () => {
-      cy.get(`[data-cy="firstName"]`).type('Mateo');
-      cy.get(`[data-cy="firstName"]`).should('have.value', 'Mateo');
+      cy.get(`[data-cy="firstName"]`).type('Johnnie');
+      cy.get(`[data-cy="firstName"]`).should('have.value', 'Johnnie');
 
-      cy.get(`[data-cy="lastName"]`).type('Hagenes');
-      cy.get(`[data-cy="lastName"]`).should('have.value', 'Hagenes');
+      cy.get(`[data-cy="lastName"]`).type('Tromp');
+      cy.get(`[data-cy="lastName"]`).should('have.value', 'Tromp');
 
-      cy.get(`[data-cy="email"]`).type('Alex_McCullough63@gmail.com');
-      cy.get(`[data-cy="email"]`).should('have.value', 'Alex_McCullough63@gmail.com');
+      cy.get(`[data-cy="email"]`).type('Izaiah.Metz@gmail.com');
+      cy.get(`[data-cy="email"]`).should('have.value', 'Izaiah.Metz@gmail.com');
 
-      cy.get(`[data-cy="phoneNumber"]`).type('setting consequently mmm');
-      cy.get(`[data-cy="phoneNumber"]`).should('have.value', 'setting consequently mmm');
+      cy.get(`[data-cy="phoneNumber"]`).type('woot suit');
+      cy.get(`[data-cy="phoneNumber"]`).should('have.value', 'woot suit');
 
-      cy.get(`[data-cy="hireDate"]`).type('2024-09-23T18:23');
+      cy.get(`[data-cy="hireDate"]`).type('2024-09-23T22:36');
       cy.get(`[data-cy="hireDate"]`).blur();
-      cy.get(`[data-cy="hireDate"]`).should('have.value', '2024-09-23T18:23');
+      cy.get(`[data-cy="hireDate"]`).should('have.value', '2024-09-23T22:36');
 
-      cy.get(`[data-cy="salary"]`).type('5775');
-      cy.get(`[data-cy="salary"]`).should('have.value', '5775');
+      cy.get(`[data-cy="salary"]`).type('15282');
+      cy.get(`[data-cy="salary"]`).should('have.value', '15282');
 
-      cy.get(`[data-cy="commissionPct"]`).type('4630');
-      cy.get(`[data-cy="commissionPct"]`).should('have.value', '4630');
+      cy.get(`[data-cy="commissionPct"]`).type('32313');
+      cy.get(`[data-cy="commissionPct"]`).should('have.value', '32313');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

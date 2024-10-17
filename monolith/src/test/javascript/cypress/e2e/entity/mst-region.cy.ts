@@ -15,7 +15,7 @@ describe('MstRegion e2e test', () => {
   const mstRegionPageUrlPattern = new RegExp('/mst-region(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const mstRegionSample = { name: 'of' };
+  const mstRegionSample = { name: 'ugh' };
 
   let mstRegion;
 
@@ -160,14 +160,14 @@ describe('MstRegion e2e test', () => {
     });
 
     it('should create an instance of MstRegion', () => {
-      cy.get(`[data-cy="name"]`).type('meanwhile animated neglected');
-      cy.get(`[data-cy="name"]`).should('have.value', 'meanwhile animated neglected');
+      cy.get(`[data-cy="name"]`).type('intent further');
+      cy.get(`[data-cy="name"]`).should('have.value', 'intent further');
 
-      cy.get(`[data-cy="unm49Code"]`).type('cleverly so');
-      cy.get(`[data-cy="unm49Code"]`).should('have.value', 'cleverly so');
+      cy.get(`[data-cy="unm49Code"]`).type('atop barricade depersonalize');
+      cy.get(`[data-cy="unm49Code"]`).should('have.value', 'atop barricade depersonalize');
 
-      cy.get(`[data-cy="isoAlpha2Code"]`).type('amid');
-      cy.get(`[data-cy="isoAlpha2Code"]`).should('have.value', 'amid');
+      cy.get(`[data-cy="isoAlpha2Code"]`).type('the coaxingly given');
+      cy.get(`[data-cy="isoAlpha2Code"]`).should('have.value', 'the coaxingly given');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

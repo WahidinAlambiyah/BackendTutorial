@@ -11,6 +11,7 @@ export interface IMstEmployee {
   commissionPct?: number | null;
   manager?: IMstEmployee | null;
   department?: IMstDepartment | null;
+  mstDepartment?: IMstDepartment | null;
 }
 
 export class MstEmployee implements IMstEmployee {
@@ -25,5 +26,6 @@ export class MstEmployee implements IMstEmployee {
     public commissionPct?: number | null,
     public manager?: IMstEmployee | null,
     public department?: IMstDepartment | null,
+    public mstDepartment?: IMstDepartment | null,
   ) {}
 }

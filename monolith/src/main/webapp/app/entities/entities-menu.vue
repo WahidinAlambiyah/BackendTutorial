@@ -68,6 +68,82 @@
       <font-awesome-icon icon="asterisk" />
       <span v-text="t$('global.menu.entities.jobHistory')"></span>
     </b-dropdown-item>
+    <b-dropdown-item to="/mst-product">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.mstProduct')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/mst-category">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.mstCategory')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/mst-brand">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.mstBrand')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/mst-supplier">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.mstSupplier')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/stock">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.stock')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/trx-order-stock">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.trxOrderStock')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/trx-cart">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.trxCart')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/trx-order">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.trxOrder')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/trx-order-item">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.trxOrderItem')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/mst-customer">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.mstCustomer')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/mst-loyalty-program">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.mstLoyaltyProgram')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/trx-delivery">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.trxDelivery')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/mst-driver">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.mstDriver')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/trx-order-history">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.trxOrderHistory')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/trx-product-history">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.trxProductHistory')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/trx-discount">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.trxDiscount')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/trx-coupon">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.trxCoupon')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/trx-notification">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.trxNotification')"></span>
+    </b-dropdown-item>
+    <b-dropdown-item to="/trx-stock-alert">
+      <font-awesome-icon icon="asterisk" />
+      <span v-text="t$('global.menu.entities.trxStockAlert')"></span>
+    </b-dropdown-item>
     <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->
   </div>
 </template>

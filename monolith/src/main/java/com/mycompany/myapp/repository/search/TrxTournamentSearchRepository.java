@@ -2,6 +2,7 @@ package com.mycompany.myapp.repository.search;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryStringQuery;
 import com.mycompany.myapp.domain.TrxTournament;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.client.elc.ReactiveElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.SearchHit;
@@ -16,7 +17,7 @@ public interface TrxTournamentSearchRepository
     extends ReactiveElasticsearchRepository<TrxTournament, Long>, TrxTournamentSearchRepositoryInternal {}
 
 interface TrxTournamentSearchRepositoryInternal {
-    Flux<TrxTournament> search(String query);
+    Flux<TrxTournament> search(String query, Pageable pageable);
 
     Flux<TrxTournament> search(Query query);
 }
@@ -30,8 +31,9 @@ class TrxTournamentSearchRepositoryInternalImpl implements TrxTournamentSearchRe
     }
 
     @Override
-    public Flux<TrxTournament> search(String query) {
+    public Flux<TrxTournament> search(String query, Pageable pageable) {
         NativeQuery nativeQuery = new NativeQuery(QueryStringQuery.of(qs -> qs.query(query))._toQuery());
+        nativeQuery.setPageable(pageable);
         return search(nativeQuery);
     }
 

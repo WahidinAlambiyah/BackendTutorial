@@ -2,6 +2,7 @@ package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.domain.criteria.MstTaskCriteria;
 import com.mycompany.myapp.service.dto.MstTaskDTO;
+import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -35,9 +36,10 @@ public interface MstTaskService {
     /**
      * Find mstTasks by criteria.
      *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<MstTaskDTO> findByCriteria(MstTaskCriteria criteria);
+    Flux<MstTaskDTO> findByCriteria(MstTaskCriteria criteria, Pageable pageable);
 
     /**
      * Find the count of mstTasks by criteria.
@@ -79,7 +81,9 @@ public interface MstTaskService {
      * Search for the mstTask corresponding to the query.
      *
      * @param query the query of the search.
+     *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<MstTaskDTO> search(String query);
+    Flux<MstTaskDTO> search(String query, Pageable pageable);
 }

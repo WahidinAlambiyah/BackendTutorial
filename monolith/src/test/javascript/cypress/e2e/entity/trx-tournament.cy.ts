@@ -15,7 +15,7 @@ describe('TrxTournament e2e test', () => {
   const trxTournamentPageUrlPattern = new RegExp('/trx-tournament(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const trxTournamentSample = { name: 'biodegradable per', startDate: '2024-09-23T16:46:28.924Z', endDate: '2024-09-23T20:51:18.923Z' };
+  const trxTournamentSample = { name: 'dirty whoa', startDate: '2024-09-24T04:16:33.691Z', endDate: '2024-09-24T05:37:56.943Z' };
 
   let trxTournament;
 
@@ -91,6 +91,9 @@ describe('TrxTournament e2e test', () => {
             },
             {
               statusCode: 200,
+              headers: {
+                link: '<http://localhost/api/trx-tournaments?page=0&size=20>; rel="last",<http://localhost/api/trx-tournaments?page=0&size=20>; rel="first"',
+              },
               body: [trxTournament],
             },
           ).as('entitiesRequestInternal');
@@ -157,29 +160,29 @@ describe('TrxTournament e2e test', () => {
     });
 
     it('should create an instance of TrxTournament', () => {
-      cy.get(`[data-cy="name"]`).type('highly');
-      cy.get(`[data-cy="name"]`).should('have.value', 'highly');
+      cy.get(`[data-cy="name"]`).type('refurbish once smolt');
+      cy.get(`[data-cy="name"]`).should('have.value', 'refurbish once smolt');
 
-      cy.get(`[data-cy="type"]`).select('SOLO');
+      cy.get(`[data-cy="type"]`).select('TEAM');
 
-      cy.get(`[data-cy="prizeAmount"]`).type('13366.44');
-      cy.get(`[data-cy="prizeAmount"]`).should('have.value', '13366.44');
+      cy.get(`[data-cy="prizeAmount"]`).type('29384.53');
+      cy.get(`[data-cy="prizeAmount"]`).should('have.value', '29384.53');
 
-      cy.get(`[data-cy="startDate"]`).type('2024-09-23T12:18');
+      cy.get(`[data-cy="startDate"]`).type('2024-09-23T23:39');
       cy.get(`[data-cy="startDate"]`).blur();
-      cy.get(`[data-cy="startDate"]`).should('have.value', '2024-09-23T12:18');
+      cy.get(`[data-cy="startDate"]`).should('have.value', '2024-09-23T23:39');
 
-      cy.get(`[data-cy="endDate"]`).type('2024-09-24T04:09');
+      cy.get(`[data-cy="endDate"]`).type('2024-09-24T06:22');
       cy.get(`[data-cy="endDate"]`).blur();
-      cy.get(`[data-cy="endDate"]`).should('have.value', '2024-09-24T04:09');
+      cy.get(`[data-cy="endDate"]`).should('have.value', '2024-09-24T06:22');
 
-      cy.get(`[data-cy="location"]`).type('hm jelly');
-      cy.get(`[data-cy="location"]`).should('have.value', 'hm jelly');
+      cy.get(`[data-cy="location"]`).type('traumatise beautifully trained');
+      cy.get(`[data-cy="location"]`).should('have.value', 'traumatise beautifully trained');
 
-      cy.get(`[data-cy="maxParticipants"]`).type('2561');
-      cy.get(`[data-cy="maxParticipants"]`).should('have.value', '2561');
+      cy.get(`[data-cy="maxParticipants"]`).type('30323');
+      cy.get(`[data-cy="maxParticipants"]`).should('have.value', '30323');
 
-      cy.get(`[data-cy="status"]`).select('FINISHED');
+      cy.get(`[data-cy="status"]`).select('CANCELLED');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

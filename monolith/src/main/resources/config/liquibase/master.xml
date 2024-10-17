@@ -28,6 +28,25 @@
     <include file="config/liquibase/changelog/20240924093331_added_entity_MstEmployee.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240924093332_added_entity_MstJob.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240924093333_added_entity_JobHistory.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071435_added_entity_MstProduct.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071436_added_entity_MstCategory.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071437_added_entity_MstBrand.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071438_added_entity_MstSupplier.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071439_added_entity_Stock.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071440_added_entity_TrxOrderStock.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071441_added_entity_TrxCart.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071442_added_entity_TrxOrder.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071443_added_entity_TrxOrderItem.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071444_added_entity_MstCustomer.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071445_added_entity_MstLoyaltyProgram.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071446_added_entity_TrxDelivery.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071447_added_entity_MstDriver.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071448_added_entity_TrxOrderHistory.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071449_added_entity_TrxProductHistory.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071450_added_entity_TrxDiscount.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071451_added_entity_TrxCoupon.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071452_added_entity_TrxNotification.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071453_added_entity_TrxStockAlert.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20240924093317_added_entity_constraints_TrxEvent.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240924093318_added_entity_constraints_TrxTournament.xml" relativeToChangelogFile="false"/>
@@ -42,6 +61,15 @@
     <include file="config/liquibase/changelog/20240924093331_added_entity_constraints_MstEmployee.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240924093332_added_entity_constraints_MstJob.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20240924093333_added_entity_constraints_JobHistory.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071435_added_entity_constraints_MstProduct.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071439_added_entity_constraints_Stock.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071440_added_entity_constraints_TrxOrderStock.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071441_added_entity_constraints_TrxCart.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071442_added_entity_constraints_TrxOrder.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071443_added_entity_constraints_TrxOrderItem.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071445_added_entity_constraints_MstLoyaltyProgram.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071446_added_entity_constraints_TrxDelivery.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241017071452_added_entity_constraints_TrxNotification.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

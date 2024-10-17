@@ -36,7 +36,7 @@
   ],
   "jpaMetamodelFiltering": true,
   "name": "MstEmployee",
-  "pagination": "infinite-scroll",
+  "pagination": "pagination",
   "relationships": [
     {
       "otherEntityName": "mstJob",

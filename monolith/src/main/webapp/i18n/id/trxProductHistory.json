@@ -1,0 +1,27 @@
+{
+  "monolithApp": {
+    "trxProductHistory": {
+      "home": {
+        "title": "Trx Product Histories",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Trx Product History baru",
+        "createOrEditLabel": "Buat atau edit Trx Product History",
+        "search": "Cari Trx Product History",
+        "notFound": "No Trx Product Histories found"
+      },
+      "created": "Trx Product History dengan id { param } telah dibuat",
+      "updated": "Trx Product History dengan id { param } telah diperbaharui",
+      "deleted": "Trx Product History dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Trx Product History { id }?"
+      },
+      "detail": {
+        "title": "Trx Product History"
+      },
+      "id": "ID",
+      "oldPrice": "Old Price",
+      "newPrice": "New Price",
+      "changeDate": "Change Date"
+    }
+  }
+}

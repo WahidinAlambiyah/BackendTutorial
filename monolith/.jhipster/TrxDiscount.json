@@ -1,0 +1,29 @@
+{
+  "annotations": {
+    "changelogDate": "20241017071450"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "discountPercentage",
+      "fieldType": "Float",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "startDate",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "endDate",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "TrxDiscount",
+  "pagination": "pagination",
+  "relationships": [],
+  "service": "serviceImpl"
+}

@@ -1,0 +1,31 @@
+{
+  "monolithApp": {
+    "mstCustomer": {
+      "home": {
+        "title": "Mst Customers",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Mst Customer",
+        "createOrEditLabel": "Create or edit a Mst Customer",
+        "search": "Search for Mst Customer",
+        "notFound": "No Mst Customers found"
+      },
+      "created": "A new Mst Customer is created with identifier { param }",
+      "updated": "A Mst Customer is updated with identifier { param }",
+      "deleted": "A Mst Customer is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Mst Customer { id }?"
+      },
+      "detail": {
+        "title": "Mst Customer"
+      },
+      "id": "ID",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phoneNumber": "Phone Number",
+      "address": "Address",
+      "loyaltyPoints": "Loyalty Points",
+      "order": "Order"
+    }
+  }
+}

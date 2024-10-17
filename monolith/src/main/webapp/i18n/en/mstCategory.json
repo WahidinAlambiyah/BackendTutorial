@@ -1,0 +1,26 @@
+{
+  "monolithApp": {
+    "mstCategory": {
+      "home": {
+        "title": "Mst Categories",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Mst Category",
+        "createOrEditLabel": "Create or edit a Mst Category",
+        "search": "Search for Mst Category",
+        "notFound": "No Mst Categories found"
+      },
+      "created": "A new Mst Category is created with identifier { param }",
+      "updated": "A Mst Category is updated with identifier { param }",
+      "deleted": "A Mst Category is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Mst Category { id }?"
+      },
+      "detail": {
+        "title": "Mst Category"
+      },
+      "id": "ID",
+      "name": "Name",
+      "description": "Description"
+    }
+  }
+}

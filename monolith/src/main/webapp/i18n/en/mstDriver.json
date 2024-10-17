@@ -1,0 +1,27 @@
+{
+  "monolithApp": {
+    "mstDriver": {
+      "home": {
+        "title": "Mst Drivers",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Mst Driver",
+        "createOrEditLabel": "Create or edit a Mst Driver",
+        "search": "Search for Mst Driver",
+        "notFound": "No Mst Drivers found"
+      },
+      "created": "A new Mst Driver is created with identifier { param }",
+      "updated": "A Mst Driver is updated with identifier { param }",
+      "deleted": "A Mst Driver is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Mst Driver { id }?"
+      },
+      "detail": {
+        "title": "Mst Driver"
+      },
+      "id": "ID",
+      "name": "Name",
+      "contactNumber": "Contact Number",
+      "vehicleDetails": "Vehicle Details"
+    }
+  }
+}

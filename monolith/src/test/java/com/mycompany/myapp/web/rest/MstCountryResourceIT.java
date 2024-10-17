@@ -682,7 +682,7 @@ class MstCountryResourceIT {
         MstCountry partialUpdatedMstCountry = new MstCountry();
         partialUpdatedMstCountry.setId(mstCountry.getId());
 
-        partialUpdatedMstCountry.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
+        partialUpdatedMstCountry.unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
 
         webTestClient
             .patch()

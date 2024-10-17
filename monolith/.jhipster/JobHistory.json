@@ -21,7 +21,7 @@
   ],
   "jpaMetamodelFiltering": true,
   "name": "JobHistory",
-  "pagination": "infinite-scroll",
+  "pagination": "pagination",
   "relationships": [
     {
       "otherEntityName": "mstJob",

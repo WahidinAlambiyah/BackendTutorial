@@ -134,8 +134,7 @@ describe('Service Tests', () => {
       it('should partial update a JobHistory', async () => {
         const patchObject = Object.assign(
           {
-            endDate: dayjs(currentDate).format(DATE_TIME_FORMAT),
-            language: 'BBBBBB',
+            startDate: dayjs(currentDate).format(DATE_TIME_FORMAT),
           },
           new JobHistory(),
         );

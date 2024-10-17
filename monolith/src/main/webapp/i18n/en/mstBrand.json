@@ -1,0 +1,27 @@
+{
+  "monolithApp": {
+    "mstBrand": {
+      "home": {
+        "title": "Mst Brands",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Mst Brand",
+        "createOrEditLabel": "Create or edit a Mst Brand",
+        "search": "Search for Mst Brand",
+        "notFound": "No Mst Brands found"
+      },
+      "created": "A new Mst Brand is created with identifier { param }",
+      "updated": "A Mst Brand is updated with identifier { param }",
+      "deleted": "A Mst Brand is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Mst Brand { id }?"
+      },
+      "detail": {
+        "title": "Mst Brand"
+      },
+      "id": "ID",
+      "name": "Name",
+      "logo": "Logo",
+      "description": "Description"
+    }
+  }
+}

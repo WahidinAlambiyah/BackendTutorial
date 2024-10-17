@@ -29,6 +29,12 @@ public interface MstEmployeeRepository extends ReactiveCrudRepository<MstEmploye
     @Query("SELECT * FROM mst_employee entity WHERE entity.department_id IS NULL")
     Flux<MstEmployee> findAllWhereDepartmentIsNull();
 
+    @Query("SELECT * FROM mst_employee entity WHERE entity.mst_department_id = :id")
+    Flux<MstEmployee> findByMstDepartment(Long id);
+
+    @Query("SELECT * FROM mst_employee entity WHERE entity.mst_department_id IS NULL")
+    Flux<MstEmployee> findAllWhereMstDepartmentIsNull();
+
     @Query("SELECT * FROM mst_employee entity WHERE entity.id not in (select job_history_id from job_history)")
     Flux<MstEmployee> findAllWhereJobHistoryIsNull();
 

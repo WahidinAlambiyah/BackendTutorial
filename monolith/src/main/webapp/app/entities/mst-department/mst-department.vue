@@ -50,9 +50,18 @@
       <table class="table table-striped" aria-describedby="mstDepartments">
         <thead>
           <tr>
-            <th scope="row"><span v-text="t$('global.field.id')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.mstDepartment.departmentName')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.mstDepartment.location')"></span></th>
+            <th scope="row" v-on:click="changeOrder('id')">
+              <span v-text="t$('global.field.id')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'id'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('departmentName')">
+              <span v-text="t$('monolithApp.mstDepartment.departmentName')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'departmentName'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('location.id')">
+              <span v-text="t$('monolithApp.mstDepartment.location')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'location.id'"></jhi-sort-indicator>
+            </th>
             <th scope="row"></th>
           </tr>
         </thead>
@@ -134,6 +143,14 @@
         </div>
       </template>
     </b-modal>
+    <div v-show="mstDepartments && mstDepartments.length > 0">
+      <div class="row justify-content-center">
+        <jhi-item-count :page="page" :total="queryCount" :itemsPerPage="itemsPerPage"></jhi-item-count>
+      </div>
+      <div class="row justify-content-center">
+        <b-pagination size="md" :total-rows="totalItems" v-model="page" :per-page="itemsPerPage"></b-pagination>
+      </div>
+    </div>
   </div>
 </template>
 

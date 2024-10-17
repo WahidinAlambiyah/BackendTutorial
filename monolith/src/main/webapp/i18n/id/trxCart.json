@@ -1,0 +1,26 @@
+{
+  "monolithApp": {
+    "trxCart": {
+      "home": {
+        "title": "Trx Carts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Trx Cart baru",
+        "createOrEditLabel": "Buat atau edit Trx Cart",
+        "search": "Cari Trx Cart",
+        "notFound": "No Trx Carts found"
+      },
+      "created": "Trx Cart dengan id { param } telah dibuat",
+      "updated": "Trx Cart dengan id { param } telah diperbaharui",
+      "deleted": "Trx Cart dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Trx Cart { id }?"
+      },
+      "detail": {
+        "title": "Trx Cart"
+      },
+      "id": "ID",
+      "totalPrice": "Total Price",
+      "customer": "Customer"
+    }
+  }
+}

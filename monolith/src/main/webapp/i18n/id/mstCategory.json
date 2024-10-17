@@ -1,0 +1,26 @@
+{
+  "monolithApp": {
+    "mstCategory": {
+      "home": {
+        "title": "Mst Categories",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Mst Category baru",
+        "createOrEditLabel": "Buat atau edit Mst Category",
+        "search": "Cari Mst Category",
+        "notFound": "No Mst Categories found"
+      },
+      "created": "Mst Category dengan id { param } telah dibuat",
+      "updated": "Mst Category dengan id { param } telah diperbaharui",
+      "deleted": "Mst Category dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Mst Category { id }?"
+      },
+      "detail": {
+        "title": "Mst Category"
+      },
+      "id": "ID",
+      "name": "Name",
+      "description": "Description"
+    }
+  }
+}

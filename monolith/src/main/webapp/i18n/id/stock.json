@@ -1,0 +1,28 @@
+{
+  "monolithApp": {
+    "stock": {
+      "home": {
+        "title": "Stocks",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Stock baru",
+        "createOrEditLabel": "Buat atau edit Stock",
+        "search": "Cari Stock",
+        "notFound": "No Stocks found"
+      },
+      "created": "Stock dengan id { param } telah dibuat",
+      "updated": "Stock dengan id { param } telah diperbaharui",
+      "deleted": "Stock dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Stock { id }?"
+      },
+      "detail": {
+        "title": "Stock"
+      },
+      "id": "ID",
+      "quantityAvailable": "Quantity Available",
+      "reorderLevel": "Reorder Level",
+      "expiryDate": "Expiry Date",
+      "product": "Product"
+    }
+  }
+}

@@ -204,7 +204,7 @@ relationship OneToOne {
 // Product Management Models
 // ===============================
 
-entity Product {
+entity MstProduct {
     name String required,
     description String,
     price BigDecimal required,
@@ -213,18 +213,18 @@ entity Product {
     unitSize String
 }
 
-entity Category {
+entity MstCategory {
     name String required,
     description String
 }
 
-entity Brand {
+entity MstBrand {
     name String required,
     logo String,
     description String
 }
 
-entity Supplier {
+entity MstSupplier {
     name String required,
     contactInfo String,
     address String,
@@ -241,9 +241,7 @@ entity Stock {
     expiryDate Instant
 }
 
-entity OrderStock {
-    supplier Supplier,
-    product Product,
+entity TrxOrderStock {
     quantityOrdered Integer required,
     orderDate Instant required,
     expectedArrivalDate Instant
@@ -253,11 +251,11 @@ entity OrderStock {
 // Sales and Order Models
 // ===============================
 
-entity Cart {
+entity TrxCart {
     totalPrice BigDecimal required
 }
 
-entity Order {
+entity TrxOrder {
     orderDate Instant required,
     deliveryDate Instant,
     orderStatus OrderStatus required,
@@ -265,7 +263,7 @@ entity Order {
     totalAmount BigDecimal required
 }
 
-entity OrderItem {
+entity TrxOrderItem {
     quantity Integer required,
     price BigDecimal required
 }
@@ -286,7 +284,7 @@ enum PaymentMethod {
 // Customer Management Models
 // ===============================
 
-entity Customer {
+entity MstCustomer {
     firstName String required,
     lastName String required,
     email String required,
@@ -295,34 +293,16 @@ entity Customer {
     loyaltyPoints Integer
 }
 
-entity LoyaltyProgram {
+entity MstLoyaltyProgram {
     pointsEarned Integer,
     membershipTier String
 }
 
 // ===============================
-// Staff and Management Models
-// ===============================
-
-// entity Employee {
-//    firstName String required,
-//    lastName String required,
-//    position String required,
-//    salary BigDecimal,
-//    hireDate Instant required
-// }
-
-// entity Department {
-//    departmentName String required,
-//    manager String,
-//    location String
-// }
-
-// ===============================
 // Delivery and Logistics Models
 // ===============================
 
-entity Delivery {
+entity TrxDelivery {
     deliveryAddress String required,
     deliveryStatus DeliveryStatus required,
     assignedDriver String,
@@ -335,7 +315,7 @@ enum DeliveryStatus {
     DELIVERED
 }
 
-entity Driver {
+entity MstDriver {
     name String required,
     contactNumber String,
     vehicleDetails String
@@ -345,13 +325,13 @@ entity Driver {
 // Audit and History Models
 // ===============================
 
-entity OrderHistory {
+entity TrxOrderHistory {
     previousStatus OrderStatus required,
     newStatus OrderStatus required,
     changeDate Instant required
 }
 
-entity ProductHistory {
+entity TrxProductHistory {
     oldPrice BigDecimal,
     newPrice BigDecimal,
     changeDate Instant required
@@ -361,13 +341,13 @@ entity ProductHistory {
 // Discount and Promotion Models
 // ===============================
 
-entity Discount {
+entity TrxDiscount {
     discountPercentage Float required,
     startDate Instant required,
     endDate Instant required
 }
 
-entity Coupon {
+entity TrxCoupon {
     code String required unique,
     discountAmount BigDecimal required,
     validUntil Instant required,
@@ -378,14 +358,14 @@ entity Coupon {
 // Notifications and Alerts Models
 // ===============================
 
-entity Notification {
+entity TrxNotification {
     recipient String required,
     messageType String required,
     content String required,
     sentAt Instant required
 }
 
-entity StockAlert {
+entity TrxStockAlert {
     alertThreshold Integer required,
     currentStock Integer required
 }
@@ -395,33 +375,31 @@ entity StockAlert {
 // ===============================
 
 relationship ManyToOne {
-    Product{category} to Category,
-    Product{brand} to Brand,
-    Stock{product} to Product,
-    OrderItem{order} to Order,
-    OrderItem{product} to Product,
-    Cart{customer} to Customer,
-    LoyaltyProgram{customer} to Customer
+    MstProduct{category} to MstCategory,
+    MstProduct{brand} to MstBrand,
+    Stock{product} to MstProduct,
+    TrxOrderStock{supplier} to MstSupplier,
+    TrxOrderItem{order} to TrxOrder,
+    TrxOrderItem{product} to MstProduct,
+    TrxCart{customer} to MstCustomer,
+    MstLoyaltyProgram{customer} to MstCustomer
 }
 
 relationship OneToMany {
-    Supplier{product} to Product,
-    Customer{order} to Order,
-    Order{orderItem} to OrderItem,
-    Order{delivery} to Delivery,
-    MstDepartment{employee} to MstEmployee,
-    Product{stock} to Stock
+    MstSupplier{product} to MstProduct,
+    MstCustomer{order} to TrxOrder,
+    TrxOrder{delivery} to TrxDelivery,
+    MstDepartment{employee} to MstEmployee
 }
 
 relationship ManyToOne {
-    Delivery{driver} to Driver,
-    Notification{customer} to Customer
+    TrxDelivery{driver} to MstDriver,
+    TrxNotification{customer} to MstCustomer
 }
 
 // Set pagination, DTO, and service options
 paginate * with pagination
 dto * with mapstruct
 service all with serviceImpl
-
 
 filter *

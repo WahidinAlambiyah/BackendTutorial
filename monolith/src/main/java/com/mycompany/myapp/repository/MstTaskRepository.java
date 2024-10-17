@@ -14,6 +14,8 @@ import reactor.core.publisher.Mono;
 @SuppressWarnings("unused")
 @Repository
 public interface MstTaskRepository extends ReactiveCrudRepository<MstTask, Long>, MstTaskRepositoryInternal {
+    Flux<MstTask> findAllBy(Pageable pageable);
+
     @Override
     <S extends MstTask> Mono<S> save(S entity);
 

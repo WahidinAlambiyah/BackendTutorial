@@ -1,0 +1,31 @@
+{
+  "monolithApp": {
+    "mstCustomer": {
+      "home": {
+        "title": "Mst Customers",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Mst Customer baru",
+        "createOrEditLabel": "Buat atau edit Mst Customer",
+        "search": "Cari Mst Customer",
+        "notFound": "No Mst Customers found"
+      },
+      "created": "Mst Customer dengan id { param } telah dibuat",
+      "updated": "Mst Customer dengan id { param } telah diperbaharui",
+      "deleted": "Mst Customer dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Mst Customer { id }?"
+      },
+      "detail": {
+        "title": "Mst Customer"
+      },
+      "id": "ID",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phoneNumber": "Phone Number",
+      "address": "Address",
+      "loyaltyPoints": "Loyalty Points",
+      "order": "Order"
+    }
+  }
+}

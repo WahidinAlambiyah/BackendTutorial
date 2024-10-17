@@ -139,9 +139,9 @@ describe('Service Tests', () => {
       it('should partial update a TrxTournament', async () => {
         const patchObject = Object.assign(
           {
-            name: 'BBBBBB',
-            endDate: dayjs(currentDate).format(DATE_TIME_FORMAT),
+            prizeAmount: 1,
             location: 'BBBBBB',
+            maxParticipants: 1,
             status: 'BBBBBB',
           },
           new TrxTournament(),
@@ -195,7 +195,7 @@ describe('Service Tests', () => {
           returnedFromService,
         );
         axiosStub.get.resolves([returnedFromService]);
-        return service.retrieve().then(res => {
+        return service.retrieve({ sort: {}, page: 0, size: 10 }).then(res => {
           expect(res).toContainEqual(expected);
         });
       });

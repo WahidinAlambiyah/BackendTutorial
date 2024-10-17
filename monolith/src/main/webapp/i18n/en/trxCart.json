@@ -1,0 +1,26 @@
+{
+  "monolithApp": {
+    "trxCart": {
+      "home": {
+        "title": "Trx Carts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Trx Cart",
+        "createOrEditLabel": "Create or edit a Trx Cart",
+        "search": "Search for Trx Cart",
+        "notFound": "No Trx Carts found"
+      },
+      "created": "A new Trx Cart is created with identifier { param }",
+      "updated": "A Trx Cart is updated with identifier { param }",
+      "deleted": "A Trx Cart is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Trx Cart { id }?"
+      },
+      "detail": {
+        "title": "Trx Cart"
+      },
+      "id": "ID",
+      "totalPrice": "Total Price",
+      "customer": "Customer"
+    }
+  }
+}

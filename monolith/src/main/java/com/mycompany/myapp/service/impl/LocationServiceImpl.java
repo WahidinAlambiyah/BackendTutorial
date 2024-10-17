@@ -8,6 +8,7 @@ import com.mycompany.myapp.service.dto.LocationDTO;
 import com.mycompany.myapp.service.mapper.LocationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -77,9 +78,9 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<LocationDTO> findByCriteria(LocationCriteria criteria) {
+    public Flux<LocationDTO> findByCriteria(LocationCriteria criteria, Pageable pageable) {
         log.debug("Request to get all Locations by Criteria");
-        return locationRepository.findByCriteria(criteria, null).map(locationMapper::toDto);
+        return locationRepository.findByCriteria(criteria, pageable).map(locationMapper::toDto);
     }
 
     /**
@@ -125,12 +126,8 @@ public class LocationServiceImpl implements LocationService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<LocationDTO> search(String query) {
-        log.debug("Request to search Locations for query {}", query);
-        try {
-            return locationSearchRepository.search(query).map(locationMapper::toDto);
-        } catch (RuntimeException e) {
-            throw e;
-        }
+    public Flux<LocationDTO> search(String query, Pageable pageable) {
+        log.debug("Request to search for a page of Locations for query {}", query);
+        return locationSearchRepository.search(query, pageable).map(locationMapper::toDto);
     }
 }

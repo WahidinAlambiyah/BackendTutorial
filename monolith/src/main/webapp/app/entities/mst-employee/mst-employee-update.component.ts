@@ -75,6 +75,7 @@ export default defineComponent({
       mstJobs: {},
       manager: {},
       department: {},
+      mstDepartment: {},
       jobHistory: {},
     };
     const v$ = useVuelidate(validationRules, mstEmployee as any);

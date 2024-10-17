@@ -1,0 +1,33 @@
+{
+  "monolithApp": {
+    "mstProduct": {
+      "home": {
+        "title": "Mst Products",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Mst Product",
+        "createOrEditLabel": "Create or edit a Mst Product",
+        "search": "Search for Mst Product",
+        "notFound": "No Mst Products found"
+      },
+      "created": "A new Mst Product is created with identifier { param }",
+      "updated": "A Mst Product is updated with identifier { param }",
+      "deleted": "A Mst Product is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Mst Product { id }?"
+      },
+      "detail": {
+        "title": "Mst Product"
+      },
+      "id": "ID",
+      "name": "Name",
+      "description": "Description",
+      "price": "Price",
+      "quantity": "Quantity",
+      "barcode": "Barcode",
+      "unitSize": "Unit Size",
+      "category": "Category",
+      "brand": "Brand",
+      "mstSupplier": "Mst Supplier"
+    }
+  }
+}

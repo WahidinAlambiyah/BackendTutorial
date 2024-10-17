@@ -1,0 +1,30 @@
+{
+  "monolithApp": {
+    "trxDelivery": {
+      "home": {
+        "title": "Trx Deliveries",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Trx Delivery",
+        "createOrEditLabel": "Create or edit a Trx Delivery",
+        "search": "Search for Trx Delivery",
+        "notFound": "No Trx Deliveries found"
+      },
+      "created": "A new Trx Delivery is created with identifier { param }",
+      "updated": "A Trx Delivery is updated with identifier { param }",
+      "deleted": "A Trx Delivery is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Trx Delivery { id }?"
+      },
+      "detail": {
+        "title": "Trx Delivery"
+      },
+      "id": "ID",
+      "deliveryAddress": "Delivery Address",
+      "deliveryStatus": "Delivery Status",
+      "assignedDriver": "Assigned Driver",
+      "estimatedDeliveryTime": "Estimated Delivery Time",
+      "driver": "Driver",
+      "trxOrder": "Trx Order"
+    }
+  }
+}

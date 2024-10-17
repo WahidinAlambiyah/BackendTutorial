@@ -631,7 +631,7 @@ class MstRegionResourceIT {
         MstRegion partialUpdatedMstRegion = new MstRegion();
         partialUpdatedMstRegion.setId(mstRegion.getId());
 
-        partialUpdatedMstRegion.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE);
+        partialUpdatedMstRegion.isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
 
         webTestClient
             .patch()

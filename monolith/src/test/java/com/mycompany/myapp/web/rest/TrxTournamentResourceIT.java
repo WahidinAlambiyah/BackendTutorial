@@ -1018,7 +1018,13 @@ class TrxTournamentResourceIT {
         TrxTournament partialUpdatedTrxTournament = new TrxTournament();
         partialUpdatedTrxTournament.setId(trxTournament.getId());
 
-        partialUpdatedTrxTournament.startDate(UPDATED_START_DATE).maxParticipants(UPDATED_MAX_PARTICIPANTS);
+        partialUpdatedTrxTournament
+            .name(UPDATED_NAME)
+            .startDate(UPDATED_START_DATE)
+            .endDate(UPDATED_END_DATE)
+            .location(UPDATED_LOCATION)
+            .maxParticipants(UPDATED_MAX_PARTICIPANTS)
+            .status(UPDATED_STATUS);
 
         webTestClient
             .patch()

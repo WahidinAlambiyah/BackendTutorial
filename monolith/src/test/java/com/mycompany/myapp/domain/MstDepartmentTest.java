@@ -62,6 +62,28 @@ class MstDepartmentTest {
     }
 
     @Test
+    void employeeTest() {
+        MstDepartment mstDepartment = getMstDepartmentRandomSampleGenerator();
+        MstEmployee mstEmployeeBack = getMstEmployeeRandomSampleGenerator();
+
+        mstDepartment.addEmployee(mstEmployeeBack);
+        assertThat(mstDepartment.getEmployees()).containsOnly(mstEmployeeBack);
+        assertThat(mstEmployeeBack.getMstDepartment()).isEqualTo(mstDepartment);
+
+        mstDepartment.removeEmployee(mstEmployeeBack);
+        assertThat(mstDepartment.getEmployees()).doesNotContain(mstEmployeeBack);
+        assertThat(mstEmployeeBack.getMstDepartment()).isNull();
+
+        mstDepartment.employees(new HashSet<>(Set.of(mstEmployeeBack)));
+        assertThat(mstDepartment.getEmployees()).containsOnly(mstEmployeeBack);
+        assertThat(mstEmployeeBack.getMstDepartment()).isEqualTo(mstDepartment);
+
+        mstDepartment.setEmployees(new HashSet<>());
+        assertThat(mstDepartment.getEmployees()).doesNotContain(mstEmployeeBack);
+        assertThat(mstEmployeeBack.getMstDepartment()).isNull();
+    }
+
+    @Test
     void jobHistoryTest() {
         MstDepartment mstDepartment = getMstDepartmentRandomSampleGenerator();
         JobHistory jobHistoryBack = getJobHistoryRandomSampleGenerator();

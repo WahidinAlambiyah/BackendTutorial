@@ -50,16 +50,46 @@
       <table class="table table-striped" aria-describedby="trxTournaments">
         <thead>
           <tr>
-            <th scope="row"><span v-text="t$('global.field.id')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.trxTournament.name')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.trxTournament.type')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.trxTournament.prizeAmount')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.trxTournament.startDate')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.trxTournament.endDate')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.trxTournament.location')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.trxTournament.maxParticipants')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.trxTournament.status')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.trxTournament.event')"></span></th>
+            <th scope="row" v-on:click="changeOrder('id')">
+              <span v-text="t$('global.field.id')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'id'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('name')">
+              <span v-text="t$('monolithApp.trxTournament.name')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'name'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('type')">
+              <span v-text="t$('monolithApp.trxTournament.type')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'type'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('prizeAmount')">
+              <span v-text="t$('monolithApp.trxTournament.prizeAmount')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'prizeAmount'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('startDate')">
+              <span v-text="t$('monolithApp.trxTournament.startDate')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'startDate'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('endDate')">
+              <span v-text="t$('monolithApp.trxTournament.endDate')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'endDate'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('location')">
+              <span v-text="t$('monolithApp.trxTournament.location')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'location'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('maxParticipants')">
+              <span v-text="t$('monolithApp.trxTournament.maxParticipants')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'maxParticipants'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('status')">
+              <span v-text="t$('monolithApp.trxTournament.status')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'status'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('event.title')">
+              <span v-text="t$('monolithApp.trxTournament.event')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'event.title'"></jhi-sort-indicator>
+            </th>
             <th scope="row"></th>
           </tr>
         </thead>
@@ -148,6 +178,14 @@
         </div>
       </template>
     </b-modal>
+    <div v-show="trxTournaments && trxTournaments.length > 0">
+      <div class="row justify-content-center">
+        <jhi-item-count :page="page" :total="queryCount" :itemsPerPage="itemsPerPage"></jhi-item-count>
+      </div>
+      <div class="row justify-content-center">
+        <b-pagination size="md" :total-rows="totalItems" v-model="page" :per-page="itemsPerPage"></b-pagination>
+      </div>
+    </div>
   </div>
 </template>
 

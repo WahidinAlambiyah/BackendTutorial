@@ -2,6 +2,7 @@ package com.mycompany.myapp.repository.search;
 
 import co.elastic.clients.elasticsearch._types.query_dsl.QueryStringQuery;
 import com.mycompany.myapp.domain.MstTask;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.client.elc.ReactiveElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.SearchHit;
@@ -15,7 +16,7 @@ import reactor.core.publisher.Flux;
 public interface MstTaskSearchRepository extends ReactiveElasticsearchRepository<MstTask, Long>, MstTaskSearchRepositoryInternal {}
 
 interface MstTaskSearchRepositoryInternal {
-    Flux<MstTask> search(String query);
+    Flux<MstTask> search(String query, Pageable pageable);
 
     Flux<MstTask> search(Query query);
 }
@@ -29,8 +30,9 @@ class MstTaskSearchRepositoryInternalImpl implements MstTaskSearchRepositoryInte
     }
 
     @Override
-    public Flux<MstTask> search(String query) {
+    public Flux<MstTask> search(String query, Pageable pageable) {
         NativeQuery nativeQuery = new NativeQuery(QueryStringQuery.of(qs -> qs.query(query))._toQuery());
+        nativeQuery.setPageable(pageable);
         return search(nativeQuery);
     }
 

@@ -21,6 +21,7 @@ public class MstEmployeeSqlHelper {
 
         columns.add(Column.aliased("manager_id", table, columnPrefix + "_manager_id"));
         columns.add(Column.aliased("department_id", table, columnPrefix + "_department_id"));
+        columns.add(Column.aliased("mst_department_id", table, columnPrefix + "_mst_department_id"));
         return columns;
     }
 }

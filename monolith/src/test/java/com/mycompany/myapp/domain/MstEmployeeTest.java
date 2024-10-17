@@ -75,6 +75,18 @@ class MstEmployeeTest {
     }
 
     @Test
+    void mstDepartmentTest() {
+        MstEmployee mstEmployee = getMstEmployeeRandomSampleGenerator();
+        MstDepartment mstDepartmentBack = getMstDepartmentRandomSampleGenerator();
+
+        mstEmployee.setMstDepartment(mstDepartmentBack);
+        assertThat(mstEmployee.getMstDepartment()).isEqualTo(mstDepartmentBack);
+
+        mstEmployee.mstDepartment(null);
+        assertThat(mstEmployee.getMstDepartment()).isNull();
+    }
+
+    @Test
     void jobHistoryTest() {
         MstEmployee mstEmployee = getMstEmployeeRandomSampleGenerator();
         JobHistory jobHistoryBack = getJobHistoryRandomSampleGenerator();

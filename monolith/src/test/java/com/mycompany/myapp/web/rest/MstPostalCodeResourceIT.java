@@ -564,6 +564,8 @@ class MstPostalCodeResourceIT {
         MstPostalCode partialUpdatedMstPostalCode = new MstPostalCode();
         partialUpdatedMstPostalCode.setId(mstPostalCode.getId());
 
+        partialUpdatedMstPostalCode.code(UPDATED_CODE);
+
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, partialUpdatedMstPostalCode.getId())

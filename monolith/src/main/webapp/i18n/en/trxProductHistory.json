@@ -1,0 +1,27 @@
+{
+  "monolithApp": {
+    "trxProductHistory": {
+      "home": {
+        "title": "Trx Product Histories",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Trx Product History",
+        "createOrEditLabel": "Create or edit a Trx Product History",
+        "search": "Search for Trx Product History",
+        "notFound": "No Trx Product Histories found"
+      },
+      "created": "A new Trx Product History is created with identifier { param }",
+      "updated": "A Trx Product History is updated with identifier { param }",
+      "deleted": "A Trx Product History is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Trx Product History { id }?"
+      },
+      "detail": {
+        "title": "Trx Product History"
+      },
+      "id": "ID",
+      "oldPrice": "Old Price",
+      "newPrice": "New Price",
+      "changeDate": "Change Date"
+    }
+  }
+}

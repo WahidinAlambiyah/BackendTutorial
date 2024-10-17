@@ -15,7 +15,7 @@ describe('MstSubDistrict e2e test', () => {
   const mstSubDistrictPageUrlPattern = new RegExp('/mst-sub-district(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const mstSubDistrictSample = { name: 'coolly' };
+  const mstSubDistrictSample = { name: 'obedient judgementally' };
 
   let mstSubDistrict;
 
@@ -160,14 +160,14 @@ describe('MstSubDistrict e2e test', () => {
     });
 
     it('should create an instance of MstSubDistrict', () => {
-      cy.get(`[data-cy="name"]`).type('spew bunch');
-      cy.get(`[data-cy="name"]`).should('have.value', 'spew bunch');
+      cy.get(`[data-cy="name"]`).type('actually pupil');
+      cy.get(`[data-cy="name"]`).should('have.value', 'actually pupil');
 
-      cy.get(`[data-cy="unm49Code"]`).type('reclamation beside');
-      cy.get(`[data-cy="unm49Code"]`).should('have.value', 'reclamation beside');
+      cy.get(`[data-cy="unm49Code"]`).type('so');
+      cy.get(`[data-cy="unm49Code"]`).should('have.value', 'so');
 
-      cy.get(`[data-cy="isoAlpha2Code"]`).type('once officially');
-      cy.get(`[data-cy="isoAlpha2Code"]`).should('have.value', 'once officially');
+      cy.get(`[data-cy="isoAlpha2Code"]`).type('whose into');
+      cy.get(`[data-cy="isoAlpha2Code"]`).should('have.value', 'whose into');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

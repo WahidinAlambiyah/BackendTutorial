@@ -1,0 +1,28 @@
+{
+  "monolithApp": {
+    "trxOrderStock": {
+      "home": {
+        "title": "Trx Order Stocks",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Trx Order Stock baru",
+        "createOrEditLabel": "Buat atau edit Trx Order Stock",
+        "search": "Cari Trx Order Stock",
+        "notFound": "No Trx Order Stocks found"
+      },
+      "created": "Trx Order Stock dengan id { param } telah dibuat",
+      "updated": "Trx Order Stock dengan id { param } telah diperbaharui",
+      "deleted": "Trx Order Stock dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Trx Order Stock { id }?"
+      },
+      "detail": {
+        "title": "Trx Order Stock"
+      },
+      "id": "ID",
+      "quantityOrdered": "Quantity Ordered",
+      "orderDate": "Order Date",
+      "expectedArrivalDate": "Expected Arrival Date",
+      "supplier": "Supplier"
+    }
+  }
+}

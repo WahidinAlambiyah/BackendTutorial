@@ -546,8 +546,6 @@ class MstTaskResourceIT {
         MstTask partialUpdatedMstTask = new MstTask();
         partialUpdatedMstTask.setId(mstTask.getId());
 
-        partialUpdatedMstTask.title(UPDATED_TITLE);
-
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, partialUpdatedMstTask.getId())

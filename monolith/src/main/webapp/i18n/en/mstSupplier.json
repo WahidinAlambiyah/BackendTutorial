@@ -1,0 +1,29 @@
+{
+  "monolithApp": {
+    "mstSupplier": {
+      "home": {
+        "title": "Mst Suppliers",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Mst Supplier",
+        "createOrEditLabel": "Create or edit a Mst Supplier",
+        "search": "Search for Mst Supplier",
+        "notFound": "No Mst Suppliers found"
+      },
+      "created": "A new Mst Supplier is created with identifier { param }",
+      "updated": "A Mst Supplier is updated with identifier { param }",
+      "deleted": "A Mst Supplier is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Mst Supplier { id }?"
+      },
+      "detail": {
+        "title": "Mst Supplier"
+      },
+      "id": "ID",
+      "name": "Name",
+      "contactInfo": "Contact Info",
+      "address": "Address",
+      "rating": "Rating",
+      "product": "Product"
+    }
+  }
+}

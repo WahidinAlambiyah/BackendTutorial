@@ -13,6 +13,7 @@
   ],
   "jpaMetamodelFiltering": true,
   "name": "MstDepartment",
+  "pagination": "pagination",
   "relationships": [
     {
       "otherEntityName": "location",
@@ -24,6 +25,12 @@
       "otherEntityName": "mstEmployee",
       "otherEntityRelationshipName": "department",
       "relationshipName": "mstEmployee",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "mstEmployee",
+      "relationshipName": "employee",
       "relationshipSide": "left",
       "relationshipType": "one-to-many"
     }

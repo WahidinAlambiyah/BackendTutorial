@@ -676,8 +676,6 @@ class MstCityResourceIT {
         MstCity partialUpdatedMstCity = new MstCity();
         partialUpdatedMstCity.setId(mstCity.getId());
 
-        partialUpdatedMstCity.isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
-
         webTestClient
             .patch()
             .uri(ENTITY_API_URL_ID, partialUpdatedMstCity.getId())

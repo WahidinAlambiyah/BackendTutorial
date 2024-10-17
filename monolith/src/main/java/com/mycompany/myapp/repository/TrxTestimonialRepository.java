@@ -14,6 +14,8 @@ import reactor.core.publisher.Mono;
 @SuppressWarnings("unused")
 @Repository
 public interface TrxTestimonialRepository extends ReactiveCrudRepository<TrxTestimonial, Long>, TrxTestimonialRepositoryInternal {
+    Flux<TrxTestimonial> findAllBy(Pageable pageable);
+
     @Override
     <S extends TrxTestimonial> Mono<S> save(S entity);
 

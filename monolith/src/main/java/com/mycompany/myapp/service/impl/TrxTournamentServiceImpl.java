@@ -78,9 +78,9 @@ public class TrxTournamentServiceImpl implements TrxTournamentService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<TrxTournamentDTO> findByCriteria(TrxTournamentCriteria criteria) {
+    public Flux<TrxTournamentDTO> findByCriteria(TrxTournamentCriteria criteria, Pageable pageable) {
         log.debug("Request to get all TrxTournaments by Criteria");
-        return trxTournamentRepository.findByCriteria(criteria, null).map(trxTournamentMapper::toDto);
+        return trxTournamentRepository.findByCriteria(criteria, pageable).map(trxTournamentMapper::toDto);
     }
 
     /**
@@ -120,12 +120,8 @@ public class TrxTournamentServiceImpl implements TrxTournamentService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<TrxTournamentDTO> search(String query) {
-        log.debug("Request to search TrxTournaments for query {}", query);
-        try {
-            return trxTournamentSearchRepository.search(query).map(trxTournamentMapper::toDto);
-        } catch (RuntimeException e) {
-            throw e;
-        }
+    public Flux<TrxTournamentDTO> search(String query, Pageable pageable) {
+        log.debug("Request to search for a page of TrxTournaments for query {}", query);
+        return trxTournamentSearchRepository.search(query, pageable).map(trxTournamentMapper::toDto);
     }
 }

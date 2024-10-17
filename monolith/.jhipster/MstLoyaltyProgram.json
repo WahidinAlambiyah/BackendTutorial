@@ -1,0 +1,29 @@
+{
+  "annotations": {
+    "changelogDate": "20241017071445"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "pointsEarned",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "membershipTier",
+      "fieldType": "String"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "MstLoyaltyProgram",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "mstCustomer",
+      "relationshipName": "customer",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceImpl"
+}

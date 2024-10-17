@@ -8,6 +8,7 @@ import com.mycompany.myapp.service.dto.TrxEventDTO;
 import com.mycompany.myapp.service.mapper.TrxEventMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -77,9 +78,9 @@ public class TrxEventServiceImpl implements TrxEventService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<TrxEventDTO> findByCriteria(TrxEventCriteria criteria) {
+    public Flux<TrxEventDTO> findByCriteria(TrxEventCriteria criteria, Pageable pageable) {
         log.debug("Request to get all TrxEvents by Criteria");
-        return trxEventRepository.findByCriteria(criteria, null).map(trxEventMapper::toDto);
+        return trxEventRepository.findByCriteria(criteria, pageable).map(trxEventMapper::toDto);
     }
 
     /**
@@ -115,12 +116,8 @@ public class TrxEventServiceImpl implements TrxEventService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<TrxEventDTO> search(String query) {
-        log.debug("Request to search TrxEvents for query {}", query);
-        try {
-            return trxEventSearchRepository.search(query).map(trxEventMapper::toDto);
-        } catch (RuntimeException e) {
-            throw e;
-        }
+    public Flux<TrxEventDTO> search(String query, Pageable pageable) {
+        log.debug("Request to search for a page of TrxEvents for query {}", query);
+        return trxEventSearchRepository.search(query, pageable).map(trxEventMapper::toDto);
     }
 }

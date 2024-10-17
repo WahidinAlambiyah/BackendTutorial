@@ -107,6 +107,14 @@ describe('Component Tests', () => {
         expect(comp.mstEmployees[0]).toEqual(expect.objectContaining({ id: 123 }));
       });
 
+      it('should not load a page if the page is the same as the previous page', () => {
+        // WHEN
+        comp.page = 1;
+
+        // THEN
+        expect(mstEmployeeServiceStub.retrieve.called).toBeFalsy();
+      });
+
       it('should re-initialize the page', async () => {
         // GIVEN
         comp.page = 2;

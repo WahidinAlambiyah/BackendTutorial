@@ -1,0 +1,28 @@
+{
+  "monolithApp": {
+    "trxCoupon": {
+      "home": {
+        "title": "Trx Coupons",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Trx Coupon",
+        "createOrEditLabel": "Create or edit a Trx Coupon",
+        "search": "Search for Trx Coupon",
+        "notFound": "No Trx Coupons found"
+      },
+      "created": "A new Trx Coupon is created with identifier { param }",
+      "updated": "A Trx Coupon is updated with identifier { param }",
+      "deleted": "A Trx Coupon is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Trx Coupon { id }?"
+      },
+      "detail": {
+        "title": "Trx Coupon"
+      },
+      "id": "ID",
+      "code": "Code",
+      "discountAmount": "Discount Amount",
+      "validUntil": "Valid Until",
+      "minPurchase": "Min Purchase"
+    }
+  }
+}

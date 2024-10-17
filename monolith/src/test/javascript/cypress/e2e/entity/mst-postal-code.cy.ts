@@ -15,7 +15,7 @@ describe('MstPostalCode e2e test', () => {
   const mstPostalCodePageUrlPattern = new RegExp('/mst-postal-code(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const mstPostalCodeSample = { code: 'cautious' };
+  const mstPostalCodeSample = { code: 'defiantly notwithstanding' };
 
   let mstPostalCode;
 
@@ -160,8 +160,8 @@ describe('MstPostalCode e2e test', () => {
     });
 
     it('should create an instance of MstPostalCode', () => {
-      cy.get(`[data-cy="code"]`).type('ill-fated');
-      cy.get(`[data-cy="code"]`).should('have.value', 'ill-fated');
+      cy.get(`[data-cy="code"]`).type('tomorrow ouch');
+      cy.get(`[data-cy="code"]`).should('have.value', 'tomorrow ouch');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

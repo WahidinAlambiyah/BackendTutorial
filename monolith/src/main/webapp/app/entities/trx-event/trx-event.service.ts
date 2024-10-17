@@ -1,17 +1,19 @@
 import axios from 'axios';
 
+import buildPaginationQueryOpts from '@/shared/sort/sorts';
+
 import { type ITrxEvent } from '@/shared/model/trx-event.model';
 
 const baseApiUrl = 'api/trx-events';
 const baseSearchApiUrl = 'api/trx-events/_search?query=';
 
 export default class TrxEventService {
-  public search(query): Promise<any> {
+  public search(query, paginationQuery): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       axios
-        .get(`${baseSearchApiUrl}${query}`)
+        .get(`${baseSearchApiUrl}${query}&${buildPaginationQueryOpts(paginationQuery)}`)
         .then(res => {
-          resolve(res.data);
+          resolve(res);
         })
         .catch(err => {
           reject(err);
@@ -32,10 +34,10 @@ export default class TrxEventService {
     });
   }
 
-  public retrieve(): Promise<any> {
+  public retrieve(paginationQuery?: any): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       axios
-        .get(baseApiUrl)
+        .get(baseApiUrl + `?${buildPaginationQueryOpts(paginationQuery)}`)
         .then(res => {
           resolve(res);
         })

@@ -50,10 +50,18 @@
       <table class="table table-striped" aria-describedby="mstTasks">
         <thead>
           <tr>
-            <th scope="row"><span v-text="t$('global.field.id')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.mstTask.title')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.mstTask.description')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.mstTask.job')"></span></th>
+            <th scope="row" v-on:click="changeOrder('id')">
+              <span v-text="t$('global.field.id')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'id'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('title')">
+              <span v-text="t$('monolithApp.mstTask.title')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'title'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('description')">
+              <span v-text="t$('monolithApp.mstTask.description')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'description'"></jhi-sort-indicator>
+            </th>
             <th scope="row"></th>
           </tr>
         </thead>
@@ -64,14 +72,6 @@
             </td>
             <td>{{ mstTask.title }}</td>
             <td>{{ mstTask.description }}</td>
-            <td>
-              <span v-for="(job, i) in mstTask.jobs" :key="job.id"
-                >{{ i > 0 ? ', ' : '' }}
-                <router-link class="form-control-static" :to="{ name: 'MstJobView', params: { mstJobId: job.id } }">{{
-                  job.id
-                }}</router-link>
-              </span>
-            </td>
             <td class="text-right">
               <div class="btn-group">
                 <router-link :to="{ name: 'MstTaskView', params: { mstTaskId: mstTask.id } }" custom v-slot="{ navigate }">
@@ -123,6 +123,14 @@
         </div>
       </template>
     </b-modal>
+    <div v-show="mstTasks && mstTasks.length > 0">
+      <div class="row justify-content-center">
+        <jhi-item-count :page="page" :total="queryCount" :itemsPerPage="itemsPerPage"></jhi-item-count>
+      </div>
+      <div class="row justify-content-center">
+        <b-pagination size="md" :total-rows="totalItems" v-model="page" :per-page="itemsPerPage"></b-pagination>
+      </div>
+    </div>
   </div>
 </template>
 

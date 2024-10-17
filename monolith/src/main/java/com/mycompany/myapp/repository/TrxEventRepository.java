@@ -15,6 +15,8 @@ import reactor.core.publisher.Mono;
 @SuppressWarnings("unused")
 @Repository
 public interface TrxEventRepository extends ReactiveCrudRepository<TrxEvent, Long>, TrxEventRepositoryInternal {
+    Flux<TrxEvent> findAllBy(Pageable pageable);
+
     @Query("SELECT * FROM trx_event entity WHERE entity.service_id = :id")
     Flux<TrxEvent> findByService(Long id);
 

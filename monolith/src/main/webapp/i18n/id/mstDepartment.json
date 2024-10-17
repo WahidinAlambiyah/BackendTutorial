@@ -22,6 +22,7 @@
       "departmentName": "Department Name",
       "location": "Location",
       "mstEmployee": "Mst Employee",
+      "employee": "Employee",
       "jobHistory": "Job History"
     }
   }

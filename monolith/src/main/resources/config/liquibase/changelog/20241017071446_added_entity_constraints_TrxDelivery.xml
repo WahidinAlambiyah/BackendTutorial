@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity TrxDelivery.
+    -->
+    <changeSet id="20241017071446-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="driver_id"
+                                 baseTableName="trx_delivery"
+                                 constraintName="fk_trx_delivery__driver_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="mst_driver"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="trx_order_id"
+                                 baseTableName="trx_delivery"
+                                 constraintName="fk_trx_delivery__trx_order_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="trx_order"
+                                 />
+    </changeSet>
+</databaseChangeLog>

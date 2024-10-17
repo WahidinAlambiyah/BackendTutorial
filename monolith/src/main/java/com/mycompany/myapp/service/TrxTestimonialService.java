@@ -2,6 +2,7 @@ package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.domain.criteria.TrxTestimonialCriteria;
 import com.mycompany.myapp.service.dto.TrxTestimonialDTO;
+import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -35,9 +36,10 @@ public interface TrxTestimonialService {
     /**
      * Find trxTestimonials by criteria.
      *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<TrxTestimonialDTO> findByCriteria(TrxTestimonialCriteria criteria);
+    Flux<TrxTestimonialDTO> findByCriteria(TrxTestimonialCriteria criteria, Pageable pageable);
 
     /**
      * Find the count of trxTestimonials by criteria.
@@ -79,7 +81,9 @@ public interface TrxTestimonialService {
      * Search for the trxTestimonial corresponding to the query.
      *
      * @param query the query of the search.
+     *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<TrxTestimonialDTO> search(String query);
+    Flux<TrxTestimonialDTO> search(String query, Pageable pageable);
 }

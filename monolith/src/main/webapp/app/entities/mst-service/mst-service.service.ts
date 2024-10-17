@@ -1,17 +1,19 @@
 import axios from 'axios';
 
+import buildPaginationQueryOpts from '@/shared/sort/sorts';
+
 import { type IMstService } from '@/shared/model/mst-service.model';
 
 const baseApiUrl = 'api/mst-services';
 const baseSearchApiUrl = 'api/mst-services/_search?query=';
 
 export default class MstServiceService {
-  public search(query): Promise<any> {
+  public search(query, paginationQuery): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       axios
-        .get(`${baseSearchApiUrl}${query}`)
+        .get(`${baseSearchApiUrl}${query}&${buildPaginationQueryOpts(paginationQuery)}`)
         .then(res => {
-          resolve(res.data);
+          resolve(res);
         })
         .catch(err => {
           reject(err);
@@ -32,10 +34,10 @@ export default class MstServiceService {
     });
   }
 
-  public retrieve(): Promise<any> {
+  public retrieve(paginationQuery?: any): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       axios
-        .get(baseApiUrl)
+        .get(baseApiUrl + `?${buildPaginationQueryOpts(paginationQuery)}`)
         .then(res => {
           resolve(res);
         })

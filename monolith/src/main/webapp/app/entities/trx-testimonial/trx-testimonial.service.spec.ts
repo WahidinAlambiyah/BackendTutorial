@@ -131,9 +131,7 @@ describe('Service Tests', () => {
       it('should partial update a TrxTestimonial', async () => {
         const patchObject = Object.assign(
           {
-            feedback: 'BBBBBB',
             rating: 1,
-            date: dayjs(currentDate).format(DATE_TIME_FORMAT),
           },
           new TrxTestimonial(),
         );
@@ -180,7 +178,7 @@ describe('Service Tests', () => {
           returnedFromService,
         );
         axiosStub.get.resolves([returnedFromService]);
-        return service.retrieve().then(res => {
+        return service.retrieve({ sort: {}, page: 0, size: 10 }).then(res => {
           expect(res).toContainEqual(expected);
         });
       });

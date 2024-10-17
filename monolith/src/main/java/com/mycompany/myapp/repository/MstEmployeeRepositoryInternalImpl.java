@@ -47,6 +47,7 @@ class MstEmployeeRepositoryInternalImpl extends SimpleR2dbcRepository<MstEmploye
     private static final Table entityTable = Table.aliased("mst_employee", EntityManager.ENTITY_ALIAS);
     private static final Table managerTable = Table.aliased("mst_employee", "manager");
     private static final Table departmentTable = Table.aliased("mst_department", "department");
+    private static final Table mstDepartmentTable = Table.aliased("mst_department", "mstDepartment");
 
     public MstEmployeeRepositoryInternalImpl(
         R2dbcEntityTemplate template,
@@ -79,6 +80,7 @@ class MstEmployeeRepositoryInternalImpl extends SimpleR2dbcRepository<MstEmploye
         List<Expression> columns = MstEmployeeSqlHelper.getColumns(entityTable, EntityManager.ENTITY_ALIAS);
         columns.addAll(MstEmployeeSqlHelper.getColumns(managerTable, "manager"));
         columns.addAll(MstDepartmentSqlHelper.getColumns(departmentTable, "department"));
+        columns.addAll(MstDepartmentSqlHelper.getColumns(mstDepartmentTable, "mstDepartment"));
         SelectFromAndJoinCondition selectFrom = Select.builder()
             .select(columns)
             .from(entityTable)
@@ -87,7 +89,10 @@ class MstEmployeeRepositoryInternalImpl extends SimpleR2dbcRepository<MstEmploye
             .equals(Column.create("id", managerTable))
             .leftOuterJoin(departmentTable)
             .on(Column.create("department_id", entityTable))
-            .equals(Column.create("id", departmentTable));
+            .equals(Column.create("id", departmentTable))
+            .leftOuterJoin(mstDepartmentTable)
+            .on(Column.create("mst_department_id", entityTable))
+            .equals(Column.create("id", mstDepartmentTable));
         // we do not support Criteria here for now as of https://github.com/jhipster/generator-jhipster/issues/18269
         String select = entityManager.createSelect(selectFrom, MstEmployee.class, pageable, whereClause);
         return db.sql(select).map(this::process);
@@ -108,6 +113,7 @@ class MstEmployeeRepositoryInternalImpl extends SimpleR2dbcRepository<MstEmploye
         MstEmployee entity = mstemployeeMapper.apply(row, "e");
         entity.setManager(mstemployeeMapper.apply(row, "manager"));
         entity.setDepartment(mstdepartmentMapper.apply(row, "department"));
+        entity.setMstDepartment(mstdepartmentMapper.apply(row, "mstDepartment"));
         return entity;
     }
 
@@ -161,6 +167,9 @@ class MstEmployeeRepositoryInternalImpl extends SimpleR2dbcRepository<MstEmploye
             }
             if (criteria.getDepartmentId() != null) {
                 builder.buildFilterConditionForField(criteria.getDepartmentId(), departmentTable.column("id"));
+            }
+            if (criteria.getMstDepartmentId() != null) {
+                builder.buildFilterConditionForField(criteria.getMstDepartmentId(), mstDepartmentTable.column("id"));
             }
         }
         return builder.buildConditions();

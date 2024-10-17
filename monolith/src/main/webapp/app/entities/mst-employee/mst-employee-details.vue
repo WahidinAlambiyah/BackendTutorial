@@ -68,6 +68,16 @@
               }}</router-link>
             </div>
           </dd>
+          <dt>
+            <span v-text="t$('monolithApp.mstEmployee.mstDepartment')"></span>
+          </dt>
+          <dd>
+            <div v-if="mstEmployee.mstDepartment">
+              <router-link :to="{ name: 'MstDepartmentView', params: { mstDepartmentId: mstEmployee.mstDepartment.id } }">{{
+                mstEmployee.mstDepartment.id
+              }}</router-link>
+            </div>
+          </dd>
         </dl>
         <button type="submit" v-on:click.prevent="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
           <font-awesome-icon icon="arrow-left"></font-awesome-icon>&nbsp;<span v-text="t$('entity.action.back')"></span>

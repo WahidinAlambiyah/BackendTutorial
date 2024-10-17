@@ -1,0 +1,27 @@
+{
+  "monolithApp": {
+    "mstBrand": {
+      "home": {
+        "title": "Mst Brands",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Mst Brand baru",
+        "createOrEditLabel": "Buat atau edit Mst Brand",
+        "search": "Cari Mst Brand",
+        "notFound": "No Mst Brands found"
+      },
+      "created": "Mst Brand dengan id { param } telah dibuat",
+      "updated": "Mst Brand dengan id { param } telah diperbaharui",
+      "deleted": "Mst Brand dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Mst Brand { id }?"
+      },
+      "detail": {
+        "title": "Mst Brand"
+      },
+      "id": "ID",
+      "name": "Name",
+      "logo": "Logo",
+      "description": "Description"
+    }
+  }
+}

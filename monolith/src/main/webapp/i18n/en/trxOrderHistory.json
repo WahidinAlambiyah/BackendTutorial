@@ -1,0 +1,27 @@
+{
+  "monolithApp": {
+    "trxOrderHistory": {
+      "home": {
+        "title": "Trx Order Histories",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Trx Order History",
+        "createOrEditLabel": "Create or edit a Trx Order History",
+        "search": "Search for Trx Order History",
+        "notFound": "No Trx Order Histories found"
+      },
+      "created": "A new Trx Order History is created with identifier { param }",
+      "updated": "A Trx Order History is updated with identifier { param }",
+      "deleted": "A Trx Order History is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Trx Order History { id }?"
+      },
+      "detail": {
+        "title": "Trx Order History"
+      },
+      "id": "ID",
+      "previousStatus": "Previous Status",
+      "newStatus": "New Status",
+      "changeDate": "Change Date"
+    }
+  }
+}

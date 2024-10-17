@@ -1,0 +1,27 @@
+{
+  "monolithApp": {
+    "mstLoyaltyProgram": {
+      "home": {
+        "title": "Mst Loyalty Programs",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Mst Loyalty Program",
+        "createOrEditLabel": "Create or edit a Mst Loyalty Program",
+        "search": "Search for Mst Loyalty Program",
+        "notFound": "No Mst Loyalty Programs found"
+      },
+      "created": "A new Mst Loyalty Program is created with identifier { param }",
+      "updated": "A Mst Loyalty Program is updated with identifier { param }",
+      "deleted": "A Mst Loyalty Program is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Mst Loyalty Program { id }?"
+      },
+      "detail": {
+        "title": "Mst Loyalty Program"
+      },
+      "id": "ID",
+      "pointsEarned": "Points Earned",
+      "membershipTier": "Membership Tier",
+      "customer": "Customer"
+    }
+  }
+}

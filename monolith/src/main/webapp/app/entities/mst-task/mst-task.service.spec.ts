@@ -109,7 +109,7 @@ describe('Service Tests', () => {
       it('should partial update a MstTask', async () => {
         const patchObject = Object.assign(
           {
-            description: 'BBBBBB',
+            title: 'BBBBBB',
           },
           new MstTask(),
         );
@@ -144,7 +144,7 @@ describe('Service Tests', () => {
         );
         const expected = Object.assign({}, returnedFromService);
         axiosStub.get.resolves([returnedFromService]);
-        return service.retrieve().then(res => {
+        return service.retrieve({ sort: {}, page: 0, size: 10 }).then(res => {
           expect(res).toContainEqual(expected);
         });
       });

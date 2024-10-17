@@ -137,6 +137,29 @@
               </option>
             </select>
           </div>
+          <div class="form-group">
+            <label class="form-control-label" v-text="t$('monolithApp.mstEmployee.mstDepartment')" for="mst-employee-mstDepartment"></label>
+            <select
+              class="form-control"
+              id="mst-employee-mstDepartment"
+              data-cy="mstDepartment"
+              name="mstDepartment"
+              v-model="mstEmployee.mstDepartment"
+            >
+              <option v-bind:value="null"></option>
+              <option
+                v-bind:value="
+                  mstEmployee.mstDepartment && mstDepartmentOption.id === mstEmployee.mstDepartment.id
+                    ? mstEmployee.mstDepartment
+                    : mstDepartmentOption
+                "
+                v-for="mstDepartmentOption in mstDepartments"
+                :key="mstDepartmentOption.id"
+              >
+                {{ mstDepartmentOption.id }}
+              </option>
+            </select>
+          </div>
         </div>
         <div>
           <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" v-on:click="previousState()">

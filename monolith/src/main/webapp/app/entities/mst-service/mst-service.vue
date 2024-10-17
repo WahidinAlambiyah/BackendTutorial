@@ -50,13 +50,34 @@
       <table class="table table-striped" aria-describedby="mstServices">
         <thead>
           <tr>
-            <th scope="row"><span v-text="t$('global.field.id')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.mstService.name')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.mstService.description')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.mstService.price')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.mstService.durationInHours')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.mstService.serviceType')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.mstService.testimonial')"></span></th>
+            <th scope="row" v-on:click="changeOrder('id')">
+              <span v-text="t$('global.field.id')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'id'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('name')">
+              <span v-text="t$('monolithApp.mstService.name')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'name'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('description')">
+              <span v-text="t$('monolithApp.mstService.description')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'description'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('price')">
+              <span v-text="t$('monolithApp.mstService.price')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'price'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('durationInHours')">
+              <span v-text="t$('monolithApp.mstService.durationInHours')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'durationInHours'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('serviceType')">
+              <span v-text="t$('monolithApp.mstService.serviceType')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'serviceType'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('testimonial.id')">
+              <span v-text="t$('monolithApp.mstService.testimonial')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'testimonial.id'"></jhi-sort-indicator>
+            </th>
             <th scope="row"></th>
           </tr>
         </thead>
@@ -128,6 +149,14 @@
         </div>
       </template>
     </b-modal>
+    <div v-show="mstServices && mstServices.length > 0">
+      <div class="row justify-content-center">
+        <jhi-item-count :page="page" :total="queryCount" :itemsPerPage="itemsPerPage"></jhi-item-count>
+      </div>
+      <div class="row justify-content-center">
+        <b-pagination size="md" :total-rows="totalItems" v-model="page" :per-page="itemsPerPage"></b-pagination>
+      </div>
+    </div>
   </div>
 </template>
 

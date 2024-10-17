@@ -50,16 +50,46 @@
       <table class="table table-striped" aria-describedby="trxEvents">
         <thead>
           <tr>
-            <th scope="row"><span v-text="t$('global.field.id')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.trxEvent.title')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.trxEvent.description')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.trxEvent.date')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.trxEvent.location')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.trxEvent.capacity')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.trxEvent.price')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.trxEvent.status')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.trxEvent.service')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.trxEvent.testimonial')"></span></th>
+            <th scope="row" v-on:click="changeOrder('id')">
+              <span v-text="t$('global.field.id')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'id'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('title')">
+              <span v-text="t$('monolithApp.trxEvent.title')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'title'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('description')">
+              <span v-text="t$('monolithApp.trxEvent.description')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'description'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('date')">
+              <span v-text="t$('monolithApp.trxEvent.date')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'date'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('location')">
+              <span v-text="t$('monolithApp.trxEvent.location')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'location'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('capacity')">
+              <span v-text="t$('monolithApp.trxEvent.capacity')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'capacity'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('price')">
+              <span v-text="t$('monolithApp.trxEvent.price')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'price'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('status')">
+              <span v-text="t$('monolithApp.trxEvent.status')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'status'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('service.id')">
+              <span v-text="t$('monolithApp.trxEvent.service')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'service.id'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('testimonial.id')">
+              <span v-text="t$('monolithApp.trxEvent.testimonial')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'testimonial.id'"></jhi-sort-indicator>
+            </th>
             <th scope="row"></th>
           </tr>
         </thead>
@@ -140,6 +170,14 @@
         </div>
       </template>
     </b-modal>
+    <div v-show="trxEvents && trxEvents.length > 0">
+      <div class="row justify-content-center">
+        <jhi-item-count :page="page" :total="queryCount" :itemsPerPage="itemsPerPage"></jhi-item-count>
+      </div>
+      <div class="row justify-content-center">
+        <b-pagination size="md" :total-rows="totalItems" v-model="page" :per-page="itemsPerPage"></b-pagination>
+      </div>
+    </div>
   </div>
 </template>
 

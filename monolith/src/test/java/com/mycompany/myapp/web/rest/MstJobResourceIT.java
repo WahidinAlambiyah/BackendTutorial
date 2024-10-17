@@ -684,7 +684,7 @@ class MstJobResourceIT {
         MstJob partialUpdatedMstJob = new MstJob();
         partialUpdatedMstJob.setId(mstJob.getId());
 
-        partialUpdatedMstJob.minSalary(UPDATED_MIN_SALARY);
+        partialUpdatedMstJob.jobTitle(UPDATED_JOB_TITLE);
 
         webTestClient
             .patch()

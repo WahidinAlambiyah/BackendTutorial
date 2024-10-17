@@ -1,0 +1,26 @@
+{
+  "monolithApp": {
+    "trxStockAlert": {
+      "home": {
+        "title": "Trx Stock Alerts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Trx Stock Alert baru",
+        "createOrEditLabel": "Buat atau edit Trx Stock Alert",
+        "search": "Cari Trx Stock Alert",
+        "notFound": "No Trx Stock Alerts found"
+      },
+      "created": "Trx Stock Alert dengan id { param } telah dibuat",
+      "updated": "Trx Stock Alert dengan id { param } telah diperbaharui",
+      "deleted": "Trx Stock Alert dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Trx Stock Alert { id }?"
+      },
+      "detail": {
+        "title": "Trx Stock Alert"
+      },
+      "id": "ID",
+      "alertThreshold": "Alert Threshold",
+      "currentStock": "Current Stock"
+    }
+  }
+}

@@ -678,7 +678,7 @@ class LocationResourceIT {
         Location partialUpdatedLocation = new Location();
         partialUpdatedLocation.setId(location.getId());
 
-        partialUpdatedLocation.streetAddress(UPDATED_STREET_ADDRESS);
+        partialUpdatedLocation.postalCode(UPDATED_POSTAL_CODE).city(UPDATED_CITY);
 
         webTestClient
             .patch()

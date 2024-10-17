@@ -2,6 +2,7 @@ package com.mycompany.myapp.service;
 
 import com.mycompany.myapp.domain.criteria.TrxEventCriteria;
 import com.mycompany.myapp.service.dto.TrxEventDTO;
+import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -35,9 +36,10 @@ public interface TrxEventService {
     /**
      * Find trxEvents by criteria.
      *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<TrxEventDTO> findByCriteria(TrxEventCriteria criteria);
+    Flux<TrxEventDTO> findByCriteria(TrxEventCriteria criteria, Pageable pageable);
 
     /**
      * Find the count of trxEvents by criteria.
@@ -79,7 +81,9 @@ public interface TrxEventService {
      * Search for the trxEvent corresponding to the query.
      *
      * @param query the query of the search.
+     *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<TrxEventDTO> search(String query);
+    Flux<TrxEventDTO> search(String query, Pageable pageable);
 }

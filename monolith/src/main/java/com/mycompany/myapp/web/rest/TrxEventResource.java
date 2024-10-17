@@ -5,24 +5,29 @@ import com.mycompany.myapp.repository.TrxEventRepository;
 import com.mycompany.myapp.service.TrxEventService;
 import com.mycompany.myapp.service.dto.TrxEventDTO;
 import com.mycompany.myapp.web.rest.errors.BadRequestAlertException;
-import com.mycompany.myapp.web.rest.errors.ElasticsearchExceptionMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.ForwardedHeaderUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.reactive.ResponseUtil;
 
 /**
@@ -163,13 +168,32 @@ public class TrxEventResource {
     /**
      * {@code GET  /trx-events} : get all the trxEvents.
      *
+     * @param pageable the pagination information.
+     * @param request a {@link ServerHttpRequest} request.
      * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of trxEvents in body.
      */
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Flux<TrxEventDTO> getAllTrxEvents(TrxEventCriteria criteria) {
+    public Mono<ResponseEntity<List<TrxEventDTO>>> getAllTrxEvents(
+        TrxEventCriteria criteria,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        ServerHttpRequest request
+    ) {
         log.debug("REST request to get TrxEvents by criteria: {}", criteria);
-        return trxEventService.findByCriteria(criteria);
+        return trxEventService
+            .countByCriteria(criteria)
+            .zipWith(trxEventService.findByCriteria(criteria, pageable).collectList())
+            .map(
+                countWithEntities ->
+                    ResponseEntity.ok()
+                        .headers(
+                            PaginationUtil.generatePaginationHttpHeaders(
+                                ForwardedHeaderUtils.adaptFromForwardedHeaders(request.getURI(), request.getHeaders()),
+                                new PageImpl<>(countWithEntities.getT2(), pageable, countWithEntities.getT1())
+                            )
+                        )
+                        .body(countWithEntities.getT2())
+            );
     }
 
     /**
@@ -222,15 +246,27 @@ public class TrxEventResource {
      * to the query.
      *
      * @param query the query of the trxEvent search.
+     * @param pageable the pagination information.
+     * @param request a {@link ServerHttpRequest} request.
      * @return the result of the search.
      */
     @GetMapping("/_search")
-    public Mono<List<TrxEventDTO>> searchTrxEvents(@RequestParam("query") String query) {
-        log.debug("REST request to search TrxEvents for query {}", query);
-        try {
-            return trxEventService.search(query).collectList();
-        } catch (RuntimeException e) {
-            throw ElasticsearchExceptionMapper.mapException(e);
-        }
+    public Mono<ResponseEntity<Flux<TrxEventDTO>>> searchTrxEvents(
+        @RequestParam("query") String query,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        ServerHttpRequest request
+    ) {
+        log.debug("REST request to search for a page of TrxEvents for query {}", query);
+        return trxEventService
+            .searchCount()
+            .map(total -> new PageImpl<>(new ArrayList<>(), pageable, total))
+            .map(
+                page ->
+                    PaginationUtil.generatePaginationHttpHeaders(
+                        ForwardedHeaderUtils.adaptFromForwardedHeaders(request.getURI(), request.getHeaders()),
+                        page
+                    )
+            )
+            .map(headers -> ResponseEntity.ok().headers(headers).body(trxEventService.search(query, pageable)));
     }
 }

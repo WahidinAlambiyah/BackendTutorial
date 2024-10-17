@@ -15,7 +15,7 @@ describe('MstDepartment e2e test', () => {
   const mstDepartmentPageUrlPattern = new RegExp('/mst-department(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const mstDepartmentSample = { departmentName: 'hopelessly' };
+  const mstDepartmentSample = { departmentName: 'before' };
 
   let mstDepartment;
 
@@ -91,6 +91,9 @@ describe('MstDepartment e2e test', () => {
             },
             {
               statusCode: 200,
+              headers: {
+                link: '<http://localhost/api/mst-departments?page=0&size=20>; rel="last",<http://localhost/api/mst-departments?page=0&size=20>; rel="first"',
+              },
               body: [mstDepartment],
             },
           ).as('entitiesRequestInternal');
@@ -157,8 +160,8 @@ describe('MstDepartment e2e test', () => {
     });
 
     it('should create an instance of MstDepartment', () => {
-      cy.get(`[data-cy="departmentName"]`).type('motionless pish paranoia');
-      cy.get(`[data-cy="departmentName"]`).should('have.value', 'motionless pish paranoia');
+      cy.get(`[data-cy="departmentName"]`).type('behind shack');
+      cy.get(`[data-cy="departmentName"]`).should('have.value', 'behind shack');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

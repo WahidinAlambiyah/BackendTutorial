@@ -1,0 +1,27 @@
+{
+  "monolithApp": {
+    "mstDriver": {
+      "home": {
+        "title": "Mst Drivers",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Mst Driver baru",
+        "createOrEditLabel": "Buat atau edit Mst Driver",
+        "search": "Cari Mst Driver",
+        "notFound": "No Mst Drivers found"
+      },
+      "created": "Mst Driver dengan id { param } telah dibuat",
+      "updated": "Mst Driver dengan id { param } telah diperbaharui",
+      "deleted": "Mst Driver dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Mst Driver { id }?"
+      },
+      "detail": {
+        "title": "Mst Driver"
+      },
+      "id": "ID",
+      "name": "Name",
+      "contactNumber": "Contact Number",
+      "vehicleDetails": "Vehicle Details"
+    }
+  }
+}

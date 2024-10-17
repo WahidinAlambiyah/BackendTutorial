@@ -30,6 +30,8 @@ public class MstEmployeeDTO implements Serializable {
 
     private MstDepartmentDTO department;
 
+    private MstDepartmentDTO mstDepartment;
+
     public Long getId() {
         return id;
     }
@@ -110,6 +112,14 @@ public class MstEmployeeDTO implements Serializable {
         this.department = department;
     }
 
+    public MstDepartmentDTO getMstDepartment() {
+        return mstDepartment;
+    }
+
+    public void setMstDepartment(MstDepartmentDTO mstDepartment) {
+        this.mstDepartment = mstDepartment;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -145,6 +155,7 @@ public class MstEmployeeDTO implements Serializable {
             ", commissionPct=" + getCommissionPct() +
             ", manager=" + getManager() +
             ", department=" + getDepartment() +
+            ", mstDepartment=" + getMstDepartment() +
             "}";
     }
 }

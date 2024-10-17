@@ -1,0 +1,27 @@
+{
+  "annotations": {
+    "changelogDate": "20241017071437"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "logo",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "MstBrand",
+  "pagination": "pagination",
+  "relationships": [],
+  "service": "serviceImpl"
+}

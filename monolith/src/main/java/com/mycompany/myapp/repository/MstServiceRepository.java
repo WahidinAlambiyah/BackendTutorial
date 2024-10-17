@@ -15,6 +15,8 @@ import reactor.core.publisher.Mono;
 @SuppressWarnings("unused")
 @Repository
 public interface MstServiceRepository extends ReactiveCrudRepository<MstService, Long>, MstServiceRepositoryInternal {
+    Flux<MstService> findAllBy(Pageable pageable);
+
     @Query("SELECT * FROM mst_service entity WHERE entity.testimonial_id = :id")
     Flux<MstService> findByTestimonial(Long id);
 

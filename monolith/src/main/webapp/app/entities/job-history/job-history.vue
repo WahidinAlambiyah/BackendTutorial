@@ -136,7 +136,6 @@
             </td>
           </tr>
         </tbody>
-        <span ref="infiniteScrollEl"></span>
       </table>
     </div>
     <b-modal ref="removeEntity" id="removeEntity">
@@ -160,6 +159,14 @@
         </div>
       </template>
     </b-modal>
+    <div v-show="jobHistories && jobHistories.length > 0">
+      <div class="row justify-content-center">
+        <jhi-item-count :page="page" :total="queryCount" :itemsPerPage="itemsPerPage"></jhi-item-count>
+      </div>
+      <div class="row justify-content-center">
+        <b-pagination size="md" :total-rows="totalItems" v-model="page" :per-page="itemsPerPage"></b-pagination>
+      </div>
+    </div>
   </div>
 </template>
 

@@ -45,6 +45,7 @@
   ],
   "jpaMetamodelFiltering": true,
   "name": "TrxTournament",
+  "pagination": "pagination",
   "relationships": [
     {
       "otherEntityField": "title",

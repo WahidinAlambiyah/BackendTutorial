@@ -1,0 +1,30 @@
+{
+  "monolithApp": {
+    "trxDelivery": {
+      "home": {
+        "title": "Trx Deliveries",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Trx Delivery baru",
+        "createOrEditLabel": "Buat atau edit Trx Delivery",
+        "search": "Cari Trx Delivery",
+        "notFound": "No Trx Deliveries found"
+      },
+      "created": "Trx Delivery dengan id { param } telah dibuat",
+      "updated": "Trx Delivery dengan id { param } telah diperbaharui",
+      "deleted": "Trx Delivery dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Trx Delivery { id }?"
+      },
+      "detail": {
+        "title": "Trx Delivery"
+      },
+      "id": "ID",
+      "deliveryAddress": "Delivery Address",
+      "deliveryStatus": "Delivery Status",
+      "assignedDriver": "Assigned Driver",
+      "estimatedDeliveryTime": "Estimated Delivery Time",
+      "driver": "Driver",
+      "trxOrder": "Trx Order"
+    }
+  }
+}

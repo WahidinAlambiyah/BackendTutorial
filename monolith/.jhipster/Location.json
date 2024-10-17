@@ -24,6 +24,7 @@
   ],
   "jpaMetamodelFiltering": true,
   "name": "Location",
+  "pagination": "pagination",
   "relationships": [],
   "service": "serviceImpl"
 }

@@ -8,6 +8,7 @@ import com.mycompany.myapp.service.dto.TrxTestimonialDTO;
 import com.mycompany.myapp.service.mapper.TrxTestimonialMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -77,9 +78,9 @@ public class TrxTestimonialServiceImpl implements TrxTestimonialService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<TrxTestimonialDTO> findByCriteria(TrxTestimonialCriteria criteria) {
+    public Flux<TrxTestimonialDTO> findByCriteria(TrxTestimonialCriteria criteria, Pageable pageable) {
         log.debug("Request to get all TrxTestimonials by Criteria");
-        return trxTestimonialRepository.findByCriteria(criteria, null).map(trxTestimonialMapper::toDto);
+        return trxTestimonialRepository.findByCriteria(criteria, pageable).map(trxTestimonialMapper::toDto);
     }
 
     /**
@@ -115,12 +116,8 @@ public class TrxTestimonialServiceImpl implements TrxTestimonialService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<TrxTestimonialDTO> search(String query) {
-        log.debug("Request to search TrxTestimonials for query {}", query);
-        try {
-            return trxTestimonialSearchRepository.search(query).map(trxTestimonialMapper::toDto);
-        } catch (RuntimeException e) {
-            throw e;
-        }
+    public Flux<TrxTestimonialDTO> search(String query, Pageable pageable) {
+        log.debug("Request to search for a page of TrxTestimonials for query {}", query);
+        return trxTestimonialSearchRepository.search(query, pageable).map(trxTestimonialMapper::toDto);
     }
 }

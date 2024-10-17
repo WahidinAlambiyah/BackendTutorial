@@ -1,0 +1,28 @@
+{
+  "monolithApp": {
+    "trxOrderItem": {
+      "home": {
+        "title": "Trx Order Items",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Trx Order Item baru",
+        "createOrEditLabel": "Buat atau edit Trx Order Item",
+        "search": "Cari Trx Order Item",
+        "notFound": "No Trx Order Items found"
+      },
+      "created": "Trx Order Item dengan id { param } telah dibuat",
+      "updated": "Trx Order Item dengan id { param } telah diperbaharui",
+      "deleted": "Trx Order Item dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Trx Order Item { id }?"
+      },
+      "detail": {
+        "title": "Trx Order Item"
+      },
+      "id": "ID",
+      "quantity": "Quantity",
+      "price": "Price",
+      "order": "Order",
+      "product": "Product"
+    }
+  }
+}

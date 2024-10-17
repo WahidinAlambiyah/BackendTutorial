@@ -1,0 +1,31 @@
+{
+  "monolithApp": {
+    "trxOrder": {
+      "home": {
+        "title": "Trx Orders",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Trx Order",
+        "createOrEditLabel": "Create or edit a Trx Order",
+        "search": "Search for Trx Order",
+        "notFound": "No Trx Orders found"
+      },
+      "created": "A new Trx Order is created with identifier { param }",
+      "updated": "A Trx Order is updated with identifier { param }",
+      "deleted": "A Trx Order is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Trx Order { id }?"
+      },
+      "detail": {
+        "title": "Trx Order"
+      },
+      "id": "ID",
+      "orderDate": "Order Date",
+      "deliveryDate": "Delivery Date",
+      "orderStatus": "Order Status",
+      "paymentMethod": "Payment Method",
+      "totalAmount": "Total Amount",
+      "delivery": "Delivery",
+      "mstCustomer": "Mst Customer"
+    }
+  }
+}

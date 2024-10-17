@@ -696,7 +696,7 @@ class MstSubDistrictResourceIT {
         MstSubDistrict partialUpdatedMstSubDistrict = new MstSubDistrict();
         partialUpdatedMstSubDistrict.setId(mstSubDistrict.getId());
 
-        partialUpdatedMstSubDistrict.name(UPDATED_NAME).unm49Code(UPDATED_UNM_49_CODE).isoAlpha2Code(UPDATED_ISO_ALPHA_2_CODE);
+        partialUpdatedMstSubDistrict.unm49Code(UPDATED_UNM_49_CODE);
 
         webTestClient
             .patch()

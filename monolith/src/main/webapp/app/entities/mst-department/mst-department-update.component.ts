@@ -62,6 +62,7 @@ export default defineComponent({
       },
       location: {},
       mstEmployees: {},
+      employees: {},
       jobHistory: {},
     };
     const v$ = useVuelidate(validationRules, mstDepartment as any);

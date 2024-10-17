@@ -1,0 +1,27 @@
+{
+  "monolithApp": {
+    "mstLoyaltyProgram": {
+      "home": {
+        "title": "Mst Loyalty Programs",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Mst Loyalty Program baru",
+        "createOrEditLabel": "Buat atau edit Mst Loyalty Program",
+        "search": "Cari Mst Loyalty Program",
+        "notFound": "No Mst Loyalty Programs found"
+      },
+      "created": "Mst Loyalty Program dengan id { param } telah dibuat",
+      "updated": "Mst Loyalty Program dengan id { param } telah diperbaharui",
+      "deleted": "Mst Loyalty Program dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Mst Loyalty Program { id }?"
+      },
+      "detail": {
+        "title": "Mst Loyalty Program"
+      },
+      "id": "ID",
+      "pointsEarned": "Points Earned",
+      "membershipTier": "Membership Tier",
+      "customer": "Customer"
+    }
+  }
+}

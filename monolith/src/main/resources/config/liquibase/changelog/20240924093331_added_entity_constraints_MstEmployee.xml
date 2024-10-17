@@ -23,5 +23,12 @@
                                  referencedColumnNames="id"
                                  referencedTableName="mst_department"
                                  />
+
+        <addForeignKeyConstraint baseColumnNames="mst_department_id"
+                                 baseTableName="mst_employee"
+                                 constraintName="fk_mst_employee__mst_department_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="mst_department"
+                                 />
     </changeSet>
 </databaseChangeLog>

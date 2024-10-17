@@ -36,9 +36,10 @@ public interface TrxTournamentService {
     /**
      * Find trxTournaments by criteria.
      *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<TrxTournamentDTO> findByCriteria(TrxTournamentCriteria criteria);
+    Flux<TrxTournamentDTO> findByCriteria(TrxTournamentCriteria criteria, Pageable pageable);
 
     /**
      * Find the count of trxTournaments by criteria.
@@ -88,7 +89,9 @@ public interface TrxTournamentService {
      * Search for the trxTournament corresponding to the query.
      *
      * @param query the query of the search.
+     *
+     * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Flux<TrxTournamentDTO> search(String query);
+    Flux<TrxTournamentDTO> search(String query, Pageable pageable);
 }

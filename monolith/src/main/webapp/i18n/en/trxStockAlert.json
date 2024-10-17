@@ -1,0 +1,26 @@
+{
+  "monolithApp": {
+    "trxStockAlert": {
+      "home": {
+        "title": "Trx Stock Alerts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Trx Stock Alert",
+        "createOrEditLabel": "Create or edit a Trx Stock Alert",
+        "search": "Search for Trx Stock Alert",
+        "notFound": "No Trx Stock Alerts found"
+      },
+      "created": "A new Trx Stock Alert is created with identifier { param }",
+      "updated": "A Trx Stock Alert is updated with identifier { param }",
+      "deleted": "A Trx Stock Alert is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Trx Stock Alert { id }?"
+      },
+      "detail": {
+        "title": "Trx Stock Alert"
+      },
+      "id": "ID",
+      "alertThreshold": "Alert Threshold",
+      "currentStock": "Current Stock"
+    }
+  }
+}

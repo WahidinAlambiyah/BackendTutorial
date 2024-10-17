@@ -1,0 +1,27 @@
+{
+  "monolithApp": {
+    "trxDiscount": {
+      "home": {
+        "title": "Trx Discounts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Trx Discount",
+        "createOrEditLabel": "Create or edit a Trx Discount",
+        "search": "Search for Trx Discount",
+        "notFound": "No Trx Discounts found"
+      },
+      "created": "A new Trx Discount is created with identifier { param }",
+      "updated": "A Trx Discount is updated with identifier { param }",
+      "deleted": "A Trx Discount is deleted with identifier { param }",
+      "delete": {
+        "question": "Are you sure you want to delete Trx Discount { id }?"
+      },
+      "detail": {
+        "title": "Trx Discount"
+      },
+      "id": "ID",
+      "discountPercentage": "Discount Percentage",
+      "startDate": "Start Date",
+      "endDate": "End Date"
+    }
+  }
+}

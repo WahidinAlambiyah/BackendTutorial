@@ -884,12 +884,7 @@ class TrxEventResourceIT {
         TrxEvent partialUpdatedTrxEvent = new TrxEvent();
         partialUpdatedTrxEvent.setId(trxEvent.getId());
 
-        partialUpdatedTrxEvent
-            .title(UPDATED_TITLE)
-            .description(UPDATED_DESCRIPTION)
-            .location(UPDATED_LOCATION)
-            .price(UPDATED_PRICE)
-            .status(UPDATED_STATUS);
+        partialUpdatedTrxEvent.description(UPDATED_DESCRIPTION);
 
         webTestClient
             .patch()

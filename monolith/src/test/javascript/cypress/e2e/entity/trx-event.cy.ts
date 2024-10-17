@@ -15,7 +15,7 @@ describe('TrxEvent e2e test', () => {
   const trxEventPageUrlPattern = new RegExp('/trx-event(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const trxEventSample = { title: 'pinpoint scarcely', date: '2024-09-24T09:26:59.244Z' };
+  const trxEventSample = { title: 'pace sharpen', date: '2024-09-24T06:18:17.298Z' };
 
   let trxEvent;
 
@@ -91,6 +91,9 @@ describe('TrxEvent e2e test', () => {
             },
             {
               statusCode: 200,
+              headers: {
+                link: '<http://localhost/api/trx-events?page=0&size=20>; rel="last",<http://localhost/api/trx-events?page=0&size=20>; rel="first"',
+              },
               body: [trxEvent],
             },
           ).as('entitiesRequestInternal');
@@ -157,26 +160,26 @@ describe('TrxEvent e2e test', () => {
     });
 
     it('should create an instance of TrxEvent', () => {
-      cy.get(`[data-cy="title"]`).type('till');
-      cy.get(`[data-cy="title"]`).should('have.value', 'till');
+      cy.get(`[data-cy="title"]`).type('officially savor among');
+      cy.get(`[data-cy="title"]`).should('have.value', 'officially savor among');
 
       cy.get(`[data-cy="description"]`).type('../fake-data/blob/hipster.txt');
       cy.get(`[data-cy="description"]`).invoke('val').should('match', new RegExp('../fake-data/blob/hipster.txt'));
 
-      cy.get(`[data-cy="date"]`).type('2024-09-24T05:00');
+      cy.get(`[data-cy="date"]`).type('2024-09-24T06:33');
       cy.get(`[data-cy="date"]`).blur();
-      cy.get(`[data-cy="date"]`).should('have.value', '2024-09-24T05:00');
+      cy.get(`[data-cy="date"]`).should('have.value', '2024-09-24T06:33');
 
-      cy.get(`[data-cy="location"]`).type('boohoo');
-      cy.get(`[data-cy="location"]`).should('have.value', 'boohoo');
+      cy.get(`[data-cy="location"]`).type('yuck boo');
+      cy.get(`[data-cy="location"]`).should('have.value', 'yuck boo');
 
-      cy.get(`[data-cy="capacity"]`).type('5063');
-      cy.get(`[data-cy="capacity"]`).should('have.value', '5063');
+      cy.get(`[data-cy="capacity"]`).type('24352');
+      cy.get(`[data-cy="capacity"]`).should('have.value', '24352');
 
-      cy.get(`[data-cy="price"]`).type('904.93');
-      cy.get(`[data-cy="price"]`).should('have.value', '904.93');
+      cy.get(`[data-cy="price"]`).type('29626.22');
+      cy.get(`[data-cy="price"]`).should('have.value', '29626.22');
 
-      cy.get(`[data-cy="status"]`).select('ONGOING');
+      cy.get(`[data-cy="status"]`).select('CANCELLED');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

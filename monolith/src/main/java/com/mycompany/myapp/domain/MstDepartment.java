@@ -33,8 +33,12 @@ public class MstDepartment implements Serializable {
     private Location location;
 
     @Transient
-    @JsonIgnoreProperties(value = { "mstJobs", "manager", "department", "jobHistory" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "mstJobs", "manager", "department", "mstDepartment", "jobHistory" }, allowSetters = true)
     private Set<MstEmployee> mstEmployees = new HashSet<>();
+
+    @Transient
+    @JsonIgnoreProperties(value = { "mstJobs", "manager", "department", "mstDepartment", "jobHistory" }, allowSetters = true)
+    private Set<MstEmployee> employees = new HashSet<>();
 
     @Transient
     private JobHistory jobHistory;
@@ -112,6 +116,37 @@ public class MstDepartment implements Serializable {
     public MstDepartment removeMstEmployee(MstEmployee mstEmployee) {
         this.mstEmployees.remove(mstEmployee);
         mstEmployee.setDepartment(null);
+        return this;
+    }
+
+    public Set<MstEmployee> getEmployees() {
+        return this.employees;
+    }
+
+    public void setEmployees(Set<MstEmployee> mstEmployees) {
+        if (this.employees != null) {
+            this.employees.forEach(i -> i.setMstDepartment(null));
+        }
+        if (mstEmployees != null) {
+            mstEmployees.forEach(i -> i.setMstDepartment(this));
+        }
+        this.employees = mstEmployees;
+    }
+
+    public MstDepartment employees(Set<MstEmployee> mstEmployees) {
+        this.setEmployees(mstEmployees);
+        return this;
+    }
+
+    public MstDepartment addEmployee(MstEmployee mstEmployee) {
+        this.employees.add(mstEmployee);
+        mstEmployee.setMstDepartment(this);
+        return this;
+    }
+
+    public MstDepartment removeEmployee(MstEmployee mstEmployee) {
+        this.employees.remove(mstEmployee);
+        mstEmployee.setMstDepartment(null);
         return this;
     }
 

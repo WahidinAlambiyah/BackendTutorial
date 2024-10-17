@@ -1,0 +1,40 @@
+{
+  "annotations": {
+    "changelogDate": "20241017071446"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "deliveryAddress",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "deliveryStatus",
+      "fieldType": "DeliveryStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "PENDING,OUT_FOR_DELIVERY,DELIVERED"
+    },
+    {
+      "fieldName": "assignedDriver",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "estimatedDeliveryTime",
+      "fieldType": "Instant"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "TrxDelivery",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "mstDriver",
+      "relationshipName": "driver",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceImpl"
+}

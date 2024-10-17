@@ -15,6 +15,8 @@ import reactor.core.publisher.Mono;
 @SuppressWarnings("unused")
 @Repository
 public interface LocationRepository extends ReactiveCrudRepository<Location, Long>, LocationRepositoryInternal {
+    Flux<Location> findAllBy(Pageable pageable);
+
     @Query("SELECT * FROM location entity WHERE entity.id not in (select mst_department_id from mst_department)")
     Flux<Location> findAllWhereMstDepartmentIsNull();
 

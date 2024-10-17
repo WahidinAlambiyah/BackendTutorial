@@ -8,6 +8,7 @@ import com.mycompany.myapp.service.dto.MstTaskDTO;
 import com.mycompany.myapp.service.mapper.MstTaskMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -71,9 +72,9 @@ public class MstTaskServiceImpl implements MstTaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<MstTaskDTO> findByCriteria(MstTaskCriteria criteria) {
+    public Flux<MstTaskDTO> findByCriteria(MstTaskCriteria criteria, Pageable pageable) {
         log.debug("Request to get all MstTasks by Criteria");
-        return mstTaskRepository.findByCriteria(criteria, null).map(mstTaskMapper::toDto);
+        return mstTaskRepository.findByCriteria(criteria, pageable).map(mstTaskMapper::toDto);
     }
 
     /**
@@ -109,12 +110,8 @@ public class MstTaskServiceImpl implements MstTaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public Flux<MstTaskDTO> search(String query) {
-        log.debug("Request to search MstTasks for query {}", query);
-        try {
-            return mstTaskSearchRepository.search(query).map(mstTaskMapper::toDto);
-        } catch (RuntimeException e) {
-            throw e;
-        }
+    public Flux<MstTaskDTO> search(String query, Pageable pageable) {
+        log.debug("Request to search for a page of MstTasks for query {}", query);
+        return mstTaskSearchRepository.search(query, pageable).map(mstTaskMapper::toDto);
     }
 }

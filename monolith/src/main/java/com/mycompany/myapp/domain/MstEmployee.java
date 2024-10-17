@@ -54,12 +54,16 @@ public class MstEmployee implements Serializable {
     private Set<MstJob> mstJobs = new HashSet<>();
 
     @Transient
-    @JsonIgnoreProperties(value = { "mstJobs", "manager", "department", "jobHistory" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "mstJobs", "manager", "department", "mstDepartment", "jobHistory" }, allowSetters = true)
     private MstEmployee manager;
 
     @Transient
-    @JsonIgnoreProperties(value = { "location", "mstEmployees", "jobHistory" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "location", "mstEmployees", "employees", "jobHistory" }, allowSetters = true)
     private MstDepartment department;
+
+    @Transient
+    @JsonIgnoreProperties(value = { "location", "mstEmployees", "employees", "jobHistory" }, allowSetters = true)
+    private MstDepartment mstDepartment;
 
     @Transient
     private JobHistory jobHistory;
@@ -69,6 +73,9 @@ public class MstEmployee implements Serializable {
 
     @Column("department_id")
     private Long departmentId;
+
+    @Column("mst_department_id")
+    private Long mstDepartmentId;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -235,6 +242,20 @@ public class MstEmployee implements Serializable {
         return this;
     }
 
+    public MstDepartment getMstDepartment() {
+        return this.mstDepartment;
+    }
+
+    public void setMstDepartment(MstDepartment mstDepartment) {
+        this.mstDepartment = mstDepartment;
+        this.mstDepartmentId = mstDepartment != null ? mstDepartment.getId() : null;
+    }
+
+    public MstEmployee mstDepartment(MstDepartment mstDepartment) {
+        this.setMstDepartment(mstDepartment);
+        return this;
+    }
+
     public JobHistory getJobHistory() {
         return this.jobHistory;
     }
@@ -268,6 +289,14 @@ public class MstEmployee implements Serializable {
 
     public void setDepartmentId(Long mstDepartment) {
         this.departmentId = mstDepartment;
+    }
+
+    public Long getMstDepartmentId() {
+        return this.mstDepartmentId;
+    }
+
+    public void setMstDepartmentId(Long mstDepartment) {
+        this.mstDepartmentId = mstDepartment;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

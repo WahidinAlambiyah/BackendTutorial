@@ -1,0 +1,29 @@
+{
+  "monolithApp": {
+    "trxNotification": {
+      "home": {
+        "title": "Trx Notifications",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Trx Notification baru",
+        "createOrEditLabel": "Buat atau edit Trx Notification",
+        "search": "Cari Trx Notification",
+        "notFound": "No Trx Notifications found"
+      },
+      "created": "Trx Notification dengan id { param } telah dibuat",
+      "updated": "Trx Notification dengan id { param } telah diperbaharui",
+      "deleted": "Trx Notification dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Trx Notification { id }?"
+      },
+      "detail": {
+        "title": "Trx Notification"
+      },
+      "id": "ID",
+      "recipient": "Recipient",
+      "messageType": "Message Type",
+      "content": "Content",
+      "sentAt": "Sent At",
+      "customer": "Customer"
+    }
+  }
+}

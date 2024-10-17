@@ -1,0 +1,46 @@
+<template>
+  <div class="row justify-content-center">
+    <div class="col-8">
+      <div v-if="trxDiscount">
+        <h2 class="jh-entity-heading" data-cy="trxDiscountDetailsHeading">
+          <span v-text="t$('monolithApp.trxDiscount.detail.title')"></span> {{ trxDiscount.id }}
+        </h2>
+        <dl class="row jh-entity-details">
+          <dt>
+            <span v-text="t$('monolithApp.trxDiscount.discountPercentage')"></span>
+          </dt>
+          <dd>
+            <span>{{ trxDiscount.discountPercentage }}</span>
+          </dd>
+          <dt>
+            <span v-text="t$('monolithApp.trxDiscount.startDate')"></span>
+          </dt>
+          <dd>
+            <span v-if="trxDiscount.startDate">{{ formatDateLong(trxDiscount.startDate) }}</span>
+          </dd>
+          <dt>
+            <span v-text="t$('monolithApp.trxDiscount.endDate')"></span>
+          </dt>
+          <dd>
+            <span v-if="trxDiscount.endDate">{{ formatDateLong(trxDiscount.endDate) }}</span>
+          </dd>
+        </dl>
+        <button type="submit" v-on:click.prevent="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <font-awesome-icon icon="arrow-left"></font-awesome-icon>&nbsp;<span v-text="t$('entity.action.back')"></span>
+        </button>
+        <router-link
+          v-if="trxDiscount.id"
+          :to="{ name: 'TrxDiscountEdit', params: { trxDiscountId: trxDiscount.id } }"
+          custom
+          v-slot="{ navigate }"
+        >
+          <button @click="navigate" class="btn btn-primary">
+            <font-awesome-icon icon="pencil-alt"></font-awesome-icon>&nbsp;<span v-text="t$('entity.action.edit')"></span>
+          </button>
+        </router-link>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts" src="./trx-discount-details.component.ts"></script>

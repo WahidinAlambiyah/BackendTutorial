@@ -1,0 +1,27 @@
+{
+  "monolithApp": {
+    "trxDiscount": {
+      "home": {
+        "title": "Trx Discounts",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Buat Trx Discount baru",
+        "createOrEditLabel": "Buat atau edit Trx Discount",
+        "search": "Cari Trx Discount",
+        "notFound": "No Trx Discounts found"
+      },
+      "created": "Trx Discount dengan id { param } telah dibuat",
+      "updated": "Trx Discount dengan id { param } telah diperbaharui",
+      "deleted": "Trx Discount dengan id { param } telah dihapus",
+      "delete": {
+        "question": "Apakah anda yakin ingin menghapus Trx Discount { id }?"
+      },
+      "detail": {
+        "title": "Trx Discount"
+      },
+      "id": "ID",
+      "discountPercentage": "Discount Percentage",
+      "startDate": "Start Date",
+      "endDate": "End Date"
+    }
+  }
+}

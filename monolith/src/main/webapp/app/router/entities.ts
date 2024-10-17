@@ -71,6 +71,82 @@ const JobHistory = () => import('@/entities/job-history/job-history.vue');
 const JobHistoryUpdate = () => import('@/entities/job-history/job-history-update.vue');
 const JobHistoryDetails = () => import('@/entities/job-history/job-history-details.vue');
 
+const MstProduct = () => import('@/entities/mst-product/mst-product.vue');
+const MstProductUpdate = () => import('@/entities/mst-product/mst-product-update.vue');
+const MstProductDetails = () => import('@/entities/mst-product/mst-product-details.vue');
+
+const MstCategory = () => import('@/entities/mst-category/mst-category.vue');
+const MstCategoryUpdate = () => import('@/entities/mst-category/mst-category-update.vue');
+const MstCategoryDetails = () => import('@/entities/mst-category/mst-category-details.vue');
+
+const MstBrand = () => import('@/entities/mst-brand/mst-brand.vue');
+const MstBrandUpdate = () => import('@/entities/mst-brand/mst-brand-update.vue');
+const MstBrandDetails = () => import('@/entities/mst-brand/mst-brand-details.vue');
+
+const MstSupplier = () => import('@/entities/mst-supplier/mst-supplier.vue');
+const MstSupplierUpdate = () => import('@/entities/mst-supplier/mst-supplier-update.vue');
+const MstSupplierDetails = () => import('@/entities/mst-supplier/mst-supplier-details.vue');
+
+const Stock = () => import('@/entities/stock/stock.vue');
+const StockUpdate = () => import('@/entities/stock/stock-update.vue');
+const StockDetails = () => import('@/entities/stock/stock-details.vue');
+
+const TrxOrderStock = () => import('@/entities/trx-order-stock/trx-order-stock.vue');
+const TrxOrderStockUpdate = () => import('@/entities/trx-order-stock/trx-order-stock-update.vue');
+const TrxOrderStockDetails = () => import('@/entities/trx-order-stock/trx-order-stock-details.vue');
+
+const TrxCart = () => import('@/entities/trx-cart/trx-cart.vue');
+const TrxCartUpdate = () => import('@/entities/trx-cart/trx-cart-update.vue');
+const TrxCartDetails = () => import('@/entities/trx-cart/trx-cart-details.vue');
+
+const TrxOrder = () => import('@/entities/trx-order/trx-order.vue');
+const TrxOrderUpdate = () => import('@/entities/trx-order/trx-order-update.vue');
+const TrxOrderDetails = () => import('@/entities/trx-order/trx-order-details.vue');
+
+const TrxOrderItem = () => import('@/entities/trx-order-item/trx-order-item.vue');
+const TrxOrderItemUpdate = () => import('@/entities/trx-order-item/trx-order-item-update.vue');
+const TrxOrderItemDetails = () => import('@/entities/trx-order-item/trx-order-item-details.vue');
+
+const MstCustomer = () => import('@/entities/mst-customer/mst-customer.vue');
+const MstCustomerUpdate = () => import('@/entities/mst-customer/mst-customer-update.vue');
+const MstCustomerDetails = () => import('@/entities/mst-customer/mst-customer-details.vue');
+
+const MstLoyaltyProgram = () => import('@/entities/mst-loyalty-program/mst-loyalty-program.vue');
+const MstLoyaltyProgramUpdate = () => import('@/entities/mst-loyalty-program/mst-loyalty-program-update.vue');
+const MstLoyaltyProgramDetails = () => import('@/entities/mst-loyalty-program/mst-loyalty-program-details.vue');
+
+const TrxDelivery = () => import('@/entities/trx-delivery/trx-delivery.vue');
+const TrxDeliveryUpdate = () => import('@/entities/trx-delivery/trx-delivery-update.vue');
+const TrxDeliveryDetails = () => import('@/entities/trx-delivery/trx-delivery-details.vue');
+
+const MstDriver = () => import('@/entities/mst-driver/mst-driver.vue');
+const MstDriverUpdate = () => import('@/entities/mst-driver/mst-driver-update.vue');
+const MstDriverDetails = () => import('@/entities/mst-driver/mst-driver-details.vue');
+
+const TrxOrderHistory = () => import('@/entities/trx-order-history/trx-order-history.vue');
+const TrxOrderHistoryUpdate = () => import('@/entities/trx-order-history/trx-order-history-update.vue');
+const TrxOrderHistoryDetails = () => import('@/entities/trx-order-history/trx-order-history-details.vue');
+
+const TrxProductHistory = () => import('@/entities/trx-product-history/trx-product-history.vue');
+const TrxProductHistoryUpdate = () => import('@/entities/trx-product-history/trx-product-history-update.vue');
+const TrxProductHistoryDetails = () => import('@/entities/trx-product-history/trx-product-history-details.vue');
+
+const TrxDiscount = () => import('@/entities/trx-discount/trx-discount.vue');
+const TrxDiscountUpdate = () => import('@/entities/trx-discount/trx-discount-update.vue');
+const TrxDiscountDetails = () => import('@/entities/trx-discount/trx-discount-details.vue');
+
+const TrxCoupon = () => import('@/entities/trx-coupon/trx-coupon.vue');
+const TrxCouponUpdate = () => import('@/entities/trx-coupon/trx-coupon-update.vue');
+const TrxCouponDetails = () => import('@/entities/trx-coupon/trx-coupon-details.vue');
+
+const TrxNotification = () => import('@/entities/trx-notification/trx-notification.vue');
+const TrxNotificationUpdate = () => import('@/entities/trx-notification/trx-notification-update.vue');
+const TrxNotificationDetails = () => import('@/entities/trx-notification/trx-notification-details.vue');
+
+const TrxStockAlert = () => import('@/entities/trx-stock-alert/trx-stock-alert.vue');
+const TrxStockAlertUpdate = () => import('@/entities/trx-stock-alert/trx-stock-alert-update.vue');
+const TrxStockAlertDetails = () => import('@/entities/trx-stock-alert/trx-stock-alert-details.vue');
+
 // jhipster-needle-add-entity-to-router-import - JHipster will import entities to the router here
 
 export default {
@@ -483,6 +559,462 @@ export default {
       path: 'job-history/:jobHistoryId/view',
       name: 'JobHistoryView',
       component: JobHistoryDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-product',
+      name: 'MstProduct',
+      component: MstProduct,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-product/new',
+      name: 'MstProductCreate',
+      component: MstProductUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-product/:mstProductId/edit',
+      name: 'MstProductEdit',
+      component: MstProductUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-product/:mstProductId/view',
+      name: 'MstProductView',
+      component: MstProductDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-category',
+      name: 'MstCategory',
+      component: MstCategory,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-category/new',
+      name: 'MstCategoryCreate',
+      component: MstCategoryUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-category/:mstCategoryId/edit',
+      name: 'MstCategoryEdit',
+      component: MstCategoryUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-category/:mstCategoryId/view',
+      name: 'MstCategoryView',
+      component: MstCategoryDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-brand',
+      name: 'MstBrand',
+      component: MstBrand,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-brand/new',
+      name: 'MstBrandCreate',
+      component: MstBrandUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-brand/:mstBrandId/edit',
+      name: 'MstBrandEdit',
+      component: MstBrandUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-brand/:mstBrandId/view',
+      name: 'MstBrandView',
+      component: MstBrandDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-supplier',
+      name: 'MstSupplier',
+      component: MstSupplier,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-supplier/new',
+      name: 'MstSupplierCreate',
+      component: MstSupplierUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-supplier/:mstSupplierId/edit',
+      name: 'MstSupplierEdit',
+      component: MstSupplierUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-supplier/:mstSupplierId/view',
+      name: 'MstSupplierView',
+      component: MstSupplierDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'stock',
+      name: 'Stock',
+      component: Stock,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'stock/new',
+      name: 'StockCreate',
+      component: StockUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'stock/:stockId/edit',
+      name: 'StockEdit',
+      component: StockUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'stock/:stockId/view',
+      name: 'StockView',
+      component: StockDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-order-stock',
+      name: 'TrxOrderStock',
+      component: TrxOrderStock,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-order-stock/new',
+      name: 'TrxOrderStockCreate',
+      component: TrxOrderStockUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-order-stock/:trxOrderStockId/edit',
+      name: 'TrxOrderStockEdit',
+      component: TrxOrderStockUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-order-stock/:trxOrderStockId/view',
+      name: 'TrxOrderStockView',
+      component: TrxOrderStockDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-cart',
+      name: 'TrxCart',
+      component: TrxCart,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-cart/new',
+      name: 'TrxCartCreate',
+      component: TrxCartUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-cart/:trxCartId/edit',
+      name: 'TrxCartEdit',
+      component: TrxCartUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-cart/:trxCartId/view',
+      name: 'TrxCartView',
+      component: TrxCartDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-order',
+      name: 'TrxOrder',
+      component: TrxOrder,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-order/new',
+      name: 'TrxOrderCreate',
+      component: TrxOrderUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-order/:trxOrderId/edit',
+      name: 'TrxOrderEdit',
+      component: TrxOrderUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-order/:trxOrderId/view',
+      name: 'TrxOrderView',
+      component: TrxOrderDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-order-item',
+      name: 'TrxOrderItem',
+      component: TrxOrderItem,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-order-item/new',
+      name: 'TrxOrderItemCreate',
+      component: TrxOrderItemUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-order-item/:trxOrderItemId/edit',
+      name: 'TrxOrderItemEdit',
+      component: TrxOrderItemUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-order-item/:trxOrderItemId/view',
+      name: 'TrxOrderItemView',
+      component: TrxOrderItemDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-customer',
+      name: 'MstCustomer',
+      component: MstCustomer,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-customer/new',
+      name: 'MstCustomerCreate',
+      component: MstCustomerUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-customer/:mstCustomerId/edit',
+      name: 'MstCustomerEdit',
+      component: MstCustomerUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-customer/:mstCustomerId/view',
+      name: 'MstCustomerView',
+      component: MstCustomerDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-loyalty-program',
+      name: 'MstLoyaltyProgram',
+      component: MstLoyaltyProgram,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-loyalty-program/new',
+      name: 'MstLoyaltyProgramCreate',
+      component: MstLoyaltyProgramUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-loyalty-program/:mstLoyaltyProgramId/edit',
+      name: 'MstLoyaltyProgramEdit',
+      component: MstLoyaltyProgramUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-loyalty-program/:mstLoyaltyProgramId/view',
+      name: 'MstLoyaltyProgramView',
+      component: MstLoyaltyProgramDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-delivery',
+      name: 'TrxDelivery',
+      component: TrxDelivery,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-delivery/new',
+      name: 'TrxDeliveryCreate',
+      component: TrxDeliveryUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-delivery/:trxDeliveryId/edit',
+      name: 'TrxDeliveryEdit',
+      component: TrxDeliveryUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-delivery/:trxDeliveryId/view',
+      name: 'TrxDeliveryView',
+      component: TrxDeliveryDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-driver',
+      name: 'MstDriver',
+      component: MstDriver,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-driver/new',
+      name: 'MstDriverCreate',
+      component: MstDriverUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-driver/:mstDriverId/edit',
+      name: 'MstDriverEdit',
+      component: MstDriverUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'mst-driver/:mstDriverId/view',
+      name: 'MstDriverView',
+      component: MstDriverDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-order-history',
+      name: 'TrxOrderHistory',
+      component: TrxOrderHistory,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-order-history/new',
+      name: 'TrxOrderHistoryCreate',
+      component: TrxOrderHistoryUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-order-history/:trxOrderHistoryId/edit',
+      name: 'TrxOrderHistoryEdit',
+      component: TrxOrderHistoryUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-order-history/:trxOrderHistoryId/view',
+      name: 'TrxOrderHistoryView',
+      component: TrxOrderHistoryDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-product-history',
+      name: 'TrxProductHistory',
+      component: TrxProductHistory,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-product-history/new',
+      name: 'TrxProductHistoryCreate',
+      component: TrxProductHistoryUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-product-history/:trxProductHistoryId/edit',
+      name: 'TrxProductHistoryEdit',
+      component: TrxProductHistoryUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-product-history/:trxProductHistoryId/view',
+      name: 'TrxProductHistoryView',
+      component: TrxProductHistoryDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-discount',
+      name: 'TrxDiscount',
+      component: TrxDiscount,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-discount/new',
+      name: 'TrxDiscountCreate',
+      component: TrxDiscountUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-discount/:trxDiscountId/edit',
+      name: 'TrxDiscountEdit',
+      component: TrxDiscountUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-discount/:trxDiscountId/view',
+      name: 'TrxDiscountView',
+      component: TrxDiscountDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-coupon',
+      name: 'TrxCoupon',
+      component: TrxCoupon,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-coupon/new',
+      name: 'TrxCouponCreate',
+      component: TrxCouponUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-coupon/:trxCouponId/edit',
+      name: 'TrxCouponEdit',
+      component: TrxCouponUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-coupon/:trxCouponId/view',
+      name: 'TrxCouponView',
+      component: TrxCouponDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-notification',
+      name: 'TrxNotification',
+      component: TrxNotification,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-notification/new',
+      name: 'TrxNotificationCreate',
+      component: TrxNotificationUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-notification/:trxNotificationId/edit',
+      name: 'TrxNotificationEdit',
+      component: TrxNotificationUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-notification/:trxNotificationId/view',
+      name: 'TrxNotificationView',
+      component: TrxNotificationDetails,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-stock-alert',
+      name: 'TrxStockAlert',
+      component: TrxStockAlert,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-stock-alert/new',
+      name: 'TrxStockAlertCreate',
+      component: TrxStockAlertUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-stock-alert/:trxStockAlertId/edit',
+      name: 'TrxStockAlertEdit',
+      component: TrxStockAlertUpdate,
+      meta: { authorities: [Authority.USER] },
+    },
+    {
+      path: 'trx-stock-alert/:trxStockAlertId/view',
+      name: 'TrxStockAlertView',
+      component: TrxStockAlertDetails,
       meta: { authorities: [Authority.USER] },
     },
     // jhipster-needle-add-entity-to-router - JHipster will add entities to the router here

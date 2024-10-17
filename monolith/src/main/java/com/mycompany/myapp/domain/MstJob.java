@@ -38,7 +38,7 @@ public class MstJob implements Serializable {
     private Set<MstTask> tasks = new HashSet<>();
 
     @Transient
-    @JsonIgnoreProperties(value = { "mstJobs", "manager", "department", "jobHistory" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "mstJobs", "manager", "department", "mstDepartment", "jobHistory" }, allowSetters = true)
     private MstEmployee employee;
 
     @Transient

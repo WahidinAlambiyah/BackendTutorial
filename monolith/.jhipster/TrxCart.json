@@ -1,0 +1,26 @@
+{
+  "annotations": {
+    "changelogDate": "20241017071441"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "totalPrice",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "TrxCart",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "mstCustomer",
+      "relationshipName": "customer",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceImpl"
+}

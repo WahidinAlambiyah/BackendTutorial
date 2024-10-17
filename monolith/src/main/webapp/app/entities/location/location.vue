@@ -50,11 +50,26 @@
       <table class="table table-striped" aria-describedby="locations">
         <thead>
           <tr>
-            <th scope="row"><span v-text="t$('global.field.id')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.location.streetAddress')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.location.postalCode')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.location.city')"></span></th>
-            <th scope="row"><span v-text="t$('monolithApp.location.stateProvince')"></span></th>
+            <th scope="row" v-on:click="changeOrder('id')">
+              <span v-text="t$('global.field.id')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'id'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('streetAddress')">
+              <span v-text="t$('monolithApp.location.streetAddress')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'streetAddress'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('postalCode')">
+              <span v-text="t$('monolithApp.location.postalCode')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'postalCode'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('city')">
+              <span v-text="t$('monolithApp.location.city')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'city'"></jhi-sort-indicator>
+            </th>
+            <th scope="row" v-on:click="changeOrder('stateProvince')">
+              <span v-text="t$('monolithApp.location.stateProvince')"></span>
+              <jhi-sort-indicator :current-order="propOrder" :reverse="reverse" :field-name="'stateProvince'"></jhi-sort-indicator>
+            </th>
             <th scope="row"></th>
           </tr>
         </thead>
@@ -118,6 +133,14 @@
         </div>
       </template>
     </b-modal>
+    <div v-show="locations && locations.length > 0">
+      <div class="row justify-content-center">
+        <jhi-item-count :page="page" :total="queryCount" :itemsPerPage="itemsPerPage"></jhi-item-count>
+      </div>
+      <div class="row justify-content-center">
+        <b-pagination size="md" :total-rows="totalItems" v-model="page" :per-page="itemsPerPage"></b-pagination>
+      </div>
+    </div>
   </div>
 </template>
 

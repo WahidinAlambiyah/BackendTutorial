@@ -603,7 +603,7 @@ class JobHistoryResourceIT {
         JobHistory partialUpdatedJobHistory = new JobHistory();
         partialUpdatedJobHistory.setId(jobHistory.getId());
 
-        partialUpdatedJobHistory.language(UPDATED_LANGUAGE);
+        partialUpdatedJobHistory.endDate(UPDATED_END_DATE).language(UPDATED_LANGUAGE);
 
         webTestClient
             .patch()

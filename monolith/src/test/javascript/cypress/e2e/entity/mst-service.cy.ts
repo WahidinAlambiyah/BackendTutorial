@@ -15,7 +15,7 @@ describe('MstService e2e test', () => {
   const mstServicePageUrlPattern = new RegExp('/mst-service(\\?.*)?$');
   const username = Cypress.env('E2E_USERNAME') ?? 'user';
   const password = Cypress.env('E2E_PASSWORD') ?? 'user';
-  const mstServiceSample = { name: 'weepy' };
+  const mstServiceSample = { name: 'loftily' };
 
   let mstService;
 
@@ -91,6 +91,9 @@ describe('MstService e2e test', () => {
             },
             {
               statusCode: 200,
+              headers: {
+                link: '<http://localhost/api/mst-services?page=0&size=20>; rel="last",<http://localhost/api/mst-services?page=0&size=20>; rel="first"',
+              },
               body: [mstService],
             },
           ).as('entitiesRequestInternal');
@@ -157,19 +160,19 @@ describe('MstService e2e test', () => {
     });
 
     it('should create an instance of MstService', () => {
-      cy.get(`[data-cy="name"]`).type('well-worn');
-      cy.get(`[data-cy="name"]`).should('have.value', 'well-worn');
+      cy.get(`[data-cy="name"]`).type('mostly er neuropsychiatry');
+      cy.get(`[data-cy="name"]`).should('have.value', 'mostly er neuropsychiatry');
 
       cy.get(`[data-cy="description"]`).type('../fake-data/blob/hipster.txt');
       cy.get(`[data-cy="description"]`).invoke('val').should('match', new RegExp('../fake-data/blob/hipster.txt'));
 
-      cy.get(`[data-cy="price"]`).type('26131.37');
-      cy.get(`[data-cy="price"]`).should('have.value', '26131.37');
+      cy.get(`[data-cy="price"]`).type('26024.4');
+      cy.get(`[data-cy="price"]`).should('have.value', '26024.4');
 
-      cy.get(`[data-cy="durationInHours"]`).type('20392');
-      cy.get(`[data-cy="durationInHours"]`).should('have.value', '20392');
+      cy.get(`[data-cy="durationInHours"]`).type('14242');
+      cy.get(`[data-cy="durationInHours"]`).should('have.value', '14242');
 
-      cy.get(`[data-cy="serviceType"]`).select('EVENT_MANAGEMENT');
+      cy.get(`[data-cy="serviceType"]`).select('TICKETING');
 
       cy.get(entityCreateSaveButtonSelector).click();
 

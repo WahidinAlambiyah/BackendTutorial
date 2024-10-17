@@ -4,8 +4,7 @@ import buildPaginationQueryOpts from '@/shared/sort/sorts';
 
 import { type IJobHistory } from '@/shared/model/job-history.model';
 
-const baseApiUrl = 'testapi/testing';
-// const baseApiUrl = 'api/job-histories';
+const baseApiUrl = 'api/job-histories';
 const baseSearchApiUrl = 'api/job-histories/_search?query=';
 
 export default class JobHistoryService {
