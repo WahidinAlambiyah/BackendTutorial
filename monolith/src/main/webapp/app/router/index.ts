@@ -1,4 +1,5 @@
 import { createRouter as createVueRouter, createWebHistory } from 'vue-router';
+import Dashboard from '@/entities/dashboard/dashboard.vue'; // Import your Dashboard component
 
 const Home = () => import('@/core/home/home.vue');
 const Error = () => import('@/core/error/error.vue');
@@ -15,6 +16,11 @@ export const createRouter = () =>
         path: '/',
         name: 'Home',
         component: Home,
+      },
+      {
+        path: '/dashboard', // Add your new dashboard route here
+        name: 'Dashboard',
+        component: Dashboard,
       },
       {
         path: '/forbidden',
@@ -38,9 +44,7 @@ export const createRouter = () =>
 const router = createRouter();
 
 router.beforeResolve(async (to, from, next) => {
-  console.log("disini");
   if (!to.matched.length) {
-    console.log("disini nih");
     next({ path: '/not-found' });
     return;
   }

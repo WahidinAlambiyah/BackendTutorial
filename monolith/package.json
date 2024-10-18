@@ -103,6 +103,7 @@
     "axios": "1.7.2",
     "bootstrap": "4.6.2",
     "bootstrap-vue": "2.23.1",
+    "chart.js": "^4.4.5",
     "dayjs": "1.11.11",
     "deepmerge": "4.3.1",
     "pinia": "2.1.7",
