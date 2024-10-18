@@ -7,7 +7,9 @@
         "createLabel": "Create a new Trx Event",
         "createOrEditLabel": "Create or edit a Trx Event",
         "search": "Search for Trx Event",
-        "notFound": "No Trx Events found"
+        "notFound": "No Trx Events found",
+        "filterStatus": "Filter by Status",
+        "allStatus": "All Status"
       },
       "created": "A new Trx Event is created with identifier { param }",
       "updated": "A Trx Event is updated with identifier { param }",

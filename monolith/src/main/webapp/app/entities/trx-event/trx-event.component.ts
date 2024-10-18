@@ -18,6 +18,7 @@ export default defineComponent({
     const alertService = inject('alertService', () => useAlertService(), true);
 
     const currentSearch = ref('');
+    const selectedStatus = ref('');  // New status filter
     const itemsPerPage = ref(20);
     const queryCount: Ref<number> = ref(null);
     const page: Ref<number> = ref(1);
@@ -32,6 +33,7 @@ export default defineComponent({
     const clear = () => {
       currentSearch.value = '';
       page.value = 1;
+      selectedStatus.value = '';  // Reset status filter
     };
 
     const sort = (): Array<any> => {
@@ -42,6 +44,7 @@ export default defineComponent({
       return result;
     };
 
+    // Updated retrieve method to include status filter
     const retrieveTrxEvents = async () => {
       isFetching.value = true;
       try {
@@ -53,14 +56,26 @@ export default defineComponent({
         const res = currentSearch.value
           ? await trxEventService().search(currentSearch.value, paginationQuery)
           : await trxEventService().retrieve(paginationQuery);
+        
+        // Apply status filter if selectedStatus is set
+        console.log('DATA' + selectedStatus.value)
+        trxEvents.value = selectedStatus.value
+          ? res.data.filter(event => event.status === selectedStatus.value)
+          : res.data;
+
         totalItems.value = Number(res.headers['x-total-count']);
         queryCount.value = totalItems.value;
-        trxEvents.value = res.data;
       } catch (err) {
         alertService.showHttpError(err.response);
       } finally {
         isFetching.value = false;
       }
+    };
+
+    // New method for filtering by status
+    const filterByStatus = () => {
+      page.value = 1;  // Reset to first page on filter change
+      retrieveTrxEvents();
     };
 
     const handleSyncList = () => {
@@ -132,6 +147,8 @@ export default defineComponent({
       isFetching,
       retrieveTrxEvents,
       clear,
+      filterByStatus,  // Added this for status filter dropdown
+      selectedStatus,  // Added this for the status dropdown
       ...dateFormat,
       currentSearch,
       removeId,

@@ -40,6 +40,18 @@
             </button>
           </div>
         </form>
+
+        <!-- Event Status Filter -->
+        <div class="form-group mt-3">
+          <label for="eventStatusFilter">{{ t$('monolithApp.trxEvent.home.filterStatus') }}</label>
+          <select class="form-control" id="eventStatusFilter" v-model="selectedStatus" @change="filterByStatus">
+            <option value="">{{ t$('monolithApp.trxEvent.home.allStatus') }}</option>
+            <option value="UPCOMING">{{ t$('monolithApp.EventStatus.UPCOMING') }}</option>
+            <option value="ONGOING">{{ t$('monolithApp.EventStatus.ONGOING') }}</option>
+            <option value="COMPLETED">{{ t$('monolithApp.EventStatus.COMPLETED') }}</option>
+            <option value="CANCELLED">{{ t$('monolithApp.EventStatus.CANCELLED') }}</option>
+          </select>
+        </div>
       </div>
     </div>
     <br />

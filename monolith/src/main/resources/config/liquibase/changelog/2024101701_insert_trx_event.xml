@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- Insert dummy trx_event data -->
+    <changeSet id="2024101701-insert-trx-event" author="yourname">
+        <insert tableName="trx_event">
+            <column name="id" value="1"/>
+            <column name="title" value="Spring Festival"/>
+            <column name="description" value="A celebration of spring."/>
+            <column name="date" value="2024-03-20T10:00:00Z"/>
+            <column name="location" value="Central Park"/>
+            <column name="capacity" value="100"/>
+            <column name="price" value="25.00"/>
+            <column name="status" value="UPCOMING"/>
+        </insert>
+        
+        <insert tableName="trx_event">
+            <column name="id" value="2"/>
+            <column name="title" value="Summer Concert"/>
+            <column name="description" value="An outdoor music concert."/>
+            <column name="date" value="2024-06-15T18:00:00Z"/>
+            <column name="location" value="Beachfront"/>
+            <column name="capacity" value="500"/>
+            <column name="price" value="50.00"/>
+            <column name="status" value="UPCOMING"/>
+        </insert>
+        
+        <insert tableName="trx_event">
+            <column name="id" value="3"/>
+            <column name="title" value="Tech Expo"/>
+            <column name="description" value="A showcase of the latest technology."/>
+            <column name="date" value="2024-09-10T09:00:00Z"/>
+            <column name="location" value="Convention Center"/>
+            <column name="capacity" value="300"/>
+            <column name="price" value="150.00"/>
+            <column name="status" value="ONGOING"/>
+        </insert>
+        
+        <insert tableName="trx_event">
+            <column name="id" value="4"/>
+            <column name="title" value="Food Fest"/>
+            <column name="description" value="A food festival with local vendors."/>
+            <column name="date" value="2024-07-01T11:00:00Z"/>
+            <column name="location" value="Downtown"/>
+            <column name="capacity" value="200"/>
+            <column name="price" value="15.00"/>
+            <column name="status" value="CANCELLED"/>
+        </insert>
+        
+        <insert tableName="trx_event">
+            <column name="id" value="5"/>
+            <column name="title" value="Marathon"/>
+            <column name="description" value="A city-wide marathon."/>
+            <column name="date" value="2024-11-05T07:00:00Z"/>
+            <column name="location" value="City Center"/>
+            <column name="capacity" value="1000"/>
+            <column name="price" value="10.00"/>
+            <column name="status" value="COMPLETED"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

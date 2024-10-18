@@ -70,6 +70,9 @@
     <include file="config/liquibase/changelog/20241017071445_added_entity_constraints_MstLoyaltyProgram.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20241017071446_added_entity_constraints_TrxDelivery.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20241017071452_added_entity_constraints_TrxNotification.xml" relativeToChangelogFile="false"/>
+
+    <include file="config/liquibase/changelog/2024101701_insert_trx_event.xml" relativeToChangelogFile="false"/>
+
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>
