@@ -1,6 +1,20 @@
 {
     "dashboard": {
-      "title": "Event Management Dashboard"
+      "title": "Event Management Dashboard",
+      "filter": {
+        "status": "Filter by Status",
+        "allStatus": "All Status"
+      },
+      "status": {
+        "upcoming": "Upcoming",
+        "ongoing": "Ongoing",
+        "completed": "Completed"
+      },
+      "sort": {
+        "sortBy": "Sort By",
+        "date": "Date",
+        "capacity": "Capacity"
+      }
     }
   }
   

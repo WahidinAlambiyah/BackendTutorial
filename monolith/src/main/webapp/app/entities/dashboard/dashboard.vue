@@ -2,38 +2,47 @@
     <div class="container">
       <h2>{{ t$('dashboard.title') }}</h2>
   
-      <div class="row">
+      <!-- Event Status Filter -->
+      <div class="row mb-3">
         <div class="col-md-6">
-          <b-card class="text-center mb-4" title="Total Events" bg-variant="primary" text-variant="white">
-            <p class="display-4">{{ totalEvents }}</p>
-          </b-card>
+          <label for="eventStatusFilter">{{ t$('dashboard.filter.status') }}</label>
+          <select v-model="selectedStatus" @change="filterEvents" class="form-control" id="eventStatusFilter">
+            <option value="">{{ t$('dashboard.filter.allStatus') }}</option>
+            <option value="UPCOMING">{{ t$('dashboard.status.upcoming') }}</option>
+            <option value="ONGOING">{{ t$('dashboard.status.ongoing') }}</option>
+            <option value="COMPLETED">{{ t$('dashboard.status.completed') }}</option>
+          </select>
         </div>
+  
+        <!-- Sorting Options -->
         <div class="col-md-6">
-          <b-card class="text-center mb-4" title="Ongoing Events" bg-variant="info" text-variant="white">
-            <p class="display-4">{{ ongoingEvents }}</p>
-          </b-card>
+          <label for="sortBy">{{ t$('dashboard.sort.sortBy') }}</label>
+          <select v-model="selectedSort" @change="sortEvents" class="form-control" id="sortBy">
+            <option value="date">{{ t$('dashboard.sort.date') }}</option>
+            <option value="capacity">{{ t$('dashboard.sort.capacity') }}</option>
+          </select>
         </div>
       </div>
   
       <div class="row">
+        <!-- Event Statistics (Total Events, Participants, etc.) -->
+        <div class="col-md-6">
+          <b-card class="text-center mb-4" title="Total Events" bg-variant="primary" text-variant="white">
+            <p class="display-4">{{ filteredEvents.length }}</p>
+          </b-card>
+        </div>
         <div class="col-md-6">
           <b-card class="text-center mb-4" title="Total Participants" bg-variant="success" text-variant="white">
             <p class="display-4">{{ totalParticipants }}</p>
           </b-card>
         </div>
-        <div class="col-md-6">
-          <b-card class="text-center mb-4" title="Completed Events" bg-variant="danger" text-variant="white">
-            <p class="display-4">{{ completedEvents }}</p>
-          </b-card>
-        </div>
       </div>
   
-      <!-- Only show the chart if data is loaded -->
+      <!-- Chart Section -->
       <div class="row mt-4">
         <div class="col-md-12">
           <b-card title="Events Overview">
             <chart-component v-if="!loading" :data="chartData"></chart-component>
-            <!-- Display a loading message while data is being fetched -->
             <div v-else class="text-center">Loading chart...</div>
           </b-card>
         </div>
@@ -42,9 +51,9 @@
   </template>
   
   <script lang="ts">
-  import { defineComponent, ref, onMounted } from 'vue';
+  import { defineComponent, ref, onMounted, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
-  import ChartComponent from '@/entities/dashboard/chartComponent.vue'; // Import ChartComponent
+  import ChartComponent from '@/entities/dashboard/ChartComponent.vue'; // Import ChartComponent
   import TrxEventService from '@/entities/trx-event/trx-event.service'; // Import your Event Service
   
   export default defineComponent({
@@ -57,11 +66,14 @@
       const trxEventService = new TrxEventService();
   
       // Reactive variables for statistics
-      const totalEvents = ref(0);
-      const ongoingEvents = ref(0);
-      const completedEvents = ref(0);
+      const events = ref([]);
+      const filteredEvents = ref([]);
       const totalParticipants = ref(0);
       const loading = ref(true); // Add a loading state
+  
+      // Variables for filtering and sorting
+      const selectedStatus = ref(''); // For event status filter
+      const selectedSort = ref('date'); // Default sort by date
   
       // Chart data for events overview
       const chartData = ref({
@@ -75,44 +87,70 @@
         ],
       });
   
-      const loadDashboardData = async () => {
+      // Load and fetch events from the backend
+      const loadEvents = async () => {
         try {
-          // Fetch total events
           const eventsResponse = await trxEventService.retrieve();
-          const events = eventsResponse.data;
-          totalEvents.value = events.length;
-  
-          // Calculate ongoing, completed, and upcoming events
-          ongoingEvents.value = events.filter(event => event.status === 'ONGOING').length;
-          completedEvents.value = events.filter(event => event.status === 'COMPLETED').length;
-          chartData.value.datasets[0].data = [
-            ongoingEvents.value,
-            completedEvents.value,
-            events.filter(event => event.status === 'UPCOMING').length,
-          ];
-  
-          // Calculate total participants
-          totalParticipants.value = events.reduce((acc, event) => acc + event.capacity, 0);
-  
-          // Data has been loaded, disable the loading state
+          events.value = eventsResponse.data;
+          filteredEvents.value = events.value; // Initialize with all events
+          calculateParticipants();
+          updateChart();
           loading.value = false;
         } catch (error) {
           console.error('Error loading dashboard data:', error);
         }
       };
   
+      // Calculate total participants
+      const calculateParticipants = () => {
+        totalParticipants.value = filteredEvents.value.reduce((acc, event) => acc + event.capacity, 0);
+      };
+  
+      // Filter events by selected status
+      const filterEvents = () => {
+        if (!selectedStatus.value) {
+          filteredEvents.value = events.value;
+        } else {
+          filteredEvents.value = events.value.filter(event => event.status === selectedStatus.value);
+        }
+        calculateParticipants(); // Recalculate total participants
+        updateChart(); // Update chart after filtering
+      };
+  
+      // Sort events by the selected option
+      const sortEvents = () => {
+        if (selectedSort.value === 'date') {
+          filteredEvents.value.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        } else if (selectedSort.value === 'capacity') {
+          filteredEvents.value.sort((a, b) => b.capacity - a.capacity); // Sort by capacity (descending)
+        }
+      };
+  
+      // Update the chart data based on the filtered events
+      const updateChart = () => {
+        const ongoing = filteredEvents.value.filter(event => event.status === 'ONGOING').length;
+        const completed = filteredEvents.value.filter(event => event.status === 'COMPLETED').length;
+        const upcoming = filteredEvents.value.filter(event => event.status === 'UPCOMING').length;
+        chartData.value.datasets[0].data = [ongoing, completed, upcoming];
+      };
+  
       onMounted(() => {
-        loadDashboardData();
+        loadEvents(); // Load events when the component is mounted
+      });
+  
+      watch([selectedSort, selectedStatus], () => {
+        filterEvents(); // Apply filtering
+        sortEvents(); // Apply sorting
       });
   
       return {
         t$,
-        totalEvents,
-        ongoingEvents,
-        completedEvents,
+        filteredEvents,
         totalParticipants,
+        selectedStatus,
+        selectedSort,
         chartData,
-        loading, // Return loading state to template
+        loading,
       };
     },
   });
