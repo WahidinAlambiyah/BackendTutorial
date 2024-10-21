@@ -24,7 +24,7 @@
             <span v-text="t$('global.menu.home')"></span>
           </span>
         </b-nav-item>
-        <b-nav-item to="/dashboard">
+        <b-nav-item to="/dashboard" v-if="hasAnyAuthority('ROLE_ADMIN') && authenticated">
           <span>
             <font-awesome-icon icon="tachometer-alt" />
             <span v-text="t$('global.menu.dashboard')"></span>
