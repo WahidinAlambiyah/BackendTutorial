@@ -1,27 +1,27 @@
-// package com.mycompany.myapp.web.rest;
+package com.mycompany.myapp.web.rest;
 
-// import com.mycompany.myapp.service.DashboardService;
-// import com.mycompany.myapp.service.dto.DashboardStatsDTO;
-// import org.springframework.http.ResponseEntity;
-// import org.springframework.web.bind.annotation.GetMapping;
-// import org.springframework.web.bind.annotation.RequestMapping;
-// import org.springframework.web.bind.annotation.RestController;
-// import reactor.core.publisher.Mono;
+import com.mycompany.myapp.service.DashboardService;
+import com.mycompany.myapp.service.dto.DashboardStatsDTO;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
-// @RestController
-// @RequestMapping("/api")
-// public class DashboardResource {
+@RestController
+@RequestMapping("/api")
+public class DashboardResource {
 
-//     private final DashboardService dashboardService;
+    private final DashboardService dashboardService;
 
-//     public DashboardResource(DashboardService dashboardService) {
-//         this.dashboardService = dashboardService;
-//     }
+    public DashboardResource(DashboardService dashboardService) {
+        this.dashboardService = dashboardService;
+    }
 
-//     @GetMapping("/dashboard-stats")
-//     public Mono<ResponseEntity<DashboardStatsDTO>> getDashboardStats() {
-//         return dashboardService.getDashboardStats()
-//             .map(ResponseEntity::ok)
-//             .defaultIfEmpty(ResponseEntity.notFound().build());
-//     }
-// }
+    @GetMapping("/dashboard-stats")
+    public Mono<ResponseEntity<DashboardStatsDTO>> getDashboardStats() {
+        return dashboardService.getDashboardStats()
+            .map(ResponseEntity::ok)
+            .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+}

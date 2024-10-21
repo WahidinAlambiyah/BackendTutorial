@@ -1,11 +1,11 @@
 package com.mycompany.myapp.service.impl;
 
 import com.mycompany.myapp.domain.TrxEvent;
+import com.mycompany.myapp.domain.enumeration.EventStatus;
 import com.mycompany.myapp.repository.TrxEventRepository;
 import com.mycompany.myapp.service.DashboardService;
 import com.mycompany.myapp.service.dto.DashboardStatsDTO;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
@@ -28,9 +28,9 @@ public class DashboardServiceImpl implements DashboardService {
             DashboardStatsDTO stats = new DashboardStatsDTO();
             stats.setTotalEvents((long) events.size());
             stats.setTotalParticipants(events.stream().mapToLong(TrxEvent::getCapacity).sum());
-            stats.setUpcomingEvents(events.stream().filter(event -> event.getStatus().equals("UPCOMING")).count());
-            stats.setOngoingEvents(events.stream().filter(event -> event.getStatus().equals("ONGOING")).count());
-            stats.setCompletedEvents(events.stream().filter(event -> event.getStatus().equals("COMPLETED")).count());
+            stats.setUpcomingEvents(events.stream().filter(event -> event.getStatus().equals(EventStatus.UPCOMING)).count());
+            stats.setOngoingEvents(events.stream().filter(event -> event.getStatus().equals(EventStatus.ONGOING)).count());
+            stats.setCompletedEvents(events.stream().filter(event -> event.getStatus().equals(EventStatus.COMPLETED)).count());
 
             return Mono.just(stats);
         });

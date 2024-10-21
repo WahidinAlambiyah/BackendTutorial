@@ -56,23 +56,33 @@ public class SecurityConfiguration {
             .csrf(csrf -> csrf.disable())
             .addFilterAfter(new SpaWebFilter(), SecurityWebFiltersOrder.HTTPS_REDIRECT)
             .headers(
-                headers ->
+                headers -> 
                     headers
-                        .contentSecurityPolicy(csp -> csp.policyDirectives(jHipsterProperties.getSecurity().getContentSecurityPolicy()))
+                        .contentSecurityPolicy(csp -> 
+                            // Updated the CSP policy to allow blob: in img-src
+                            csp.policyDirectives(
+                                "default-src 'self'; " +
+                                "img-src 'self' data: blob:; " + // Allow 'blob:' for images
+                                "style-src 'self' 'unsafe-inline'; " + 
+                                "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
+                                "font-src 'self' data:; " +
+                                "connect-src 'self'; " +
+                                "object-src 'none';"
+                            )
+                        )
                         .frameOptions(frameOptions -> frameOptions.mode(Mode.DENY))
                         .referrerPolicy(
-                            referrer ->
-                                referrer.policy(ReferrerPolicyServerHttpHeadersWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
+                            referrer -> referrer.policy(ReferrerPolicyServerHttpHeadersWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
                         )
                         .permissionsPolicy(
-                            permissions ->
+                            permissions -> 
                                 permissions.policy(
                                     "camera=(), fullscreen=(self), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), sync-xhr=()"
                                 )
                         )
             )
             .authorizeExchange(
-                authz ->
+                authz -> 
                     // prettier-ignore
                 authz
                     .pathMatchers("/").permitAll()
@@ -97,4 +107,5 @@ public class SecurityConfiguration {
             .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()));
         return http.build();
     }
+
 }
