@@ -42,10 +42,19 @@ spring:
     contexts: dev
     url: jdbc:postgresql://localhost:5432/monolith_1
   mail:
-    host: localhost
-    port: 25
-    username:
-    password:
+    host: smtp.gmail.com
+    port: 587
+    username: wahidin.personal@gmail.com
+    password: cdnx qiag yxtb tfjc
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            trust: smtp.gmail.com
   messages:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
   r2dbc:
