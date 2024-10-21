@@ -21,6 +21,7 @@ export const createRouter = () =>
         path: '/dashboard', // Add your new dashboard route here
         name: 'Dashboard',
         component: Dashboard,
+        meta: { authorities: ['ROLE_USER'] }, // Restrict access to authenticated users
       },
       {
         path: '/forbidden',

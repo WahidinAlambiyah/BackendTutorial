@@ -1,6 +1,9 @@
 {
     "dashboard": {
       "title": "Event Management Dashboard",
+      "totalEvents": "Total Events",
+      "totalParticipants": "Total Participants",
+      "eventStatus": "Event Status",
       "filter": {
         "status": "Filter by Status",
         "allStatus": "All Status"

@@ -100,7 +100,7 @@
     "@vuelidate/core": "2.0.3",
     "@vuelidate/validators": "2.0.4",
     "@vueuse/core": "10.11.0",
-    "axios": "1.7.2",
+    "axios": "^1.7.2",
     "bootstrap": "4.6.2",
     "bootstrap-vue": "2.23.1",
     "chart.js": "^4.4.5",
@@ -108,6 +108,7 @@
     "deepmerge": "4.3.1",
     "pinia": "2.1.7",
     "vue": "3.4.21",
+    "vue-chartjs": "^5.3.1",
     "vue-i18n": "9.13.1",
     "vue-router": "4.4.0"
   },
